@@ -141,6 +141,24 @@ def equations_FD(eq, field_slices, t_grid, x_grid, y_grid, parameters, operators
 
         fields = np.array([F_1, G_1, F_2, G_2])
 
+    elif eq == "pdS":
+        U_1 = field_slices[0]
+        U_2 = field_slices[1]
+
+        alpha = parameters[0]
+        gamma = parameters[1]
+        mu = parameters[2]
+        nu = parameters[3]
+
+        DD = operators[0]
+
+        ddU_1 = Der(DD, U_1)
+        ddU_2 = Der(DD, U_2)
+
+        F = -alpha * ddU_2 - nu * U_2 + (gamma - mu) * U_1
+        G = alpha * ddU_1 - nu * U_1 - (gamma + mu) * U_2
+
+        fields = np.array([F, G])
 
     elif eq == 'kdV':
 

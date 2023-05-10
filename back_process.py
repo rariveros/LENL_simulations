@@ -33,6 +33,7 @@ from scipy.signal import hilbert, chirp
 from scipy.integrate import solve_ivp
 from scipy.sparse import diags
 from scipy import integrate
+from scipy.optimize import fsolve
 
 #### OTROS ###
 import numpy as np

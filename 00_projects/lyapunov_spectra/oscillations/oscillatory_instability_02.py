@@ -19,10 +19,12 @@ if __name__ == '__main__':
     dt = T[1] - T[0]
     dx = X[1] - X[0]
     L = X[-1] - X[0]
-    sigma_i = 10
+    sigma_i = 60
     mu = 0.1
-    nu = 0.4
-    sigma = np.sqrt((nu / mu) * sigma_i)
+    nu = 0.056
+    alpha = 5.721
+    sigma = sigma_i #2.3548 * sigma_i#np.sqrt(np.sqrt(nu * alpha) * (sigma_i / mu))
+    print(sigma)
     sigma_window_l = int((Nx - (sigma / L) * Nx) / 2)
     sigma_window_r = int(sigma_window_l + (sigma / L) * Nx)
 
@@ -63,7 +65,7 @@ if __name__ == '__main__':
     amplitude_points = []
     x_points = []
     t_points = []
-    window_size = 6
+    window_size = 4
     for k in range(K):
         window_left = J_points_init[k] - int(window_size / 2)
         window_right = J_points_init[k] + int(window_size / 2)
@@ -87,12 +89,25 @@ if __name__ == '__main__':
         amplitude_points.append(amplitude_points_k)
         t_points.append(t_points_k)
         x_points.append(x_points_k)
+
+
+
+    Z_r_points_np = np.array(Z_r_points[2][:])
+    Z_i_points_np = np.array(Z_i_points[2][:])
+    x_points_np = np.array(x_points[2][:])
+    t_points_np = np.array(t_points[2][:])
+    np.savetxt(directory + '/Z_r_points.txt', Z_r_points_np, delimiter=',')
+    np.savetxt(directory + '/Z_i_points.txt', Z_i_points_np, delimiter=',')
+    np.savetxt(directory + '/x_points.txt', x_points_np, delimiter=',')
+    np.savetxt(directory + '/t_points.txt', t_points_np, delimiter=',')
+
+
     fig, ax = plt.subplots()
 
     # legend
-    pcm = plt.pcolormesh(X, T, Z_modulo, cmap=parula_map, vmin=np.amin(Z_modulo), vmax=np.amax(Z_modulo), shading='auto')
+    pcm = plt.pcolormesh(X, T, Z_r, cmap=parula_map, vmin=-np.amax(Z_r), vmax=np.amax(Z_r), shading='auto')
     cbar = plt.colorbar(pcm)
-    cbar.set_label('$|A|$', rotation=0, size=25, labelpad=-27, y=1.11)
+    cbar.set_label('$A_R(x,t)$', rotation=0, size=25, labelpad=-27, y=1.11)
     for k in range(K):
         ax.plot(x_points[k], t_points[k], zorder=1, linewidth=1, color="r")
     # put the major ticks at the middle of each cell

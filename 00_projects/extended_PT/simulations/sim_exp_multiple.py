@@ -14,27 +14,27 @@ if __name__ == '__main__':
     T = 1000
     dx = 1 #en milimetros
 
-    pist_dist = np.arange(4, 7.5, 0.5)                  # PISTONES DE DISTANCIA ENTRE GAUSSIANAS
-    f_i = np.arange(15, 17.25, 0.25)                                          # FRECUENCIA DE INYECCION
-    a = np.arange(10, 13)                                              # AMPLITUD ANGULAR
+    pist_dist = [1, 2]                 # PISTONES DE DISTANCIA ENTRE GAUSSIANAS
+    f_i = np.arange(15.18, 15.2, 0.001)                                      # FRECUENCIA DE INYECCION
+    a = [14.5]                                             # AMPLITUD ANGULAR
     for i in range(len(f_i)):
         for j in range(len(a)):
             for pist_dist_i in pist_dist:
                 alpha, beta, nu, gamma_0 = fluid_pdnls_parameters(f_i[i], a[j], d=20)         # PARAMETROS DE PDNLS DESDE FLUIDO
                 beta = 1                                                                # RE-DEFINIR BETA COMO UNO
-                mu = 0.13                                                               # PARAMETRO FENOMENOLOGICO
+                mu = 0.10                                                               # PARAMETRO FENOMENOLOGICO
                 piston_spac = 18.46                                                     # DISTANCIA ENTRE PISTONES
-                n_pist = 6                                                              # CANTIDAD DE PISTONES ENCENDIDOS
+                n_pist = 1                                                              # CANTIDAD DE PISTONES ENCENDIDOS
                 FWHM = n_pist * piston_spac
-                sigma = FWHM / (2 * np.sqrt(2 * np.log(2)))     # SE ASUME QUE LOS PISTONES USADOS CORRESPONDEN AL HALF WIDTH HALF MAXIMUM (HWHM)
+                sigma = FWHM / (2 * np.sqrt(2 * np.log(2)))
+                print(sigma)# SE ASUME QUE LOS PISTONES USADOS CORRESPONDEN AL HALF WIDTH HALF MAXIMUM (HWHM)
                 dist = pist_dist_i * piston_spac                # DISTANCIA ENTRE CENTROS DE GAUSSIANAS
 
-                gamma_str = str(int(gamma_0 * 1000) * 0.001)
-                nu_str = str(int(nu * 1000) * 0.001)
-                mu_str = str(int(mu * 1000) * 0.001)
-                print('gamma = ' + gamma_str)
-                print('nu = ' + nu_str)
-                print('mu = ' + mu_str)
+                alpha_str = str(alpha).split(".")[0] + '.' + str(alpha).split(".")[1][0:3]
+                beta_str = str(beta)
+                nu_str = str(nu).split(".")[0] + '.' + str(nu).split(".")[1][0:3]
+                gamma_str = str(gamma_0).split(".")[0] + '.' + str(gamma_0).split(".")[1][0:3]
+                sigma_str = str(sigma).split(".")[0] + '.' + str(sigma).split(".")[1][0:1]
 
                 # Definición de la grilla
                 [tmin, tmax, dt] = [0, T, dt]
@@ -116,9 +116,9 @@ if __name__ == '__main__':
                 plt.xlabel('$x$', size='20')
                 plt.ylabel('$t$', size='20')
                 plt.grid(linestyle='--', alpha=0.5)
-                plt.title(
-                    '$\gamma = ' + str(gamma_str) + '$' + '    $\\nu = ' + str(nu_str) + '$' + '    $\mu = ' + str(mu_str) + '$',
-                    size='20')
+                plt.title('$\gamma_0 = ' + gamma_str + '\ f_i = ' + str(f_i[i]) + '\ \\textrm{Hz}' +
+                          '\ \\alpha = ' + alpha_str + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$',
+                          size='10')
                 plt.savefig(file + subfile + '/module_spacetime.png', dpi=300)
                 plt.close()
 
@@ -129,9 +129,9 @@ if __name__ == '__main__':
                 plt.xlabel('$x$', size='20')
                 plt.ylabel('$t$', size='20')
                 plt.grid(linestyle='--', alpha=0.5)
-                plt.title(
-                    '$\gamma = ' + str(gamma_str) + '$' + '    $\\nu = ' + str(nu_str) + '$' + '    $\mu = ' + str(mu_str) + '$',
-                    size='20')
+                plt.title('$\gamma_0 = ' + gamma_str + '\ f_i = ' + str(f_i[i]) + '\ \\textrm{Hz}' +
+                          '\ \\alpha = ' + alpha_str + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$',
+                          size='10')
                 plt.savefig(file + subfile + '/arg_spacetime.png', dpi=300)
                 plt.close()
 
@@ -142,9 +142,9 @@ if __name__ == '__main__':
                 plt.xlabel('$x$', size='20')
                 plt.ylabel('$t$', size='20')
                 plt.grid(linestyle='--', alpha=0.5)
-                plt.title(
-                    '$\gamma = ' + str(gamma_str) + '$' + '    $\\nu = ' + str(nu_str) + '$' + '    $\mu = ' + str(mu_str) + '$',
-                    size='20')
+                plt.title('$\gamma_0 = ' + gamma_str + '\ f_i = ' + str(f_i[i]) + '\ \\textrm{Hz}' +
+                          '\ \\alpha = ' + alpha_str + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$',
+                          size='10')
                 plt.savefig(file + subfile + '/real_spacetime.png', dpi=300)
                 plt.close()
 
@@ -155,8 +155,8 @@ if __name__ == '__main__':
                 plt.xlabel('$x$', size='20')
                 plt.ylabel('$t$', size='20')
                 plt.grid(linestyle='--', alpha=0.5)
-                plt.title(
-                    '$\gamma = ' + str(gamma_str) + '$' + '    $\\nu = ' + str(nu_str) + '$' + '    $\mu = ' + str(mu_str) + '$',
-                    size='20')
+                plt.title('$\gamma_0 = ' + gamma_str + '\ f_i = ' + str(f_i[i]) + '\ \\textrm{Hz}' +
+                          '\ \\alpha = ' + alpha_str + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$',
+                          size='10')
                 plt.savefig(file + subfile + '/img_spacetime.png', dpi=300)
                 plt.close()
