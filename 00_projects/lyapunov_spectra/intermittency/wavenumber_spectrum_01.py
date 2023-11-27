@@ -23,7 +23,7 @@ if __name__ == '__main__':
         #ti = 0
         #tf = -1
 
-        #Z_r = Z_r[ti:tf, :]
+        #Z_modulo = Z_modulo[ti:tf, :]
         #T = T[ti:tf]
         Nt = len(T)
         dt = T[1] - T[0]

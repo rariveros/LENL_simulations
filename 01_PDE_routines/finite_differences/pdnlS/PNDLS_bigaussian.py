@@ -137,5 +137,5 @@ if __name__ == '__main__':
     plt.ylabel('Amplitude', size='20')
     plt.xlim([x_grid[0], x_grid[-1]])
     plt.grid(linestyle='--', alpha=0.5)
-    plt.savefig(file + subfile + '/forcing.png')
+    plt.savefig(file + subfile + '/forcing_01.png')
     plt.close()

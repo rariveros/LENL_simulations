@@ -1,4 +1,3 @@
-from directories import *
 from back_process import *
 
 if __name__ == '__main__':

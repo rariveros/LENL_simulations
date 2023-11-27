@@ -5,8 +5,8 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/PDNLS_bigaussian'
-    disc = 'D:/'                                        # DISCO DE TRABAJO
+    project_name = '/PDNLS_bigaussian_exp'
+    disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
     t_rate = 100                                        # CADA CUANTAS ITERACIONES GUARDA
@@ -14,16 +14,16 @@ if __name__ == '__main__':
     T = 1000
     dx = 1 #en milimetros
 
-    pist_dist = 1                  # PISTONES DE DISTANCIA ENTRE GAUSSIANAS
-    f_i = 15.195                                          # FRECUENCIA DE INYECCION
-    a = 14.5                                             # AMPLITUD ANGULAR
+    pist_dist = 2                  # PISTONES DE DISTANCIA ENTRE GAUSSIANAS
+    f_i = 14.0                                       # FRECUENCIA DE INYECCION
+    a = 15                                            # AMPLITUD ANGULAR
     alpha, beta, nu, gamma_0 = fluid_pdnls_parameters(f_i, a,  d=20)         # PARAMETROS DE PDNLS DESDE FLUIDO
     beta = 1                                                                # RE-DEFINIR BETA COMO UNO
     mu = 0.1                                                              # PARAMETRO FENOMENOLOGICO
     piston_spac = 18.46                                                     # DISTANCIA ENTRE PISTONES
     n_pist = 1                                                              # CANTIDAD DE PISTONES ENCENDIDOS
     FWHM = n_pist * piston_spac
-    sigma = 3#FWHM / (2 * np.sqrt(2 * np.log(2)))     # SE ASUME QUE LOS PISTONES USADOS CORRESPONDEN AL HALF WIDTH HALF MAXIMUM (HWHM)
+    sigma = 6#FWHM / (2 * np.sqrt(2 * np.log(2)))     # SE ASUME QUE LOS PISTONES USADOS CORRESPONDEN AL HALF WIDTH HALF MAXIMUM (HWHM)
     dist = pist_dist * piston_spac                # DISTANCIA ENTRE CENTROS DE GAUSSIANAS
 
     gamma_str = str(int(gamma_0 * 1000) * 0.001)
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     plt.ylabel('$\gamma(x)$', size='25')
     plt.ylim([-gamma_0 * 1.1, gamma_0 * 1.1])
     plt.grid(linestyle='--', alpha=0.5)
-    plt.savefig(file + subfile + '/forcing.png', dpi=300)
+    plt.savefig(file + subfile + '/forcing_01.png', dpi=300)
     plt.close()
 
     pcm = plt.pcolormesh(x_grid, t_light, modulo_light_1, cmap=parula_map, shading='auto')

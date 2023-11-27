@@ -12,20 +12,21 @@ if __name__ == '__main__':
     eq = 'PDNLS'
     save_rate = 1
     plots = "no"
-    [tmin, tmax, dt] = [0, 1000, 0.02]
-    [xmin, xmax, dx] = [-70, 70, 0.2]
-    d_nu = 0.0
-    d_gammas = 0.002
-    nus = [0.4]
-    sigmas = [10] #np.arange(0.255, 0.259 + d_gammas, d_gammas)
-    for nu_i in nus:
-        for sigma in sigmas:
-            alpha = 1
+    [tmin, tmax, dt] = [0, 300, 0.02]
+    [xmin, xmax, dx] = [-100, 100, 0.1]
+    ies = [0.03]
+    jotas = [7]
+    for nu in ies:
+        for sigma in jotas:
+            print("N° of simulations: " + str(len(ies)*len(jotas)))
+            alpha = 6.524  # 5.721
             beta = 1
-            gamma_0 = 0.4
+            nu = -0.03  # 0.04812#0.0327449 #0.0052
             mu_0 = 0.1
-            nu = nu_i
+            gamma_0 = 0.15
+            nu = nu
             sigma = sigma
+            delta = np.sqrt(- nu + np.sqrt(gamma_0 ** 2 - mu_0 ** 2))
             [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu_0, nu, sigma, gamma_0], 0)
 
             # Definición de la grilla
@@ -37,8 +38,8 @@ if __name__ == '__main__':
             Nx = x_grid.shape[0]
 
             # Initial Conditions Pattern
-            U_1_init = 0.01 * np.random.rand(Nx)
-            U_2_init = 0.01 * np.random.rand(Nx)
+            U_1_init = delta / np.cos(delta * x_grid / alpha)
+            U_2_init = 0.0 * np.random.rand(Nx)
 
             # Empaquetamiento de parametros, campos y derivadas para integración
             L = xmax - xmin
@@ -46,8 +47,8 @@ if __name__ == '__main__':
             operators = np.array([D2])
             fields_init = [U_1_init, U_2_init]
             grids = [t_grid, x_grid, 0]
-            gamma_real = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2))
-            gamma_img = 0
+            gamma_real = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * np.real(np.exp(1j * 0.5 * np.arcsin(mu_0 / gamma_0)))
+            gamma_img = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * np.imag(np.exp(1j * 0.5 * np.arcsin(mu_0 / gamma_0)))
             gamma = [gamma_real, 0]
             mu = mu_0 * np.ones(Nx)
             mu[0:10] = 10

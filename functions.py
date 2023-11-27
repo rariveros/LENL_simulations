@@ -1,6 +1,6 @@
 from back_process import *
 
-def equations_FD(eq, field_slices, t_grid, x_grid, y_grid, parameters, operators):
+def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
     if eq == 'wave':
         U_1 = field_slices[0]
         U_2 = field_slices[1]
@@ -49,17 +49,21 @@ def equations_FD(eq, field_slices, t_grid, x_grid, y_grid, parameters, operators
         U_1 = field_slices[0]
         U_2 = field_slices[1]
 
-        delta = parameters[0]
-        S = parameters[1]
-        C = parameters[2]
+        alpha = parameters[0]
+        beta = parameters[1]
+        S = parameters[2]
+        S_1 = S[0]
+        S_2 = S[1]
+        mu = parameters[3]
+        nu = parameters[4]
 
         DD = operators[0]
 
         ddU_1 = Der(DD, U_1)
         ddU_2 = Der(DD, U_2)
 
-        F = S - U_1 + delta * U_2 + C * ddU_2 + U_1 ** 2 * U_2 + U_2 ** 3
-        G = - U_2 - delta * U_1 - C * ddU_1 - U_1 ** 3 - U_2 ** 2 * U_1
+        F = S_1 - mu * U_1 + nu * U_2 + alpha * ddU_2 + beta * U_1 ** 2 * U_2 + U_2 ** 3
+        G = S_2 - mu * U_2 - nu * U_1 - alpha * ddU_1 - beta * U_1 ** 3 - U_2 ** 2 * U_1
 
         fields = np.array([F, G])
 
@@ -413,6 +417,53 @@ def equations_FD(eq, field_slices, t_grid, x_grid, y_grid, parameters, operators
         H = - (m1 * h2 - m2 * h1) + alpha * (mod_12 * h3 - m3 * m1 * h1 - m3 * m2 * h2) + g * m3 * m1
 
         fields = np.array([F, G, H])
+    elif eq == 'mathieu_single':
+        U = field_slices[0]
+        V = field_slices[1]
+
+        w_0 = parameters[0]
+        w_i = parameters[1]
+        gamma_i = parameters[2]
+        delta = parameters[3]
+
+        F = V
+        G = - (w_0 ** 2 + (gamma_i * w_i ** 2 / 2) * (np.sin(w_i * t_i) + np.sin((1 + delta) * w_i * t_i))) * (U - U ** 3 / 6)
+
+        fields = np.array([F, G])
+    elif eq == 'mathieu_double':
+        U = field_slices[0]
+        V = field_slices[1]
+
+        w_0 = parameters[0]
+        w_i = parameters[1]
+        gamma_i = parameters[2]
+        delta = parameters[3]
+
+        interact = operators[0]
+        OU = Der(interact, U)
+        F = V
+        G = - w_0 ** 2 * (U - U ** 3 / 6) + gamma_i * np.cos(w_i * t_i) + delta * OU
+
+        fields = np.array([F, G])
+    elif eq == "GPE_periodic":
+        U_1 = field_slices[0]
+        U_2 = field_slices[1]
+
+        alpha = parameters[0]
+        beta = parameters[1]
+        V_0 = parameters[2]
+        w = parameters[3]
+        V = V_0 * np.cos(w * t_i)
+
+        DD = operators[0]
+
+        ddU_1 = Der(DD, U_1)
+        ddU_2 = Der(DD, U_2)
+
+        F = (-alpha * ddU_2 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_2
+        G = -(-alpha * ddU_1 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_1
+
+        fields = np.array([F, G])
     return fields
 
 
@@ -535,4 +586,16 @@ def equations_ode(eq, vect, t, parameters):
         f = -a * (my * hz - mz * hy) + b * ((my ** 2 + mz ** 2) * hx - mx * my * hy - mx * mz * hz)
         g = -a * (mz * hx - mx * hz) + b * ((mx ** 2 + mz ** 2) * hy - my * mz * hz - my * mx * hx)
         h = -a * (mx * hy - my * hx) + b * ((mx ** 2 + my ** 2) * hz - mz * mx * hx - mz * my * hy)
-    return np.array([f, g, h])
+        vects = np.array([f, g, h])
+    elif eq == "transcritical":
+        U_1 = vect[0]
+
+        alpha = parameters[0]
+        beta = parameters[1]
+        gamma = parameters[2]
+
+        noise = 2 * (np.random.rand(1) - 0.5)
+
+        F = alpha * U_1 - U_1 ** 2 + np.sqrt(beta) * noise
+        vects = np.array([F])
+    return vects

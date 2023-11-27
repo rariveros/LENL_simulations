@@ -16,7 +16,7 @@ if __name__ == '__main__':
     T = T
     Nx = len(X)
     Nt = len(T)
-    #Z_filtered = filtro_superficie(Z_r_fft, 150, "X")
+    #Z_filtered = filtro_superficie(Z_modulo_fft, 150, "X")
 
     #fig, ax = plt.subplots()
 

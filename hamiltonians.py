@@ -13,7 +13,6 @@ def hamiltonians_FD(eq, fields, t_grid, x_grid, y_grid, parameters, operators):
         mu = parameters[3]
         nu = parameters[4]
 
-        hamiltonian_x = Der(D, Z_r) ** 2 + Der(D, Z_i) ** 2 - 0.5 * (Z_r ** 2 + Z_i ** 2) ** 2 - nu * (
-                    Z_r ** 2 + Z_i ** 2)
+        hamiltonian_x = Der(D, Z_r) ** 2 + Der(D, Z_i) ** 2#np.abs(Z_r * Z_i)#Der(D, Z_r) ** 2 + Der(D, Z_i) ** 2 - 0.5 * (Z_r ** 2 + Z_i ** 2) ** 2 - nu * (Z_r ** 2 + Z_i ** 2)
         hamiltonian = integrate.simpson(hamiltonian_x, x_grid)
     return hamiltonian

@@ -1,12 +1,12 @@
 #### MATPLOTLIB ###
 import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 from matplotlib import rc
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.ticker import FuncFormatter, MultipleLocator, FormatStrFormatter
 from matplotlib.colors import TwoSlopeNorm
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
@@ -20,6 +20,7 @@ rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 #rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
+import cv2
 
 #### SCIPY ###
 from scipy.signal import filtfilt
@@ -394,6 +395,51 @@ def arnold_tongue_exp_show(gamma_0, mu, nu):
     plt.grid(linestyle='--', alpha=0.5)
     plt.show()
 
+
+def pix_to_mm(img, scale):
+    def click_event(event, x, y, flags, params):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            points_i = (x, y)
+            points.append(points_i)
+            cv2.circle(img, (x, y), radius=4, color=(0, 0, 255), thickness=-1)
+            cv2.imshow('image', img)
+            if len(points) >= 2:
+                cv2.line(img, (points[-1]), (points[-2]), (0, 255, 0), thickness=2, lineType=8)
+                cv2.circle(img, (points[-1]), radius=4, color=(0, 0, 255), thickness=-1)
+                cv2.circle(img, (points[-2]), radius=4, color=(0, 0, 255), thickness=-1)
+            cv2.imshow('image', img)
+
+    cv2.imshow('image', img)
+    points = []
+    cv2.setMouseCallback('image', click_event)
+    cv2.waitKey(0)
+    pix_to_mm = (40 / np.abs(points[-1][0] - points[-2][0])) * scale
+    cv2.destroyAllWindows()
+    return pix_to_mm
+
+
+def define_window(img, scale):
+    def click_event(event, x, y, flags, params):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            points_i = (x, y)
+            points.append(points_i)
+            cv2.circle(img, (x, y), radius=4, color=(0, 0, 255), thickness=-1)
+            cv2.imshow('image', img)
+            if len(points) >= 2:
+                cv2.line(img, (points[-1]), (points[-2]), (0, 255, 0), thickness=2, lineType=8)
+                cv2.circle(img, (points[-1]), radius=4, color=(0, 0, 255), thickness=-1)
+                cv2.circle(img, (points[-2]), radius=4, color=(0, 0, 255), thickness=-1)
+            cv2.imshow('image', img)
+
+    cv2.imshow('image', img)
+    points = []
+    cv2.setMouseCallback('image', click_event)
+    cv2.waitKey(0)
+    window_left_0, window_right_0 = np.abs(points[-1][0] * 1), np.abs(points[-2][0] * 1)
+    t_init_pix = np.abs(points[-1][1])
+    cv2.destroyAllWindows()
+    return window_left_0, window_right_0, t_init_pix
+
 def campos_ligeros(campos, n, Nt, Nx, T):
     t_ligero = np.linspace(0, T, int(Nt / n))
     campos_light = []
@@ -523,6 +569,22 @@ def sparse_D(Nx, dx):
     #D1[-1, 0] = 1 / dx
     return D1
 
+def sparse_D_neumann_4order(Nx, dx):
+    data = np.ones((5, Nx))
+    data[0] = 1 * data[0]
+    data[1] = - 8 * data[1]
+    data[2] = 0 * data[2]
+    data[3] = 8 * data[3]
+    data[4] = - 1 * data[4]
+    diags = [-2, -1, 0, 1, 2]
+    D1 = sparse.spdiags(data, diags, Nx, Nx) / (12 * dx)
+    D1 = sparse.lil_matrix(D1)
+    D1[0, 0] = 0
+    D1[-1, -1] = 0
+    D1[1, 0] = 0
+    D1[-2, -1] = 0
+    return D1
+
 def sparse_DDD(Nx, dx):
     data = np.ones((5, Nx))
     data[0] = - 0.5 * data[0]
@@ -587,6 +649,11 @@ def sparse_id(Nx):
 def Dxx(DD, f):
     dd_f = DD @ f
     return dd_f
+
+def Dx(D, f):
+    d_f = D @ f
+    return d_f
+
 
 def Der(D, f):
     d_f = D @ f
@@ -654,15 +721,17 @@ def pdnlS_name(parameters, order):
     return directory_name
 
 def pdnlS_bigauss_name(parameters, order):
-    rounded_params = [np.round(param, 3) for param in parameters]
+    rounded_params = [np.round(param, 4) for param in parameters]
     str_params = [str(param) for param in rounded_params]
     str_params_final = []
     for str_param in str_params:
         splited_params = str_param.split(".")
         len_digits = len(splited_params[-1])
         if len_digits == 1 and len(splited_params) != 1:
-            str_param = str_param + "00"
+            str_param = str_param + "000"
         elif len_digits == 2 and len(splited_params) != 1:
+            str_param = str_param + "00"
+        elif len_digits == 3 and len(splited_params) != 1:
             str_param = str_param + "0"
         elif len(splited_params) == 1:
             str_param = str_param + ".000"
@@ -867,14 +936,41 @@ def time_propagator(type, I, J, Q, dt):
 
 def fluid_pdnls_parameters(f_i, a_ang, d):
     g = 9790
-    l_y = 15
+    l_y = 16
     w = 2 * np.pi * (f_i / 2)
     k_y = np.pi / l_y
     k = k_y
     tau = np.tanh(k * d)
     w_1 = np.sqrt(g * k * tau)
+    f_0 = w_1 / np.pi
     gamma = f_i ** 2 * a_ang * 8.401093 * 10 ** (-5)
-    alpha = (1 / (4 * k ** 2)) * (1 + k * d * ((1 - tau ** 2) / tau))  # término difusivo
+    alpha = (1 / (4 * k ** 2)) * (1 + k * d * ((1 - tau ** 2) / tau))
+    #alpha = (1 / (4 * tau)) * (1 - tau ** 2 + tau/k)# término difusivo
     beta = (k ** 2 / 64) * (6 * tau ** 2 - 5 + 16 * tau ** (-2) - 9 * tau ** (-4))  # término no lineal
     nu = 0.5 * ((w / w_1) ** 2 - 1)
-    return alpha, beta, nu, gamma
+    return alpha, beta, nu, gamma, f_0
+
+
+def max_finder(Z, t_grid, Nt, dt):
+    D = sparse_D_neumann_4order(Nt, dt)
+    DD = sparse_DD_neumann(Nt, dt)
+    #Z = filtro_array(10, Z)
+    #print(np.transpose(Z).shape)
+    #print(Nt)
+
+    D1_Z = D.dot(np.transpose(Z))
+    D2_Z = DD.dot(np.transpose(Z))
+
+    tau_L_points_max = []
+    Z_points_max = []
+    I_max = []
+    for i in range(Nt):
+        if np.sign(D1_Z[i]) != np.sign(D1_Z[i - 1]) and D2_Z[i] < 0 and i != 0 and np.sign(D1_Z[i]) + np.sign(
+                D1_Z[i - 1]) != 1:
+            tau_L_points_max.append(t_grid[i])
+            Z_points_max.append(Z[i])
+            I_max.append(i)
+    Z_points_max = np.array(Z_points_max)
+    tau_L_points_max = np.array(tau_L_points_max)
+    I_max = np.array(I_max)
+    return Z_points_max, tau_L_points_max, I_max

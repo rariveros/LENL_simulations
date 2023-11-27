@@ -1,7 +1,7 @@
 from back_process import *
 
 def jacobians_FD(eq, fields, t_grid, x_grid, y_grid, parameters, operators):
-    if eq == 'pdnlS':
+    if eq == 'pdnlS' or eq == 'PDNLS':
         U_1 = fields[0]
         U_2 = fields[1]
         [alpha, beta, gamma, mu, nu] = parameters

@@ -6,26 +6,26 @@ from directories_lyap import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = main_directory + directory_branching + "/ham_test_01"
-    disc = 'E:/'
+    project_name = main_directory + "/hamiltonian_analyisis"
+    disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'
     save_rate = 10
     plots = "no"
-    [tmin, tmax, dt] = [0, 30000, 0.02]
-    [xmin, xmax, dx] = [-70, 70, 0.2]
+    [tmin, tmax, dt] = [0, 100000, 0.02]
+    [xmin, xmax, dx] = [-60, 60, 0.2]
     d_nu = 0.0
     d_gammas = 0.002
-    nus = [0.4]
-    sigmas = [10] #np.arange(0.255, 0.259 + d_gammas, d_gammas)
+    nus = [0.3]
+    tries = [5, 6, 7, 8, 9, 10] #np.arange(0.255, 0.259 + d_gammas, d_gammas)
     for nu_i in nus:
-        for sigma in sigmas:
+        for i in tries:
             alpha = 1
             beta = 1
             gamma_0 = 0.5
             mu_0 = 0.1
             nu = nu_i
-            sigma = sigma
+            sigma = 10
             [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu_0, nu, sigma, gamma_0], 0)
 
             # Definición de la grilla
@@ -77,8 +77,7 @@ if __name__ == '__main__':
             parameters_np = np.array([alpha, beta, gamma_0, mu_0, nu])
             if not os.path.exists(file + subfile):
                 os.makedirs(file + subfile)
-            np.savetxt(file + subfile + '/hamiltonian.txt', hamiltonian, delimiter=',')
+            np.savetxt(file + subfile + '/hamiltonian_0' + str(int(i)) + '.txt', hamiltonian, delimiter=',')
             np.savetxt(file + subfile + '/T.txt', time_grid, delimiter=',')
             plt.plot(time_grid, hamiltonian)
-            plt.show()
             plt.close()

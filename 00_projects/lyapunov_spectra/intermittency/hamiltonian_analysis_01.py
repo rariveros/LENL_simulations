@@ -10,9 +10,9 @@ if __name__ == '__main__':
     root.withdraw()
     directory = filedialog.askdirectory(parent=root, initialdir=initial_dir_data, title='Elección de carpeta')
 
-    H = np.loadtxt(directory + '/hamiltonian_t.txt', delimiter=',')
-    T = np.loadtxt(directory + '/T.txt', delimiter=',')[0:-1]
-    H_mean = filtro_array(300, H)#filtro_array(50, H)
+    H = np.loadtxt(directory + '/hamiltonian.txt', delimiter=',')
+    T = np.loadtxt(directory + '/T.txt', delimiter=',')
+    H_mean = filtro_array(100, H)#filtro_array(50, H)
     plt.plot(T, H)
     plt.plot(T, H_mean)
     plt.show()
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     plt.scatter(T_points_min, H_points_min, color="b", zorder=1)
     plt.plot(T, H_mean, color="k", zorder=0)
     #plt.plot(T, D1_H)
-    #plt.plot(T, D2_H)
+    #plt.plot(T, D2_SL)
     plt.xlabel('$t$', size='20')
     plt.xticks(fontsize=15)
     plt.xlim([T[0], T[-1]])

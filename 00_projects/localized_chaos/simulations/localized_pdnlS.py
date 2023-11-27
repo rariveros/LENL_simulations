@@ -5,36 +5,43 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/PDNLS_oscillatory'
-    disc = 'D:/'
+    project_name = '/PDNLS_scale_test'
+    disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'
     t_rate = 10
-    gammas = np.arange(0.15, 0.19, 0.004)
-    sigmas = [30, 35, 45, 55]
+    gammas = [0.137]
+    sigmas = [46]
+    #directory = "D:/mnustes_science/simulation_data/FD/PDNLS_oscillatory_02/alpha=5.721/beta=1.000/mu=0.100/nu=0.027/sigma=30.000/gamma=0.190"
+    #Z_r_0 = np.loadtxt(directory + '/field_real.txt', delimiter=',')
+    #Z_i_0 = np.loadtxt(directory + '/field_img.txt', delimiter=',')
+
     for sigma_i in sigmas:
         for gamma_i in gammas:
-            alpha = 5.721
+            alpha = 2 * 6.524
             beta = 1
             gamma_0 = gamma_i
             mu_0 = 0.1
-            nu = 0.0274
+            nu = 0.15771
             sigma = sigma_i
 
             # Definición de la grilla
-            [tmin, tmax, dt] = [0, 2000, 0.01]
-            [xmin, xmax, dx] = [-200, 200, 0.5]
+            [tmin, tmax, dt] = [0, 5000, 0.05]
+            [xmin, xmax, dx] = [-200, 200, 1]
             t_grid = np.arange(tmin, tmax + dt, dt)
             x_grid = np.arange(xmin, xmax, dx)
             T = tmax
             Nt = t_grid.shape[0]
             Nx = x_grid.shape[0]
 
+            #np.savetxt(directory + '/field_real_init.txt', Z_r_0[-1, :], delimiter=',')
+            #np.savetxt(directory + '/field_imag_init.txt', Z_i_0[-1, :], delimiter=',')
+
 
             # Initial Conditions Pattern
             #[s, c, d, phi] = special.ellipj(x_grid, 1)
-            U_1_init = 0.01 * np.random.rand(Nx)
-            U_2_init = 0.01 * np.random.rand(Nx)
+            U_1_init = 0.01 * np.random.rand(Nx)#Z_r_0[-1, :]#
+            U_2_init = 0.01 * np.random.rand(Nx)#Z_i_0[-1, :]#Z_i_0[-1, :]#
 
             # Empaquetamiento de parametros, campos y derivadas para integración
             L = xmax - xmin
@@ -95,7 +102,7 @@ if __name__ == '__main__':
             np.savetxt(file + subfile + '/X.txt', x_grid, delimiter=',')
             np.savetxt(file + subfile + '/T.txt', t_grid, delimiter=',')
 
-            pcm = plt.pcolormesh(x_grid, t_light[::10], modulo_light[::10, :], cmap=parula_map, shading='auto')
+            pcm = plt.pcolormesh(x_grid, t_light[::10], modulo_light[::10, :]/np.sqrt(0.004811649356064012), cmap=parula_map, shading='auto')
             cbar = plt.colorbar(pcm, shrink=1)
             cbar.set_label('$|A|$', rotation=0, size=20, labelpad=-27, y=1.1)
             plt.xlim([x_grid[0], x_grid[-1]])
@@ -145,4 +152,14 @@ if __name__ == '__main__':
                 '$\gamma = ' + str(gamma_str) + '$' + '    $\\nu = ' + str(nu_str) + '$' + '    $\mu = ' + str(mu_str) + '$',
                 size='20')
             plt.savefig(file + subfile + '/img_spacetime.png', dpi=300)
+            plt.close()
+
+            plt.plot(x_grid, modulo_light[-1, :]/np.sqrt(0.004811649356064012), label="$|A(x,t)|$")
+            plt.xlabel('$x$', size='25')
+            plt.ylabel('$|A(x)|$', size='25')
+            plt.legend(fontsize=18)
+            plt.xlim([-180, 180])
+            plt.grid(alpha=0.3)
+            plt.tight_layout()
+            plt.savefig(file + subfile + '/final_profile.png', dpi=200)
             plt.close()
