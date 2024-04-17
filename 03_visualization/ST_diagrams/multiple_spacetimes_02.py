@@ -61,5 +61,5 @@ if __name__ == "__main__":
     cbar.ax.tick_params(labelsize=8)
     cbar.set_label('$A_{R}(x, t)$', rotation=0, size=30, labelpad=-25, y=1.1)
     #plt.show()
-    plt.savefig('test.png', dpi=300)
+    plt.savefig('ventanas_fernando.png', dpi=300)
     plt.close()

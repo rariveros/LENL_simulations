@@ -104,6 +104,92 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
 
         fields = np.array([F, G])
 
+    elif eq == 'PDNLS_complex':
+        U = field_slices[0]
+
+        alpha = parameters[0]
+        beta = parameters[1]
+        gamma = parameters[2]
+        gamma = gamma[0]
+        mu = parameters[3]
+        nu = parameters[4]
+
+        DD = operators[0]
+        ddU = Der(DD, U)
+
+        F = - (mu + 1j * nu) * U - 1j * alpha * ddU - 1j * beta * np.abs(U) * U + gamma * np.conjugate(U)
+
+        fields = np.array([F])
+
+    elif eq == 'PT_dimer':
+        U1 = field_slices[0]
+        U2 = field_slices[1]
+        U1_conj = np.conjugate(U1)
+        U2_conj = np.conjugate(U2)
+        U1_mod = np.abs(U1)
+        U2_mod = np.abs(U2)
+
+        alpha = parameters[0]
+        beta = parameters[1]
+        mu = parameters[2]
+        nu = parameters[3]
+        sigma = parameters[4]
+        pi = parameters[5]
+        delta = parameters[6]
+
+        S11 = sigma[0]
+        S12 = sigma[1]
+        S21 = sigma[2]
+        S22 = sigma[3]
+
+        P11 = pi[0]
+        P12 = pi[1]
+        P21 = pi[2]
+        P22 = pi[3]
+
+        D11 = delta[0]
+        D21 = delta[1]
+        D31 = delta[2]
+        D41 = delta[3]
+        D51 = delta[4]
+        D61 = delta[5]
+
+        D12 = delta[6]
+        D22 = delta[7]
+        D32 = delta[8]
+        D42 = delta[9]
+        D52 = delta[10]
+        D62 = delta[11]
+
+        F = - (mu + 1j * nu) * U1 - 1j * (S11 * U1 + S12 * U2) + P11 * U1_conj + P12 * U2_conj - 1j * beta * \
+            (D11 * (U2_mod ** 2) * U2
+             + D21 * (U2_mod ** 2) * U1
+             + D31 * (U1_mod ** 2) * U2
+             + D41 * (U1_mod ** 2) * U1
+             + D51 * (U2 ** 2) * U1_conj
+             + D61 * (U1 ** 2) * U2_conj
+             )
+        G = - (mu + 1j * nu) * U2 - 1j * (S21 * U1 + S22 * U2) + P21 * U1_conj + P22 * U2_conj - 1j * beta * \
+            (D12 * (U2_mod ** 2) * U2
+             + D22 * (U2_mod ** 2) * U1
+             + D32 * (U1_mod ** 2) * U2
+             + D42 * (U1_mod ** 2) * U1
+             + D52 * (U2 ** 2) * U1_conj
+             + D62 * (U1 ** 2) * U2_conj
+             )
+        fields = np.array([F, G])
+    elif eq == 'pdnlS_nospace':
+        U1 = field_slices[0]
+
+        alpha = parameters[0]
+        beta = parameters[1]
+        gamma = parameters[2]
+        mu = parameters[3]
+        nu = parameters[4]
+
+        F = -(mu + 1j * nu) * U1 - 1j * np.abs(U1) ** 2 * U1 + gamma * np.conjugate(U1)
+        fields = np.array([F])
+
     elif eq == 'PDNLS_interaction':
 
         U_1 = field_slices[0]
@@ -451,17 +537,21 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
 
         alpha = parameters[0]
         beta = parameters[1]
-        V_0 = parameters[2]
+        #V_0 = parameters[2]
         w = parameters[3]
-        V = V_0 * np.cos(w * t_i)
-
+        mu = parameters[4]
+        pot_info = parameters[2]
+        potential_0 = pot_info[0]
+        potential_time_0 = pot_info[1]
+        amp = pot_info[2]
+        V = potential_0 * (1 + amp * np.sin(w * t_i))
         DD = operators[0]
 
         ddU_1 = Der(DD, U_1)
         ddU_2 = Der(DD, U_2)
 
-        F = (-alpha * ddU_2 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_2
-        G = -(-alpha * ddU_1 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_1
+        F = - mu * U_1 + (-alpha * ddU_2 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_2
+        G = - mu * U_2 - (-alpha * ddU_1 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_1
 
         fields = np.array([F, G])
     return fields

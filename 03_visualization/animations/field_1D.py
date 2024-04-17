@@ -1,5 +1,6 @@
 from back_process import *
 
+
 if __name__ == '__main__':
     Lx = 20
     x = np.arange(-Lx / 2, Lx / 2, 0.05)
@@ -48,7 +49,7 @@ if __name__ == '__main__':
                                    interval=30,
                                    blit=True)
     FFwriter = animation.FFMpegWriter()
-    ani.save('name_test.mp4', writer=FFwriter, dpi=300)
+    ani.save("test_02.gif", dpi=300, writer=PillowWriter(fps=120))
     plt.close()
 
     #FFwriter = animation.FFMpegWriter()

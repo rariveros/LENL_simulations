@@ -54,7 +54,7 @@ if __name__ == '__main__':
     ax.axes.set_xlim3d(left=25, right=85)
     ax.axes.set_ylim3d(bottom=0.15, top=0.2)
     ax.axes.set_zlim3d(bottom=0)
-    ax.axes.tick_params(axis="both", labelsize=12)
+    ax.axes.tick_params(axis="both", labelsize=20)
     ax.view_init(elev=21, azim=-145, roll=0)
     #plt.show()
     plt.tight_layout()

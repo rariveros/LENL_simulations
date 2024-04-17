@@ -1,6 +1,6 @@
 from back_process import *
 from jacobians import *
-
+from scipy.sparse.linalg import eigs
 if __name__ == '__main__':
     disco = 'D:/'
     eq = 'pdnlS'
@@ -27,12 +27,14 @@ if __name__ == '__main__':
     parameters = [alpha, beta, gamma, mu, nu]
     DD = sparse_DD_neumann(Nx, dx)
     J = jacobians_FD(eq, [Z_r[-1, :], Z_i[-1, :]], t_grid, x_grid, [0], parameters, [DD])
-    eigenvalues, eigenvectors = np.linalg.eig(J)
+    len_J = len(J)
+    J = sparse.csr_matrix(J)
+    eigenvalues, eigenvectors = eigs(J, k=len_J-2)
     print(eigenvalues)
     plt.scatter(np.real(eigenvalues), np.imag(eigenvalues), marker="D", c="r", zorder=10)
     plt.grid(alpha=0.4, zorder=0)
-    plt.xlim([-0.1, 0.1])
-    plt.ylim([-1.2, 1.2])
+    #plt.xlim([-0.1, 0.1])
+    #plt.ylim([-1.2, 1.2])
     plt.xlabel("$\\textrm{Re}\{\lambda_i\}$", fontsize=18)
     plt.ylabel("$\\textrm{Im}\{\lambda_i\}$", fontsize=18)
     plt.xticks(fontsize=12)

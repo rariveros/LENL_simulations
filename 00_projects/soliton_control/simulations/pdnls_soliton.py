@@ -3,10 +3,11 @@ from back_process import *
 from time_integrators import *
 #from directories_lyap import *
 
+
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = "/soliton_control"
+    project_name = "/numba_test"
     disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'

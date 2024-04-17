@@ -9,15 +9,12 @@ if __name__ == '__main__':
     disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'GPE_periodic'
-    t_rate = 10
-    alpha = 1
-    beta = 0.2
-    V_0 = 0.2
-    w = 1
+    t_rate = 1
+
 
     # Definición de la grilla
-    [tmin, tmax, dt] = [0, 300, 0.001]
-    [xmin, xmax, dx] = [-100, 100, 1]
+    [tmin, tmax, dt] = [0, 4, 0.00002]
+    [xmin, xmax, dx] = [-20, 20, 0.1]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax
@@ -27,8 +24,8 @@ if __name__ == '__main__':
 
     # Initial Conditions Pattern
     #[s, c, d, phi] = special.ellipj(x_grid, 1)
-    U_1_init = 0.01 * np.random.rand(Nx)
-    U_2_init = 0.01 * np.random.rand(Nx)
+    U_1_init = np.exp(-x_grid ** 2 / 2) / np.pi
+    U_2_init = 0. * np.random.rand(Nx)
 
     # Empaquetamiento de parametros, campos y derivadas para integración
     L = xmax - xmin
@@ -37,7 +34,29 @@ if __name__ == '__main__':
     fields_init = [U_1_init, U_2_init]
     grids = [t_grid, x_grid, 0]
 
-    parameters = [alpha, beta, V_0, w]
+    alpha = 1/2
+    beta = 1
+    V_0 = 10
+    w = 0.5
+    mu = 0.0
+    gamma = 0.1
+    lamda = 4.0
+    V0 = 10.0
+    A = (V0 * 2 * np.pi ** 2 / (lamda ** 2))
+    print(A)
+    print(gamma)
+    amp = 0.1
+
+    potential_0 = (gamma / 2) * x_grid ** 2
+    potential_time_0 = A * np.sin(2 * np.pi * x_grid / lamda) ** 2
+
+    plt.plot(x_grid, potential_0)
+    plt.plot(x_grid, potential_time_0)
+    plt.show()
+    plt.close()
+
+    #delta_potential = np.exp(- (x_grid - 10) ** 2 / (2 * 6 ** 2)) - np.exp(- (x_grid + 10) ** 2 / (2 * 6 ** 2))
+    parameters = [alpha, beta, [V_0, potential_0, potential_time_0, amp], w, mu]
 
     # Midiendo tiempo inicial
     now = datetime.datetime.now()

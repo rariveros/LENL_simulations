@@ -3,7 +3,6 @@ from functions import *
 from hamiltonians import *
 from jacobians import *
 
-
 def RK4_FD(eq, fields, parameters, grids, dt, Nt, operators, t_rate):
     t_grid = grids[0]
     x_grid = grids[1]

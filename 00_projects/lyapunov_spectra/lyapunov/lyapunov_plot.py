@@ -44,6 +44,6 @@ if __name__ == '__main__':
     plt.ylabel('$D_{KY}$', size='20')
     plt.grid(alpha=0.2)
     plt.tight_layout()
-    plt.savefig('D_ky.png', dpi=300)
+    plt.savefig('D_ky_s12.png', dpi=300)
     plt.show()
     plt.close()

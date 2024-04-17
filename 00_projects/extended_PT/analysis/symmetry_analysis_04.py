@@ -9,18 +9,18 @@ if __name__ == '__main__':
     root.withdraw()
     working_directory = filedialog.askdirectory(parent=root, initialdir=initial_dir_data, title='Elección de carpeta')
     directories = [name for name in os.listdir(working_directory) if os.path.isdir(os.path.join(working_directory, name))]
-    data_out = "D:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/oscillations_dnu/data_out"
+    data_out = "C:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras/dimensional/analysis"
     index_01 = []
     index_02 = []
     parameters = []
 
     for directory in directories:
         print("#############   " + directory + "   #############")
-        Z_r = np.loadtxt(working_directory + '/' + directory + '/sigma=6.000/gamma=0.280/dist=20.000/field_real.txt', delimiter=',')
-        Z_i = np.loadtxt(working_directory + '/' + directory + '/sigma=6.000/gamma=0.280/dist=20.000/field_img.txt', delimiter=',')
-        X = np.loadtxt(working_directory + '/' + directory + '/sigma=6.000/gamma=0.280/dist=20.000/X.txt', delimiter=',')
-        T = np.loadtxt(working_directory + '/' + directory + '/sigma=6.000/gamma=0.280/dist=20.000/T.txt', delimiter=',')
-        params = np.loadtxt(working_directory + '/' + directory + '/sigma=6.000/gamma=0.280/dist=20.000/parameters.txt', delimiter=',')
+        Z_r = np.loadtxt(working_directory + '/' + directory + 'field_real.txt', delimiter=',')
+        Z_i = np.loadtxt(working_directory + '/' + directory + '/field_img.txt', delimiter=',')
+        X = np.loadtxt(working_directory + '/' + directory + '/X.txt', delimiter=',')
+        T = np.loadtxt(working_directory + '/' + directory + '/T.txt', delimiter=',')
+        params = np.loadtxt(working_directory + '/' + directory + '/parameters.txt', delimiter=',')
         center_L = - 0.5 * params[3]
         center_R = 0.5 * params[3]
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
         index_01.append(np.mean(np.real(integral_01 / integral_02)))
         index_02.append(np.mean(np.imag(integral_01 / integral_02)))
-        parameters.append(params[5])
+        parameters.append(params[3])
 
     if not os.path.exists(data_out):
         os.makedirs(data_out)
@@ -85,6 +85,7 @@ if __name__ == '__main__':
     plt.ylabel('$\\xi^{1}_s$', size='20')
     #plt.ylim(0.05, 0.125)
     plt.grid(linestyle='--', alpha=0.5)
-    plt.savefig(data_out + '//index_01.png', dpi=300)
+    plt.show()
+    #plt.savefig(data_out + '//index_01.png', dpi=300)
     plt.close()
 

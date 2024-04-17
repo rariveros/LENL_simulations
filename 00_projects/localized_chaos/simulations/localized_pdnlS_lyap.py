@@ -3,7 +3,7 @@ from back_process import *
 from time_integrators import *
 
 if __name__ == '__main__':
-
+    #ti.init(arch=ti.gpu)
     # Definiendo parámetros
     project_name = '/localized_chaos'
     disc = 'C:/'
@@ -23,8 +23,8 @@ if __name__ == '__main__':
     x_condit = np.arange(0, N_condit)/(2*Nx)
     U_1_init = 0.01 * np.random.rand(Nx)  # Z_r_0[-1, :]#
     U_2_init = 0.01 * np.random.rand(Nx)  # Z_i_0[-1, :]#Z_i_0[-1, :]#
-    ies = [0.200, 0.225, 0.250]#np.arange(0.175, 0.525, 0.025)#
-    jotas = [12]
+    ies = [0.275, 0.300]#np.arange(0.375, 0.525, 0.025)#
+    jotas = [8]
     m = 10
     i = 0
     for gamma_i in ies:
@@ -156,7 +156,7 @@ if __name__ == '__main__':
 
             U_1_init = U1_light[-1, :]
             U_2_init = U2_light[-1, :]
-            m = 12000
+            m = 15000
     plt.scatter(param, D_kys)
-    plt.savefig('D_ky.png', dpi=200)
+    plt.savefig('D_ky_s12.png', dpi=200)
     plt.close()

@@ -5,41 +5,38 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/PDNLS_extended_PT/dgamma_down'
-    disc = 'D:/'                                        # DISCO DE TRABAJO
+    project_name = '/PDNLS_extended_PT/extras_02'
+    disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
     t_rate = 100                                        # CADA CUANTAS ITERACIONES GUARDA
-    dt = 0.024
-    T = 3000
-    dx = 1 #en milimetros
-
-    directory = "D:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/dgamma_down/alpha=6.524/beta=1.000/mu=0.100/nu=0.030/sigma=6.000/gamma=0.1750/dist=20.000"
-
+    dt = 0.01
+    T = 5000
+    dx = 0.25 #en milimetros
+    #directory = "C:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras_02/dist_bifurcation/alpha=6.5240/beta=1.000/mu=0.1000/nu=0.0180/sigma=6.000/gamma=0.1850/dist=30.2920"
     #Z_r_0 = np.loadtxt(directory + '/field_real.txt', delimiter=',')
     #Z_i_0 = np.loadtxt(directory + '/field_img.txt', delimiter=',')
-
-    gammas = np.arange(0.1988, 0.18, -0.0025)
+    ies = np.arange(16, 80, 2)
 
     # Definición de la grilla
     [tmin, tmax, dt] = [0, T, dt]
-    [xmin, xmax, dx] = [-125, 125, dx]
+    [xmin, xmax, dx] = [-100, 100, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax
     Nt = t_grid.shape[0]
     Nx = x_grid.shape[0]
-    U_1_init = 0.01 * np.random.rand(Nx)#Z_r_0[-1, :]
-    U_2_init = 0.01 * np.random.rand(Nx)#Z_i_0[-1, :]
-    print("N° of simulations: " + str(len(gammas)))
-    for gamma in gammas:
-        alpha = 6.524  #5.721
+    U_1_init = 0.01 * np.random.rand(Nx)#
+    U_2_init = 0.01 * np.random.rand(Nx)#
+    print("N° of simulations: " + str(len(ies)))
+    for dist in ies:
+        alpha = 1  #5.721
         beta = 1
-        nu = 0.03  #0.04812#0.0327449 #0.0052
+        nu = 0.32  #0.04812#0.0327449 #0.0052
         mu = 0.1
-        gamma_0 = gamma
-        sigma = 6
-        dist = 20
+        gamma_0 = 0.28
+        sigma = 3
+        #dist = 20
 
         [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu, nu, sigma, gamma_0], 0)
 
@@ -89,9 +86,6 @@ if __name__ == '__main__':
         arg_light_1 = (2 * np.pi + arg_light_1) * (arg_light_1 < 0) + arg_light_1 * (arg_light_1 > 0)
         analytical_signal_1 = hilbert(U1_light[-1, :])
         amplitude_envelope_1 = np.abs(analytical_signal_1)
-
-        U_1_init = U1_light[-1, :]
-        U_2_init = U2_light[-1, :]
 
         # Guardando datos
         file = disc + route + project_name

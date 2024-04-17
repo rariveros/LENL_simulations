@@ -19,7 +19,8 @@ if __name__ == "__main__":
         img_i = cv2.imread(file + '/' + IMG_names[int(i_strobo)])
         #image_rgb_i = cv2.cvtColor(img_i, cv2.COLOR_BGR2RGB)
         imgs_strobo.append(img_i)
-
+    imgs_strobo = imgs_strobo[::5]
+    N_img = len(imgs_strobo)
     fig = plt.figure()
     im = plt.imshow(imgs_strobo[0], animated=True)
     plt.axis('off')

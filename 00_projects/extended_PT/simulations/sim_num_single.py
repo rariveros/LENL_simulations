@@ -13,14 +13,13 @@ if __name__ == '__main__':
     dt = 0.01
     T = 5000
     dx = 1 #en milimetros
-    ies = np.arange(0.179, 0.25, 0.01)#np.arange(27, 40, 2)#np.arange(0.1875, 0.2975, 0.005)#np.arange(20, 36, 0.25)#[0.05, 0.055, 0.06, 0.065, 0.07, 0.075, 0.085]
-    #gammas = [0.28]#np.arange(0.175, 0.    180, 0.0005)
+    ies = np.arange(0.179, 0.25, 0.01)
     print("N° of simulations: " + str(len(ies)))
     for i in ies:
         alpha = 2 * 6.524  #5.721
         beta = 1
         nu = 0.018 #0.014 #0.04812#0.0327449 #0.0052
-        mu = 0.095
+        mu = 0.1
         gamma_0 = i
         dist = 27
         sigma = 12.67

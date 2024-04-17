@@ -5,25 +5,25 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/PDNLS_extended_PT/extras/lug_lef'
-    disc = 'D:/'
+    project_name = '/PDNLS_extended_PT/lug_lef'
+    disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'lug_lef'
 
     save_rate = 10                                        # CADA CUANTAS ITERACIONES GUARDA
-    dt = 0.01
+    dt = 0.005
     T = 500
-    dx = 0.5 #en milimetros
-    dists = [20]
+    dx = 1 #en milimetros
+    dists = [30]
     [tmin, tmax] = [0, T]
     [xmin, xmax] = [-75, 75]
 
     for dist in dists:
-        alpha = 6.524
+        alpha = 1
         beta = 1
         nu = 0.03
-        mu_0 = 0.1
-        gamma_0 = 0.28
+        mu_0 = 0.0
+        gamma_0 = 0.15
         sigma = 6
         [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu_0, nu, sigma, gamma_0], 0)
 
@@ -43,8 +43,8 @@ if __name__ == '__main__':
         Nx = x_grid.shape[0]
 
         # Initial Conditions Pattern
-        U_1_init = 0.01 * np.random.rand(Nx)
-        U_2_init = 0.01 * np.random.rand(Nx)
+        U_1_init = 2 * np.exp(- (x_grid + dist / 2) ** 2 / (2 * sigma ** 2))
+        U_2_init = 0 * np.random.rand(Nx)
 
         # Empaquetamiento de parametros, campos y derivadas para integración
         L = xmax - xmin
@@ -59,10 +59,10 @@ if __name__ == '__main__':
         gamma_img = gamma_0 * gamma_r * np.sin(phi) * np.exp(- (x_grid + dist / 2) ** 2 / (2 * sigma ** 2))
         gamma = [gamma_real, gamma_img]
         mu = mu_0 * np.ones(Nx)
-        mu[0:10] = 20
-        mu[-10:-1] = 20
+        mu[:25] = 0
+        mu[-25:] = 0
 
-        parameters = [alpha, beta, gamma, mu, nu]
+        parameters = [alpha, -beta, gamma, mu, nu]
 
         # Midiendo tiempo inicial
         now = datetime.datetime.now()

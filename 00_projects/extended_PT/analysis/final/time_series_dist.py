@@ -71,12 +71,19 @@ if __name__ == '__main__':
         dtau = tau[1] - tau[0]
 
         CCF_max, tau_max, CCF_I = max_finder(CCF[:-1], tau, Ntau, dtau)
+        #plt.plot(tau, CCF[:-1])
+        #plt.show()
+        #plt.close()
 
         tau_R = []
         maxval = np.amax(CCF)
         for i in range(len(tau_max)):
-            if CCF_max[i] > 0.6 * maxval:
+            if CCF_max[i] > 0.5 * maxval:
                 tau_R.append(tau_max[i])
+        #if len(tau_R) == 2:
+        #    period = 0
+        #    period_std = 0
+        #else:
         period = np.mean(np.diff(tau_R))
         period_std = np.std(np.diff(tau_R))
         print(np.diff(tau_R))
@@ -198,19 +205,19 @@ if __name__ == '__main__':
         plt.savefig(savedirectory + '/oneperiod_spacetime_dist.png', dpi=300)
         plt.close()
     datafile = "C:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras/dimensional/analysis"
-    fig, (ax1, ax2) = plt.subplots(2)
-    for i in range(len(directories)):
-        ax1.plot(X_domain[i], profiles_R[i], c="r", zorder=2)
-        ax2.plot(X_domain[i], profiles_L[i], c="b", zorder=0)
-    ax1.set_xlabel("$x\ \\textrm{(mm)}$", fontsize=20)
-    ax1.set_ylabel("$|A|\ \\textrm{(A.U.)}$", fontsize=20)
-    ax1.set_xlim([-100, 100])
-    ax2.set_xlabel("$x\ \\textrm{(mm)}$", fontsize=20)
-    ax2.set_ylabel("$|A|\ \\textrm{(A.U.)}$", fontsize=20)
-    ax2.set_xlim([-100, 100])
-    plt.tight_layout()
-    plt.savefig(datafile + '/profiles_joydivision_dist.png', dpi=300)
-    plt.close()
+    #fig, (ax1, ax2) = plt.subplots(2)
+    #for i in range(len(directories)):
+    #    ax1.plot(X_domain[i], profiles_R[i], c="r", zorder=2)
+    #    ax2.plot(X_domain[i], profiles_L[i], c="b", zorder=0)
+    #ax1.set_xlabel("$x\ \\textrm{(mm)}$", fontsize=20)
+    #ax1.set_ylabel("$|A|\ \\textrm{(A.U.)}$", fontsize=20)
+    #ax1.set_xlim([-100, 100])
+    #ax2.set_xlabel("$x\ \\textrm{(mm)}$", fontsize=20)
+    #ax2.set_ylabel("$|A|\ \\textrm{(A.U.)}$", fontsize=20)
+    #ax2.set_xlim([-100, 100])
+    #plt.tight_layout()
+    #plt.savefig(datafile + '/profiles_joydivision_dist.png', dpi=300)
+    #plt.close()
     DATA = np.array(DATA)
     if not os.path.exists(datafile):
         os.makedirs(datafile)

@@ -5,7 +5,12 @@ def jacobians_FD(eq, fields, t_grid, x_grid, y_grid, parameters, operators):
         U_1 = fields[0]
         U_2 = fields[1]
         [alpha, beta, gamma, mu, nu] = parameters
+        #print(alpha)
+        #print(beta)
+        #print(nu)
+        #print(mu)
         gamma_1 = gamma[0]
+
         DD = operators[0]
 
         j_11 = [gamma_1 - mu + 2 * beta * U_1 * U_2]

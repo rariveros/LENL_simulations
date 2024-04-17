@@ -35,6 +35,8 @@ if __name__ == '__main__':
     ti = 0
     tf = 250
 
+    t_rate = 10
+
     dx = 0.25
     dy = 0.25
     dt = 0.02
@@ -71,7 +73,7 @@ if __name__ == '__main__':
     print('Hora de Inicio: ' + str(now.hour) + ':' + str(now.minute) + ':' + str(now.second))
     time_init = time.time()
 
-    final_fields, fields_history, time_grid = RK4_FD(eq, fields_init, parameters, grids, dt, Nt, operators)
+    final_fields, fields_history, time_grid = RK4_FD(eq, fields_init, parameters, grids, dt, Nt, operators, t_rate)
 
     now = datetime.datetime.now()
     print('Hora de Término: ' + str(now.hour) + ':' + str(now.minute) + ':' + str(now.second))

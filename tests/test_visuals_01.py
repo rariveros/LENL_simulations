@@ -66,5 +66,5 @@ if __name__ == '__main__':
     cbar.ax.tick_params(labelsize=8)
     cbar.set_label('$|A|$', rotation=0, size=15, labelpad=-27, y=1.1)
 
-    plt.savefig(directory_sim + '/test.png', dpi=300)
+    plt.savefig(directory_sim + '/ventanas_fernando.png', dpi=300)
     plt.close()
