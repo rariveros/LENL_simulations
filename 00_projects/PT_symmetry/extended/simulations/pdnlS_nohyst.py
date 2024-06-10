@@ -3,16 +3,16 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/PT_extended/variando_distancia'
+    project_name = '/PT_extended/variando_distancia_rabi'
     disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
-    t_rate = 1000                                       # CADA CUANTAS ITERACIONES GUARDA
+    t_rate = 100                                        # CADA CUANTAS ITERACIONES GUARDA
     dt = 0.01
-    T = 20000
+    T = 5000
     dx = 1 #en milimetros
-    ies = [30.293, 30.295, 30.297] #np.arange(30.0, 30.4, 0.02)
-    jotas = [6]
+    ies = np.arange(0.1, 0.28, 0.01)
+    jotas = [3]
     print("N° of simulations: " + str(len(ies)))
     for j in jotas:
         for i in ies:

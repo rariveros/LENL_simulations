@@ -7,32 +7,31 @@ if __name__ == '__main__':
     disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
-    t_rate = 50                                      # CADA CUANTAS ITERACIONES GUARDA
-    dt = 0.0025
-    T = 1000
-    dx = 0.1#en milimetros
-    ies = [0.018]#np.arange(0.16, 0.32, 0.02)
+    t_rate = 1000                                      # CADA CUANTAS ITERACIONES GUARDA
+    dt = 0.01
+    T = 2000
+    dx = 0.25#en milimetros
+    ies = np.arange(0.01, 0.32, 0.02)
     jes = [0, np.pi] #np.arange(150, 50, -4)
     [tmin, tmax, dt] = [0, T, dt]
-    [xmin, xmax, dx] = [-75, 75, dx]
+    [xmin, xmax, dx] = [-70, 70, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax
     Nt = t_grid.shape[0]
     Nx = x_grid.shape[0]
 
-
     print("N° of simulations: " + str(len(ies) * len(jes)))
     for i in ies:
         U_1_init = 0.01 * np.random.rand(Nx)
         U_2_init = 0.01 * np.random.rand(Nx)
         for j in jes:
-            alpha = 6.524  #5.721
+            alpha = 1 #6.524  #5.721
             beta = 1
             nu = i #0.014 #0.04812#0.0327449 #0.0052
             mu = 0.1
-            gamma_0 = 0.185
-            sigma = 6
+            gamma_0 = 0.28
+            sigma = 3
             [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu, nu, sigma, gamma_0], 0)
 
             gamma_str = str(int(gamma_0 * 1000) * 0.001)

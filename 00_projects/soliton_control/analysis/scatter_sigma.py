@@ -15,8 +15,8 @@ if __name__ == '__main__':
     datafile = "C:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras/dimensional/analysis"
     centers = []
     nus = []
-    sigmas = ["12.500", "15.000", "17.500"]
-    gammas = ["0.180"]
+    sigmas = ["15.000"]
+    gammas = ["0.100", "0.110", "0.120", "0.130", "0.140", "0.150", "0.160", "0.170", "0.180", "0.190", "0.200", "0.210", "0.220", "0.240"]
     colors = (np.array([12.5, 15, 17.5]) - 12.5) / 5.01
     xd = 0
     fig = plt.figure()
@@ -38,7 +38,7 @@ if __name__ == '__main__':
                     params = np.loadtxt(working_directory + "/" + directory + '/sigma=' + sigma + '/gamma=' + gamma + '/parameters.txt', delimiter=',')
                     #[alpha, beta, gamma_0, mu_0, nu, sigma]
                     #[center, delta, ancho, amplitud]
-                    nu = params[4]
+                    nu = params[2]
                     nus_i.append(nu)
                     center = data[0]
                     centers_i.append(center)
@@ -63,11 +63,11 @@ if __name__ == '__main__':
                     else:
                         ax1.scatter(nu, np.abs(center), zorder=depth, c=color, edgecolors=edge, alpha=1)
             ax1.plot(nus_i, np.abs(centers_i), zorder=3, color="k", alpha=1)
-    ax1.set_xlabel("$\\nu$", fontsize=15)
+    ax1.set_xlabel("$\gamma$", fontsize=15)
     ax1.set_ylabel("$x_s$", fontsize=15)
     ax1.axes.tick_params(axis="both", labelsize=12)
     ax1.hlines(0, -0.17, -0.04, colors="k")
-    ax1.set_xlim(-0.16, -0.05)
+    #ax1.set_xlim(-0.16, -0.05)
     ax1.legend()
     ax1.grid(alpha=0.2, zorder=0)
     plt.tight_layout()

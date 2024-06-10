@@ -24,7 +24,7 @@ if __name__ == '__main__':
     dt = 1
     T = 5000
 
-    disco = 'D:/'
+    disco = 'C:/'
     initial_dir_data = str(disco) + 'Users/mnustes_science/PT_fluids/mnustes_science/simulation_data'
     root = tk.Tk()
     root.withdraw()
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     #N_resample = 4
     #[Z_r_00, Z_i_00, Z_r_01, Z_i_01], x_grid = resample([Z_r_00, Z_i_00, Z_r_01, Z_i_01], x_grid, N_resample)
 
-    distances = np.arange(1, 60, 0.25)
+    distances = np.arange(10, 60, 0.25)
     PHI_Rs = []
     PHI_Ls = []
     times = []
@@ -130,8 +130,8 @@ if __name__ == '__main__':
         Nt = t_grid.shape[0]
 
         # Initial Conditions Pattern
-        U_1_init = 0.01 * (np.random.rand(1) + 1j * np.random.rand(1))
-        U_2_init = 0.01 * (np.random.rand(1) + 1j * np.random.rand(1))
+        U_1_init = 0.1 * (np.random.rand(1) + 1j * np.random.rand(1))
+        U_2_init = 0.1 * (np.random.rand(1) + 1j * np.random.rand(1))
         operators = [0]
 
         # Empaquetamiento de parametros, campos y derivadas para integración

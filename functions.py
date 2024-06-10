@@ -104,6 +104,26 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
 
         fields = np.array([F, G])
 
+    elif eq == 'choro_dinger':
+
+        U_1 = field_slices[0]
+        U_2 = field_slices[1]
+
+        alpha = parameters[0]
+        V = parameters[1]
+        epsilon = 0.2
+        V = V * (1 + epsilon * np.cos(2 * t_i))
+
+        DD = operators[0]
+
+        ddU_1 = Der(DD, U_1)
+        ddU_2 = Der(DD, U_2)
+
+        F = -alpha * ddU_2 + V * U_2
+        G = alpha * ddU_1 - V * U_1
+
+        fields = np.array([F, G])
+
     elif eq == 'PDNLS_complex':
         U = field_slices[0]
 
@@ -178,6 +198,48 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
              + D62 * (U1 ** 2) * U2_conj
              )
         fields = np.array([F, G])
+
+    elif eq == 'soliton_variational':
+        X = field_slices[0]
+        Y = field_slices[1]
+
+        alpha = parameters[0]
+        beta = parameters[1]
+        gamma_0 = parameters[2]
+        mu = parameters[3]
+        nu = parameters[4]
+        sigma = parameters[5]
+        dx = parameters[6]
+
+        gammaR_ij = gamma_0 * (np.exp(-X ** 2 / (2 * sigma ** 2)))
+        gammaI_ij = gamma_0 * (np.exp(-Y ** 2 / (2 * sigma ** 2)))
+        phaseR_ij = 0.5 * np.arccos(mu / gammaR_ij)
+        phaseI_ij = 0.5 * np.arccos(mu / gammaI_ij)
+        deltaR_ij = 1 * (- nu + np.sqrt(gammaR_ij ** 2 - mu ** 2))
+        deltaI_ij = 1 * (- nu + np.sqrt(gammaI_ij ** 2 - mu ** 2))
+        AR_i = np.sqrt(2 * deltaR_ij) * np.cos(phaseR_ij)
+        AI_i = - np.sqrt(2 * deltaI_ij) * np.sin(phaseI_ij)
+        phi_01_i = (AR_i / np.cosh(np.sqrt(deltaR_ij / alpha) * (x_grid - X)))
+        phi_02_i = (AI_i / np.cosh(np.sqrt(deltaI_ij / alpha) * (x_grid - Y)))
+        Dphi_01_i = np.append(np.diff(phi_01_i) / dx, 0)
+        Dphi_02_i = np.append(np.diff(phi_02_i) / dx, 0)
+        f_ij = mu * phi_01_i * phi_02_i \
+               - (- (alpha / 2) * Dphi_02_i ** 2 \
+                  + (beta / 4) * phi_02_i ** 4 \
+                  + (nu / 2) * phi_02_i ** 2 \
+                  + gamma_0 * (np.exp(-x_grid ** 2 / (2 * sigma ** 2))) * phi_01_i * phi_02_i
+                  + (beta / 2) * phi_01_i ** 2 * phi_02_i ** 2)
+        F_ij = -integrate.simpson(f_ij, x_grid)
+        g_ij = mu * phi_01_i * phi_02_i \
+               + (- (alpha / 2) * Dphi_01_i ** 2 \
+                  + (beta / 4) * phi_01_i ** 4 \
+                  + (nu / 2) * phi_01_i ** 2 \
+                  + gamma_0 * (np.exp(-x_grid ** 2 / (2 * sigma ** 2))) * phi_01_i * phi_02_i
+                  + (beta / 2) * phi_01_i ** 2 * phi_02_i ** 2)
+        G_ij = -integrate.simpson(g_ij, x_grid)
+        h_ij = phi_01_i * phi_02_i
+        H_ij = integrate.simpson(h_ij)
+
     elif eq == 'pdnlS_nospace':
         U1 = field_slices[0]
 

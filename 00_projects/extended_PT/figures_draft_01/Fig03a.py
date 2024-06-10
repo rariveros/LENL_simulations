@@ -2,8 +2,8 @@ from back_process import *
 
 
 if __name__ == "__main__":
-    principal_sim = "C:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras"
-    principal_exp = "C:/mnustes_science/experimental_data"
+    principal_sim = "E:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras"
+    principal_exp = "E:/mnustes_science/experimental_data"
     dir_02 = principal_sim + "/dimensional_dist_02/alpha=6.5240/beta=1.000/mu=0.1000/nu=0.0180/sigma=6.000/gamma=0.1850/dist=31.000"#/dist_03/alpha=13.0480/beta=1.000/mu=0.0950/nu=0.0180/sigma=12.6700/gamma=0.1690/dist=40.000"#
     dir_01 = principal_sim + "/dimensional_dist_02/alpha=6.5240/beta=1.000/mu=0.1000/nu=0.0180/sigma=6.000/gamma=0.1850/dist=21.0000"#"/dist_03/alpha=13.0480/beta=1.000/mu=0.0950/nu=0.0180/sigma=12.6700/gamma=0.1690/dist=31.000"#
     dir_03 = principal_exp + "/PT_04/f=14.20_a=10.00"
@@ -11,14 +11,14 @@ if __name__ == "__main__":
 
     beta = 0.004811649356064012
 
-    Z_r_01 = np.loadtxt(dir_01 + '/field_real.txt', delimiter=',')
-    Z_i_01 = np.loadtxt(dir_01 + '/field_img.txt', delimiter=',')
+    Z_r_01 = np.loadtxt(dir_01 + '/field_real.txt', delimiter=',') / np.sqrt(beta)
+    Z_i_01 = np.loadtxt(dir_01 + '/field_img.txt', delimiter=',') / np.sqrt(beta)
     X_01 = np.loadtxt(dir_01 + '/X.txt', delimiter=',')
     T_01 = np.loadtxt(dir_01 + '/T.txt', delimiter=',')
     Z_complex_01 = Z_r_01 + 1j * Z_i_01
     arg_01 = np.angle(Z_complex_01)
     Z_modulo_01 = np.absolute(Z_complex_01)
-    Z_modulo_01 = filtro_superficie(Z_modulo_01, 2, "XY") / np.sqrt(beta)
+    Z_modulo_01 = filtro_superficie(Z_modulo_01, 2, "XY")
 
     ###
     xi_exp, xf_exp = -150, 150

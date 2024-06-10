@@ -16,7 +16,7 @@ if __name__ == '__main__':
     centers = []
     nus = []
     sigmas = ["15.000"]
-    gammas = ["0.160", "0.180", "0.200"]
+    gammas = ["0.100", "0.110", "0.120", "0.130", "0.140", "0.150", "0.160", "0.170", "0.180", "0.190", "0.200", "0.210", "0.220", "0.240"]
     colors = (np.array([0.16, 0.18, 0.20]) - 0.16) / 0.04
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
@@ -60,6 +60,6 @@ if __name__ == '__main__':
     #plt.legend()
     plt.grid(alpha=0.2, zorder=0)
     plt.tight_layout()
-    plt.savefig("parameter_space_gamma.png", dpi=300)
+    plt.savefig("xs_gamma.png", dpi=300)
     plt.close()
 

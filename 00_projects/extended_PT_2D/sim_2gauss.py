@@ -17,9 +17,9 @@ if __name__ == '__main__':
 
     alpha = 1
     beta = 1
-    gamma_0 = 0.25
-    nu = 0.7
-    sigma = 11
+    gamma_0 = 0.28
+    nu = 0.32
+    sigma = 4
     mu = 0.1
 
     gamma_str = str(int(gamma_0 * 1000) * 0.001)
@@ -30,16 +30,16 @@ if __name__ == '__main__':
     print('mu = ' + mu_str)
 
     # Definición de la grilla
-    Lx = 200
-    Ly = 200
+    Lx = 120
+    Ly = 120
     ti = 0
-    tf = 1000
+    tf = 2500
 
-    t_rate = 50
+    t_rate = 25
 
-    dx = 0.75
-    dy = 0.75
-    dt = 0.075
+    dx = 0.5
+    dy = 0.5
+    dt = 0.05
 
     [tmin, tmax, dt] = [0, tf, dt]
     [xmin, xmax, dx] = [- Lx / 2,  Lx / 2, dx]
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     Nx = x_grid.shape[0]
     Ny = y_grid.shape[0]
     X, Y = np.meshgrid(x_grid, y_grid)
-    R = 30
+    R = 15
     N = 6
     Zs = []
     for i in range(N):
@@ -124,8 +124,8 @@ if __name__ == '__main__':
     U2_light_reshaped = U2_light.reshape(U2_light.shape[0], -1)
 
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.set(xlim=(x_grid[0], x_grid[-1]), ylim=(y_grid[0], y_grid[-1]))
-    cax = ax.pcolormesh(x_grid, y_grid, modulo_light_1[0], vmin=0, vmax=np.amax(final_fields[-1]), cmap=parula_map, shading='auto')
+    ax.set(xlim=(-40, 40), ylim=(-40, 40))
+    cax = ax.pcolormesh(x_grid, y_grid, modulo_light_1[0], vmin=0, vmax=0.55,cmap="turbo", shading='auto')
     cbar = fig.colorbar(cax)
     cbar.set_label('$|A(x, y)|$', rotation=0, size=20, labelpad=-27, y=1.13)
     def animate(i):

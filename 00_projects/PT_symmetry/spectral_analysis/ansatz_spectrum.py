@@ -28,11 +28,10 @@ if __name__ == '__main__':
     params_01 = np.loadtxt(directory + '/phi01/parameters.txt', delimiter=',')
 
     dx = x_grid[1] - x_grid[0]
-    #N_resample = 10
-    #[Z_r_00, Z_i_00, Z_r_01, Z_i_01], x_grid = resample([Z_r_00, Z_i_00, Z_r_01, Z_i_01], x_grid, N_resample)
+    print(dx)
     Nx = len(x_grid)
     [alpha, beta, gamma_0, mu, nu, sigma, phi] = params_00
-    distances = np.arange(30.4, 31.1, 0.1)
+    distances = np.arange(29, 35, 1)
     colors = np.arange(0, 1 + 1 / (len(distances) - 1), 1 / (len(distances) + 1))
     for i in range(len(distances)):
         d = distances[i]
@@ -50,30 +49,40 @@ if __name__ == '__main__':
         Delta_J_L = J_center - J_L
         Delta_J_R = J_R - J_center
         PHI_L = np.append(Z_r_00[Delta_J_L:], np.zeros(Delta_J_L)) + 1j * np.append(Z_i_00[Delta_J_L:], np.zeros(Delta_J_L))
-        PHI_R = np.append(np.zeros(Delta_J_R), Z_r_01[:-Delta_J_R]) + 1j * np.append(np.zeros(Delta_J_R),
-                                                                                     Z_i_01[:-Delta_J_R])
-        #PHI_L = 1j * PHI_L
-        #PHI_R = 1j * PHI_R
-
-        PHI = np.flip((PHI_L + PHI_R))
-        #plt.plot(x_grid, np.real(PHI))
-        #plt.plot(x_grid, np.imag(PHI))
-        #plt.show()
-        #plt.close()
-
+        PHI_R = np.append(np.zeros(Delta_J_R), Z_r_01[:-Delta_J_R]) + 1j * np.append(np.zeros(Delta_J_R), Z_i_01[:-Delta_J_R])
+        PHI = (PHI_L + PHI_R)
+        #if d == 35:
+        #    plt.plot(x_grid, np.real(PHI), )
+        #    plt.plot(x_grid, np.imag(PHI))
+        #    plt.show()
+        #    plt.close()
         J = jacobians_FD(eq, [np.real(PHI), np.imag(PHI)], [0], x_grid, [0], parameters, [DD])
         eigenvalues, eigenvectors = np.linalg.eig(J)
+        x_array = np.real(eigenvalues) > 0
         arg_max = np.argmax(np.real(eigenvalues))
-        plt.scatter(np.real(eigenvalues[arg_max]), np.imag(eigenvalues[arg_max]), marker="D", c=(colors[i], 0, 1 - colors[i]), zorder=10)
+        plt.scatter(np.real(eigenvalues), np.imag(eigenvalues), marker="D", c=[[colors[i], 0, 1 - colors[i]]], zorder=10)
+        #plt.scatter(d, np.real(eigenvalues[arg_max]))
+        #plt.scatter([d] * len(np.real(eigenvalues[x_array])), np.real(eigenvalues[x_array]))
+
+    # print(np.polyfit(DIST, 2000 * np.array(imag_maxs), 1))
     plt.grid(alpha=0.4, zorder=0)
-    # plt.xlim([-0.1, 0.1])
-    # plt.ylim([-1.2, 1.2])
-    plt.xlabel("$\\textrm{Re}\{\lambda_i\}$", fontsize=18)
+    plt.xlabel("$d\ \\textrm{(mm)}$", fontsize=18)
     plt.ylabel("$\\textrm{Im}\{\lambda_i\}$", fontsize=18)
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
-    plt.vlines(0, -1.2, 1.2, colors="k")
-    plt.hlines(0, -0.1, 0.1, colors="k")
     plt.tight_layout()
     plt.show()
     plt.close()
+
+    #plt.grid(alpha=0.4, zorder=0)
+    ## plt.xlim([-0.1, 0.1])
+    ## plt.ylim([-1.2, 1.2])
+    #plt.xlabel("$\\textrm{Re}\{\lambda_i\}$", fontsize=18)
+    #plt.ylabel("$\\textrm{Im}\{\lambda_i\}$", fontsize=18)
+    #plt.xticks(fontsize=12)
+    #plt.yticks(fontsize=12)
+    #plt.vlines(0, -1.2, 1.2, colors="k")
+    #plt.hlines(0, -0.1, 0.1, colors="k")
+    #plt.tight_layout()
+    #plt.show()
+    #plt.close()

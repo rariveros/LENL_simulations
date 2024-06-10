@@ -21,7 +21,6 @@ if __name__ == '__main__':
     Nt = t_grid.shape[0]
     Nx = x_grid.shape[0]
 
-    d = 20
     f_i = np.arange(12.9, 13.3, 0.05)
     a = 0.180 / (f_i ** 2 * 8.401093 * 10 ** (-5))
     alpha, beta, nus, gamma_0, f_0 = fluid_pdnls_parameters(f_i, a, d)

@@ -4,8 +4,8 @@ from back_process import *
 
 
 if __name__ == "__main__":
-    principal_sim = "C:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras"
-    principal_exp = "C:/mnustes_science/experimental_data"
+    principal_sim = "E:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras"
+    principal_exp = "E:/mnustes_science/experimental_data"
     dir_01 = principal_sim + "/dimensional_dist_02/alpha=6.5240/beta=1.000/mu=0.1000/nu=0.0180/sigma=6.000/gamma=0.1850/dist=31.000"#/dist_03/alpha=13.0480/beta=1.000/mu=0.0950/nu=0.0180/sigma=12.6700/gamma=0.1690/dist=40.000"#
     dir_02 = principal_sim + "/dimensional_dist_02/alpha=6.5240/beta=1.000/mu=0.1000/nu=0.0180/sigma=6.000/gamma=0.1850/dist=21.0000"#"/dist_03/alpha=13.0480/beta=1.000/mu=0.0950/nu=0.0180/sigma=12.6700/gamma=0.1690/dist=31.000"#
     dir_03 = principal_exp + "/PT_04/f=14.20_a=10.00"
@@ -20,8 +20,8 @@ if __name__ == "__main__":
     T_01 = np.loadtxt(dir_01 + '/T.txt', delimiter=',')
     Z_complex_01 = Z_r_01 + 1j * Z_i_01
     arg_01 = np.angle(Z_complex_01)
-    Z_modulo_01 = np.absolute(Z_complex_01)
-    Z_modulo_01 = filtro_superficie(Z_modulo_01, 5, "XY") / np.sqrt(beta)
+    Z_modulo_01 = np.absolute(Z_complex_01) / np.sqrt(beta)
+    #Z_modulo_01 = filtro_superficie(Z_modulo_01, 5, "XY")
     x01 = 0
 
     middle = np.argmin(np.abs(X_01 - x01))
@@ -29,10 +29,10 @@ if __name__ == "__main__":
     Z_mod_R = Z_modulo_01[:, middle + 1:]
     X_01_L = X_01[0:middle]
     X_01_R = X_01[middle + 1:]
-    N_01_L = integrate.simpson(Z_mod_L ** 2, X_01_L)
-    N_01_R = integrate.simpson(Z_mod_R ** 2, X_01_R)
-    N_01_L = filtro_array(3, N_01_L)
-    N_01_R = filtro_array(3, N_01_R)
+    N_01_L = integrate.simpson(Z_mod_L ** 2, X_01_L) / 6
+    N_01_R = integrate.simpson(Z_mod_R ** 2, X_01_R) / 6
+    #N_01_L = filtro_array(3, N_01_L)
+    #N_01_R = filtro_array(3, N_01_R)
 
     ###
 
@@ -42,8 +42,8 @@ if __name__ == "__main__":
     T_02 = np.loadtxt(dir_02 + '/T.txt', delimiter=',')
     Z_complex_02 = Z_r_02 + 1j * Z_i_02
     arg_02 = np.angle(Z_complex_02)
-    Z_modulo_02 = np.absolute(Z_complex_02)
-    Z_modulo_02 = filtro_superficie(Z_modulo_02, 5, "XY") / np.sqrt(beta)
+    Z_modulo_02 = np.absolute(Z_complex_02) / np.sqrt(beta)
+    #Z_modulo_02 = filtro_superficie(Z_modulo_02, 5, "XY")
     x02 = 0
 
     middle = np.argmin(np.abs(X_02 - x02))
@@ -51,10 +51,10 @@ if __name__ == "__main__":
     Z_mod_R = Z_modulo_02[:, middle + 1:]
     X_02_L = X_02[0:middle]
     X_02_R = X_02[middle + 1:]
-    N_02_L = integrate.simpson(Z_mod_L ** 2, X_02_L)
-    N_02_R = integrate.simpson(Z_mod_R ** 2, X_02_R)
-    N_02_L = filtro_array(3, N_02_L)
-    N_02_R = filtro_array(3, N_02_R)
+    N_02_L = integrate.simpson(Z_mod_L ** 2, X_02_L) / 6
+    N_02_R = integrate.simpson(Z_mod_R ** 2, X_02_R) / 6
+    #N_02_L = filtro_array(3, N_02_L)
+    #N_02_R = filtro_array(3, N_02_R)
 
     ###
 
@@ -80,10 +80,10 @@ if __name__ == "__main__":
     Z_mod_R = Z_03[:, middle + 1:]
     X_03_L = X_03[0:middle]
     X_03_R = X_03[middle + 1:]
-    N_03_L = integrate.simpson(Z_mod_L ** 2, X_03_L)
-    N_03_R = integrate.simpson(Z_mod_R ** 2, X_03_R)
-    N_03_L = filtro_array(3, N_03_L)
-    N_03_R = filtro_array(3, N_03_R)
+    N_03_L = integrate.simpson(Z_mod_L ** 2, X_03_L) / 13
+    N_03_R = integrate.simpson(Z_mod_R ** 2, X_03_R) / 13
+    #N_03_L = filtro_array(3, N_03_L)
+    #N_03_R = filtro_array(3, N_03_R)
 
     ###
 
@@ -101,77 +101,102 @@ if __name__ == "__main__":
     Z_mod_R = Z_04[:, middle + 1:]
     X_04_L = X_04[0:middle]
     X_04_R = X_04[middle + 1:]
-    N_04_L = integrate.simpson(Z_mod_L ** 2, X_04_L)
-    N_04_R = integrate.simpson(Z_mod_R ** 2, X_04_R)
-    N_04_L = filtro_array(3, N_04_L)
-    N_04_R = filtro_array(3, N_04_R)
+    N_04_L = integrate.simpson(Z_mod_L ** 2, X_04_L) / 13
+    N_04_R = integrate.simpson(Z_mod_R ** 2, X_04_R) / 13
+    #N_04_L = filtro_array(3, N_04_L)
+    #N_04_R = filtro_array(3, N_04_R)
 
     ###
 
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4)
-    ax4.plot(T_01 - 2000, N_01_R, label="$N_R(t)$", c="b", linewidth=2)
-    ax4.plot(T_01 - 2000, N_01_L, label="$N_L(t)$", c="r", linewidth=2)
-    ax4.set_xlabel("$t/T$", fontsize=25)
-    ax4.set_xlim(0, 400)
-    ax4.set_ylim(0, 1.1 * np.amax(N_01_R))
-    ax4.grid(alpha=0.3)
-    ax4.set_yticklabels([])
-    ax4.tick_params(axis="x", direction="in", labelsize=15)
+    import matplotlib.gridspec as gridspec
 
+    #fig, (ax1, ax2, ax3, ax4) = plt.subplots(4)
+    fig = plt.figure()
+    outer = gridspec.GridSpec(2, 1, wspace=0.2, hspace=0.2)
 
-    ax3.plot(T_02 - 2050, N_02_R, label="$N_R^{(N)}$", c="b", linewidth=2)
-    ax3.plot(T_02 - 2050, N_02_L, label="$N_L^{(N)}$", c="r", linewidth=2)
-    ax3.set_xlim(0, 400)
-    ax3.grid(alpha=0.3)
-    ax3.set_ylim(0, 1.1 * np.amax(N_02_R))
-    ax3.set_xticklabels([])
-    ax3.set_yticklabels([])
-    ax3.tick_params(axis="x", direction="in")
-    ax3.tick_params(axis="y", direction="in")
-    xi_sim = 0
-    xf_sim = 180
-    ti_sim = 0
-    tf_sim = 1.1 * np.amax(N_02_R)
-    ax3.fill_between([xi_sim, xi_sim + 0.225 * (xf_sim - xi_sim)], [0.455 * (tf_sim - ti_sim), tf_sim], tf_sim, color="white", zorder=12)
-    ax3.plot([xi_sim, xi_sim + 0.23 * (xf_sim - xi_sim)], [0.45 * (tf_sim - ti_sim), tf_sim], linewidth=1, color="k", zorder=12)
-    ax3.plot([xi_sim, xi_sim + 0.23 * (xf_sim - xi_sim)], [tf_sim, tf_sim], linewidth=1, color="k", zorder=12)
-    ax3.plot([xi_sim, xi_sim], [0.45 * (tf_sim - ti_sim), tf_sim], linewidth=1, color="k", zorder=12)
-    ax3.text(xi_sim + 0.005 * (xf_sim - xi_sim), ti_sim + 0.58 * (tf_sim - ti_sim), "$\\textbf{NUM}$", fontsize=12,rotation=41, zorder=13)
+    inner_01 = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer[0], wspace=0.1, hspace=0.)
+    inner_02 = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer[1], wspace=0.1, hspace=0.)
 
-    ax1.plot(T_03, N_03_R, label="$N_R^{(E)}$", c="b", linewidth=2)
-    ax1.plot(T_03, N_03_L, label="$N_L^{(E)}$", c="r", linewidth=2)
+    ax1 = plt.Subplot(fig, inner_01[0])
+    ax2 = plt.Subplot(fig, inner_01[1])
+    ax3 = plt.Subplot(fig, inner_02[0])
+    ax4 = plt.Subplot(fig, inner_02[1])
+
+    norm = 500
+    ax1.plot(T_03, N_03_R / (norm / 13), label="$N_R$", c="b", linewidth=2)
+    ax1.plot(T_03, N_03_L / (norm / 13), label="$N_L$", c="r", linewidth=2)
     ax1.set_xlim(0, 400)
     ax1.grid(alpha=0.3)
-    ax1.set_ylim(0, 1.1 * np.amax(N_03_R))
+    ax1.set_ylim(0, 1.4)
     ax1.set_xticklabels([])
-    ax1.set_yticklabels([])
-    ax1.tick_params(axis="x", direction="in")
-    ax1.tick_params(axis="y", direction="in")
+    # ax1.set_yticklabels([])
+    ax1.tick_params(axis="x", direction="in", top=True, bottom=False)
+    ax1.tick_params(axis="y", direction="in", labelsize=20)
     xi_sim = 0
     xf_sim = 180
     ti_sim = 0
-    tf_sim = 1.1 * np.amax(N_03_R)
-    ax1.fill_between([xi_sim, xi_sim + 0.225 * (xf_sim - xi_sim)], [0.455 * (tf_sim - ti_sim), tf_sim], tf_sim, color="white", zorder=12)
-    ax1.plot([xi_sim, xi_sim + 0.23 * (xf_sim - xi_sim)], [0.45 * (tf_sim - ti_sim), tf_sim], linewidth=1, color="k", zorder=12)
-    ax1.plot([xi_sim, xi_sim + 0.23 * (xf_sim - xi_sim)], [tf_sim, tf_sim], linewidth=1, color="k", zorder=12)
-    ax1.plot([xi_sim, xi_sim], [0.45 * (tf_sim - ti_sim), tf_sim], linewidth=1, color="k", zorder=12)
-    ax1.text(xi_sim + 0.01 * (xf_sim - xi_sim), ti_sim + 0.6 * (tf_sim - ti_sim), "$\\textbf{EXP}$", fontsize=12,rotation=41, zorder=13)
+    tf_sim = 1.4
+    ax1.fill_between([xi_sim, xi_sim + 0.305 * (xf_sim - xi_sim)], [0.205 * (tf_sim - ti_sim), tf_sim], tf_sim, color="white", zorder=12)
+    ax1.plot([xi_sim, xi_sim + 0.3 * (xf_sim - xi_sim)], [0.2 * (tf_sim - ti_sim), tf_sim], linewidth=1, color="k", zorder=12)
+    ax1.plot([xi_sim, xi_sim + 0.3 * (xf_sim - xi_sim)], [tf_sim, tf_sim], linewidth=1, color="k", zorder=12)
+    ax1.plot([xi_sim, xi_sim], [0.2 * (tf_sim - ti_sim), tf_sim], linewidth=1, color="k", zorder=12)
+    ax1.text(xi_sim + 0.01 * (xf_sim - xi_sim), ti_sim + 0.43 * (tf_sim - ti_sim), "$\\textbf{EXP}$", fontsize=17,rotation=45, zorder=13)
 
-    ax2.plot(T_04, N_04_R, label="$N_R(t)$", c="b", linewidth=2)
-    ax2.plot(T_04, N_04_L, label="$N_L(t)$", c="r", linewidth=2)
+    ax2.plot(T_04, N_04_R / (norm / 13), label="$N_R$", c="b", linewidth=2)
+    ax2.plot(T_04, N_04_L / (norm / 13), label="$N_L$", c="r", linewidth=2)
     ax2.grid(alpha=0.3)
     ax2.set_xlim(0, 400)
-    ax2.set_ylim(0, 1.1 * np.amax(N_04_R))
+    ax2.set_ylim(0, 1.4)
     ax2.set_xticklabels([])
-    ax2.set_yticklabels([])
+    # ax2.set_yticklabels([])
     ax2.tick_params(axis="x", direction="in")
-    ax2.tick_params(axis="y", direction="in")
+    ax2.tick_params(axis="y", direction="in", labelsize=20)
 
-    ax1.legend(loc="upper right", fontsize=13)
-    ax3.legend(loc="upper right", fontsize=13)
-    plt.tight_layout()
+    ax3.plot(T_02 - 2050, N_02_R / (norm / 6), label="$N_R$", c="b", linewidth=2)
+    ax3.plot(T_02 - 2050, N_02_L / (norm / 6), label="$N_L$", c="r", linewidth=2)
+    ax3.set_xlim(0, 400)
+    ax3.grid(alpha=0.3)
+    ax3.set_ylim(0, 1.4)
+    ax3.set_xticklabels([])
+    #ax3.set_yticklabels([])
+    ax3.tick_params(axis="x", direction="in", top=True, bottom=False)
+    ax3.tick_params(axis="y", direction="in", labelsize=20)
+    xi_sim = 0
+    xf_sim = 180
+    ti_sim = 0
+    tf_sim = 1.4
+    ax3.fill_between([xi_sim, xi_sim + 0.305 * (xf_sim - xi_sim)], [0.205 * (tf_sim - ti_sim), tf_sim], tf_sim, color="white", zorder=12)
+    ax3.plot([xi_sim, xi_sim + 0.3 * (xf_sim - xi_sim)], [0.2 * (tf_sim - ti_sim), tf_sim], linewidth=1, color="k", zorder=12)
+    ax3.plot([xi_sim, xi_sim + 0.3 * (xf_sim - xi_sim)], [tf_sim, tf_sim], linewidth=1, color="k", zorder=12)
+    ax3.plot([xi_sim, xi_sim], [0.2 * (tf_sim - ti_sim), tf_sim], linewidth=1, color="k", zorder=12)
+    ax3.text(xi_sim + 0.008 * (xf_sim - xi_sim), ti_sim + 0.42 * (tf_sim - ti_sim), "$\\textbf{NUM}$", fontsize=17,rotation=45, zorder=13)
+
+    ax4.plot(T_01 - 2000, N_01_R / (norm / 6), label="$N_R$", c="b", linewidth=2)
+    ax4.plot(T_01 - 2000, N_01_L / (norm / 6), label="$N_L$",  c="r", linewidth=2)
+    ax4.set_xlabel("$t/T$", fontsize=20)
+    ax4.set_xlim(0, 400)
+    ax4.set_ylim(0, 1.4)
+    ax4.grid(alpha=0.3)
+    #ax4.set_yticklabels([])
+    ax4.tick_params(axis="x", direction="in", labelsize=20)
+    ax4.tick_params(axis="y", direction="in", labelsize=20)
+
+    props = dict(boxstyle='round,pad=0.1', facecolor='white', alpha=0.75)
+    ax1.text(362, 0.25, "$\\textbf{(a)}$", fontsize=23, rotation=0, zorder=13, bbox=props)
+    ax2.text(362, 0.25, "$\\textbf{(b)}$", fontsize=23, rotation=0, zorder=13, bbox=props)
+    ax3.text(362, 0.25, "$\\textbf{(c)}$", fontsize=23, rotation=0, zorder=13, bbox=props)
+    ax4.text(362, 0.25, "$\\textbf{(d)}$", fontsize=23, rotation=0, zorder=13, bbox=props)
+
+
+    #ax2.legend(loc="upper right", fontsize=18)
+    ax4.legend(loc="center left", fontsize=16)
+    fig.add_subplot(ax1)
+    fig.add_subplot(ax2)
+    fig.add_subplot(ax3)
+    fig.add_subplot(ax4)
+    fig.set_tight_layout(True)
     #plt.show()
-    plt.savefig('Fig02a.png', dpi=300)
+    plt.savefig('Fig02a_alt.png', dpi=300)
     plt.close()
 
 

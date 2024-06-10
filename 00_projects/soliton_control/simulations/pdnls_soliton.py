@@ -7,28 +7,28 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = "/numba_test"
+    project_name = "/soliton_control"
     disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'
     save_rate = 500
     plots = "si"
     file = disc + route + project_name
-    [tmin, tmax, dt] = [0, 5000, 0.002]
-    [xmin, xmax, dx] = [-120, 120, 0.5]
+    [tmin, tmax, dt] = [0, 2000, 0.005]
+    [xmin, xmax, dx] = [-120, 120, 1]
     d_nu = 0.0
     d_gammas = 0.002
-    nus = [-0.21]#np.arange(-0.29, -0.17, 0.01)
-    sigmas = [15] #np.arange(25, 26, 1)
+    nus = [-0.11]#np.arange(-0.29, -0.17, 0.01)
+    gammas = [0.23] #np.arange(0.1, 0.25, 0.01)
     t_0 = tmax
-    x_0 = 1
+    x_0 = -1
     X_max = []
     for nu in nus:
-        for sigma in sigmas:
-            alpha = 6.524  # 5.721
+        for gamma_0 in gammas:
+            alpha = 26.096  # 5.721
             beta = 1
-            mu_0 = 0.1
-            gamma_0 = 0.15
+            mu_0 = 0.075
+            sigma = 15
             delta = np.sqrt(- nu + np.sqrt(gamma_0 ** 2 - mu_0 ** 2))
             [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu_0, nu, sigma, gamma_0], 0)
 
@@ -41,8 +41,8 @@ if __name__ == '__main__':
             Nx = x_grid.shape[0]
 
             # Initial Conditions Pattern
-            U_1_init = (np.sqrt(2) * delta / np.cosh(delta * (x_grid - x_0) / np.sqrt(alpha))) * np.real(np.exp(-1j * 0.5 * np.arcsin(mu_0 / gamma_0)))
-            U_2_init = (np.sqrt(2) * delta / np.cosh(delta * (x_grid - x_0) / np.sqrt(alpha))) * np.imag(np.exp(-1j * 0.5 * np.arcsin(mu_0 / gamma_0)))
+            U_1_init = (np.sqrt(2) * delta / np.cosh(delta * (x_grid - x_0) / np.sqrt(alpha))) * np.real(np.exp(-1j * 0.5 * np.arccos(mu_0 / gamma_0)))
+            U_2_init = (np.sqrt(2) * delta / np.cosh(delta * (x_grid + x_0) / np.sqrt(alpha))) * np.imag(np.exp(-1j * 0.5 * np.arccos(mu_0 / gamma_0)))
 
             # Empaquetamiento de parametros, campos y derivadas para integración
             L = xmax - xmin
@@ -51,8 +51,8 @@ if __name__ == '__main__':
             fields_init = [U_1_init, U_2_init]
             grids = [t_grid, x_grid, 0]
             gamma_real = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2))
-            gamma_img = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * 0
-            gamma = [gamma_real, gamma_img]
+            gamma_img = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2))
+            gamma = [gamma_real, 0 * gamma_img]
             mu = mu_0 * np.ones(Nx)
             mu[0:10] = 10
             mu[-10:-1] = 10
@@ -189,15 +189,15 @@ if __name__ == '__main__':
                 plt.savefig(file + subfile + '/final_phase.png', dpi=200)
                 plt.close()
 
-    np.savetxt(file + '/X_max_sigma.txt', X_max, delimiter=',')
-    plt.scatter(sigmas, X_max, zorder=10, c="k")
+    np.savetxt(file + '/X_max_gamma.txt', X_max, delimiter=',')
+    plt.scatter(gammas, X_max, zorder=10, c="k")
     plt.xlabel('$\\nu$', size='25')
     plt.ylabel('$x_f$', size='25')
     plt.xticks(fontsize=18)
     plt.yticks(fontsize=18)
     plt.grid(alpha=0.3, zorder=0)
     plt.tight_layout()
-    plt.savefig(file + '/maximums_sigmas.png', dpi=200)
+    plt.savefig(file + '/maximums_gamas.png', dpi=200)
     plt.close()
 
 
