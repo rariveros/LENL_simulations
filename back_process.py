@@ -15,6 +15,9 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import proj3d
 
+import warnings
+#warnings.filterwarnings("ignore", category=SyntaxWarning)
+
 #plt.rcParams['animation.ffmpeg_path'] = "C:/Users/rariv/ffmpeg/bin/ffmpeg.exe"
 rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:
