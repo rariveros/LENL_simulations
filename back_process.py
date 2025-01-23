@@ -556,21 +556,14 @@ def sparse_D_neumann(Nx, dx):
 
 def sparse_D(Nx, dx):
     data = np.ones((3, Nx))
-    data[0] = - 0.5 * data[0]
+    data[0] = - 1 * data[0]
     data[1] = 0 * data[1]
-    data[2] = 0.5 * data[2]
+    data[2] = 1 * data[2]
     diags = [-1, 0, 1]
-    D1 = sparse.spdiags(data, diags, Nx, Nx) / dx
+    D1 = sparse.spdiags(data, diags, Nx, Nx) / (2 * dx)
     D1 = sparse.lil_matrix(D1)
-    D1[-1, 0] = 0.5 / dx
-    D1[0, -1] = - 0.5 / dx
-
-    #data = np.ones((2, Nx))
-    #data[0] = -1 * data[0]
-    #diags = [0, 1]
-    #D1 = sparse.spdiags(data, diags, Nx, Nx) / dx
-    #D1 = sparse.lil_matrix(D1)
-    #D1[-1, 0] = 1 / dx
+    D1[0, 0] = - 1.0 / (2 * dx)
+    D1[-1, -1] = 0.0 / (2 * dx)
     return D1
 
 def sparse_D_neumann_4order(Nx, dx):
