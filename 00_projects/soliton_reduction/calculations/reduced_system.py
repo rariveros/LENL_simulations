@@ -27,7 +27,7 @@ if __name__ == '__main__':
     NY = len(Ys)
     I = np.argmin(np.abs(Xs))
     J = np.argmin(np.abs(Ys))
-    print(Xs[zero_arg_X], Ys[zero_arg_Y])
+    print(Xs[I], Ys[J])
     nus = np.arange(-0.2, 0.0, 0.005)
     EIGS = []
     for nu in nus:
