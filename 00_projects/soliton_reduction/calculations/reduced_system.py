@@ -17,7 +17,7 @@ def phis(alpha, beta, nu, mu, gamma, sigma, X, Y, x_grid, dx):
 
 
 if __name__ == '__main__':
-    dx = 0.1
+    dx = 0.2
     x_grid = np.arange(-40, 40, dx)
     Xs = np.arange(-0.1, 0.1, 0.02)
     Ys = np.arange(-0.2, 0.2, 0.02)
