@@ -445,6 +445,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
              np.sin(2 * np.sqrt(nu) * x_grid) * ((U_1 ** 2 - U_2 ** 2) * dU_2 + 2 * U_1 * U_2 * dU_1))
 
         fields = np.array([F, G])
+
     elif eq == 'PNDLS_C_envelope':
         U_1 = field_slices[0]
         U_2 = field_slices[1]
@@ -476,6 +477,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         G = A * ddU_2 + B * U_2 - C * (3 * dU_1_mod - 2 * U_1 * dUmod2)
 
         fields = np.array([F, G])
+
     elif eq == 'LL_Zani':
         m1 = field_slices[0]
         m2 = field_slices[1]
@@ -506,6 +508,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         H = - (m1 * h2 - m2 * h1) + alpha * (mod_12 * h3 - m3 * m1 * h1 - m3 * m2 * h2)
 
         fields = np.array([F, G, H])
+
     elif eq == 'LL_x':
         m1 = field_slices[0]
         m2 = field_slices[1]
@@ -535,6 +538,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         F = - (m2 * h3 - m3 * h2) + alpha * (mod_23 * h1 - m1 * m2 * h2 - m1 * m3 * h3)
         G = - (m3 * h1 - m1 * h3) + alpha * (mod_13 * h2 - m2 * m3 * h3 - m2 * m1 * h1)
         H = - (m1 * h2 - m2 * h1) + alpha * (mod_12 * h3 - m3 * m1 * h1 - m3 * m2 * h2)
+
     elif eq == 'LLGZ_01':
         m1 = field_slices[0]
         m2 = field_slices[1]
@@ -565,6 +569,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         H = - (m1 * h2 - m2 * h1) + alpha * (mod_12 * h3 - m3 * m1 * h1 - m3 * m2 * h2) + g * m3 * m1
 
         fields = np.array([F, G, H])
+
     elif eq == 'mathieu_single':
         U = field_slices[0]
         V = field_slices[1]
@@ -578,6 +583,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         G = - (w_0 ** 2 + (gamma_i * w_i ** 2 / 2) * (np.sin(w_i * t_i) + np.sin((1 + delta) * w_i * t_i))) * (U - U ** 3 / 6)
 
         fields = np.array([F, G])
+
     elif eq == 'mathieu_double':
         U = field_slices[0]
         V = field_slices[1]
@@ -593,6 +599,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         G = - w_0 ** 2 * (U - U ** 3 / 6) + gamma_i * np.cos(w_i * t_i) + delta * OU
 
         fields = np.array([F, G])
+
     elif eq == "GPE_periodic":
         U_1 = field_slices[0]
         U_2 = field_slices[1]
@@ -616,6 +623,24 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         G = - mu * U_2 - (-alpha * ddU_1 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_1
 
         fields = np.array([F, G])
+
+    elif eq == 'ladder_PDQHO':
+        U1 = field_slices[0]
+        U2 = field_slices[1]
+        V1 = field_slices[2]
+        V2 = field_slices[3]
+
+        Delta = parameters[0]
+        gamma = parameters[1]
+        Omega = parameters[2]
+        k = parameters[3]
+        g = parameters[4]
+
+        F1 = - (1j * Delta + gamma / 2) * U1 - 2 * 1j * Omega * U2 + 1j * k * V1 - 2 * 1j * g * np.abs(U1) ** 2 * U1
+        F2 = + (1j * Delta - gamma / 2) * U2 + 2 * 1j * Omega * U1 - 1j * k * V2 + 2 * 1j * g * np.abs(U2) ** 2 * U2
+        G1 = - (1j * Delta + gamma / 2) * V1 + 2 * 1j * Omega * V2 + 1j * k * U1 - 2 * 1j * g * np.abs(V1) ** 2 * V1
+        G2 = + (1j * Delta - gamma / 2) * V2 - 2 * 1j * Omega * V1 - 1j * k * U2 + 2 * 1j * g * np.abs(V2) ** 2 * V2
+        fields = np.array([F1, F2, G1, G2])
     return fields
 
 
