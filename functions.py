@@ -600,29 +600,21 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
 
         fields = np.array([F, G])
 
-    elif eq == "GPE_periodic":
+    elif eq == "GPE":
         U_1 = field_slices[0]
-        U_2 = field_slices[1]
 
         alpha = parameters[0]
         beta = parameters[1]
-        #V_0 = parameters[2]
-        w = parameters[3]
-        mu = parameters[4]
-        pot_info = parameters[2]
-        potential_0 = pot_info[0]
-        potential_time_0 = pot_info[1]
-        amp = pot_info[2]
-        V = potential_0 * (1 + amp * np.sin(w * t_i))
+        V = parameters[2]
+        mu = parameters[3]
+
         DD = operators[0]
 
         ddU_1 = Der(DD, U_1)
-        ddU_2 = Der(DD, U_2)
 
-        F = - mu * U_1 + (-alpha * ddU_2 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_2
-        G = - mu * U_2 - (-alpha * ddU_1 + beta * (U_1 ** 2 + U_2 ** 2) + V) * U_1
+        F = -1j * (- alpha * ddU_1 + (beta * np.abs(U_1) ** 2 + V) * U_1)
 
-        fields = np.array([F, G])
+        fields = np.array([F])
 
     elif eq == 'ladder_PDQHO':
         U1 = field_slices[0]
@@ -641,6 +633,16 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         G1 = - (1j * Delta + gamma / 2) * V1 + 2 * 1j * Omega * V2 + 1j * k * U1 - 2 * 1j * g * np.abs(V1) ** 2 * V1
         G2 = + (1j * Delta - gamma / 2) * V2 - 2 * 1j * Omega * V1 - 1j * k * U2 + 2 * 1j * g * np.abs(V2) ** 2 * V2
         fields = np.array([F1, F2, G1, G2])
+
+    elif eq == 'reduced_soliton':
+        U = field_slices[0]
+        V = field_slices[1]
+
+        [alpha, beta, mu, nu, sigma, gamma] = parameters
+        [D1, D2] = operators
+        F1 = D1[0] + D1[1] * U + D1[2] * V + (1 / 2) * (D1[3] * U ** 2 + 2 * D1[4] * U * V + D1[5] * V ** 2) + (1 / 6) * (D1[6] * U ** 3 + 3 * D1[7] * U ** 2 * V + 3 * D1[8] * U * V ** 2 + D1[9] * V ** 3)
+        F2 = D2[0] + D2[1] * U + D2[2] * V + (1 / 2) * (D2[3] * U ** 2 + 2 * D2[4] * U * V + D2[5] * V ** 2) + (1 / 6) * (D2[6] * U ** 3 + 3 * D2[7] * U ** 2 * V + 3 * D2[8] * U * V ** 2 + D2[9] * V ** 3)
+        fields = np.array([F1, F2])
     return fields
 
 

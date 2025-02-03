@@ -538,11 +538,12 @@ def sparse_DD_neumann(Nx, dx):
     diags = [-1, 0, 1]
     D2 = sparse.spdiags(data, diags, Nx, Nx) / (dx ** 2)
     D2 = sparse.lil_matrix(D2)
-    D2[0, 0] = 0
-    D2[0, 1] = 0
-    D2[-1, -1] = 0
-    D2[-1, -2] = 0
-    return D2
+    # Condiciones de borde de Neumann: ajustar la primera y última fila
+    D2[0, 0] = -1 / (dx ** 2)
+    D2[0, 1] = 1 / (dx ** 2)
+    D2[-1, -1] = -1 / (dx ** 2)
+    D2[-1, -2] = 1 / (dx ** 2)
+    return D2.tocsr()
 
 def sparse_D_neumann(Nx, dx):
     data = np.ones((2, Nx))
@@ -995,3 +996,16 @@ def min_finder(Z, t_grid, Nt, dt):
     tau_L_points_max = np.array(tau_L_points_max)
     I_max = np.array(I_max)
     return Z_points_max, tau_L_points_max, I_max
+
+def phis(alpha, beta, nu, mu, gamma, sigma, X, Y, x_grid, dx):
+    gamma_01 = gamma * np.exp(- X ** 2 / (2 * sigma ** 2))
+    gamma_02 = gamma * np.exp(- Y ** 2 / (2 * sigma ** 2))
+    delta_01 = - nu + np.sqrt(gamma_01 ** 2 - mu ** 2)
+    delta_02 = - nu + np.sqrt(gamma_02 ** 2 - mu ** 2)
+    theta_01 = 0.5 * np.arccos(mu / gamma_01)
+    theta_02 = 0.5 * np.arccos(mu / gamma_02)
+    phi_01 = (1 / (np.cosh(np.sqrt(delta_01 / alpha) * (x_grid - X)))) * np.sqrt(2 * delta_01) * np.cos(theta_01) * (beta ** (-2))
+    phi_02 = - (1 / (np.cosh(np.sqrt(delta_02 / alpha) * (x_grid - Y)))) * np.sqrt(2 * delta_02) * np.sin(theta_02) * (beta ** (-2))
+    Dphi_01 = np.append(np.diff(phi_01) / dx, 0)
+    Dphi_02 = np.append(np.diff(phi_02) / dx, 0)
+    return [phi_01, phi_02, Dphi_01, Dphi_02]

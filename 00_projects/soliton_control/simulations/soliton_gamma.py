@@ -6,33 +6,33 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = "/soliton_control"
-    disc = 'C:/'
+    project_name = "/soliton_control/test"
+    disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'
-    save_rate = 500
+    save_rate = 1
     plots = "si"
     file = disc + route + project_name
-    [tmin, tmax, dt] = [0, 4000, 0.005]
-    [xmin, xmax, dx] = [-120, 120, 0.5]
+    [tmin, tmax, dt] = [0, 500, 0.01]
+    [xmin, xmax, dx] = [-50, 50, 0.5]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax
     Nt = t_grid.shape[0]
     Nx = x_grid.shape[0]
-
-    gammas = np.arange(0.15, 0.205, 0.005)#np.arange(0.1, 0.25, 0.01) + 0.005
-    nus = np.arange(-0.15, -0.05, 0.005)
+    beta_adim = 0.004811649356064012
+    gammas = [0.18] #np.arange(0.15, 0.205, 0.005)#np.arange(0.1, 0.25, 0.01) + 0.005
+    nus = [-0.19] #np.arange(-0.15, -0.05, 0.005)
     sigmas = [15]
     t_0 = tmax
-    x_0 = -1
+    x_0 = -4
     X_max = []
     for sigma in sigmas:
         print("###### sigma = " + str(sigma) + " ######")
         for gamma_0 in gammas:
             print("###### gamma = " + str(gamma_0) + " ######")
-            nu = -0.11
-            alpha = 4 * 6.524  # 5.721
+            nu = nus[0]
+            alpha = 6.524  # 5.721
             beta = 1
             mu_0 = 0.075
             #sigma = 15
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
             # Empaquetamiento de parametros, campos y derivadas para integración
             L = xmax - xmin
-            D2 = sparse_DD(Nx, dx)
+            D2 = sparse_DD_neumann(Nx, dx)
             operators = np.array([D2])
             fields_init = [U_1_init, U_2_init]
             grids = [t_grid, x_grid, 0]
@@ -53,8 +53,6 @@ if __name__ == '__main__':
             gamma_img = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * 0
             gamma = [gamma_real, gamma_img]
             mu = mu_0 * np.ones(Nx)
-            mu[0:10] = 10
-            mu[-10:-1] = 10
 
             parameters = [alpha, beta, gamma, mu, nu]
 
@@ -71,8 +69,8 @@ if __name__ == '__main__':
             print(str(time_fin - time_init) + ' seg')
 
             # Reobteniendo campos
-            U1_light = np.array(fields_history)[:, 0]
-            U2_light = np.array(fields_history)[:, 1]
+            U1_light = np.array(fields_history)[:, 0] / np.sqrt(beta_adim)
+            U2_light = np.array(fields_history)[:, 1] / np.sqrt(beta_adim)
             U_complex = U1_light + 1j * U2_light
             t_light = time_grid
 

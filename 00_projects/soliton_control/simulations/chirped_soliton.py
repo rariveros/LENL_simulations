@@ -6,14 +6,14 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = "/soliton_control/test"
+    project_name = "/soliton_control/chirped_test"
     disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'
     save_rate = 100
     plots = "si"
     file = disc + route + project_name
-    [tmin, tmax, dt] = [0, 500, 0.01]
+    [tmin, tmax, dt] = [0, 1000, 0.01]
     [xmin, xmax, dx] = [-50, 50, 0.5]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
@@ -22,10 +22,10 @@ if __name__ == '__main__':
     Nx = x_grid.shape[0]
     beta_adim = 0.004811649356064012
     gammas = [0.18] #np.arange(0.15, 0.205, 0.005)#np.arange(0.1, 0.25, 0.01) + 0.005
-    nus = [-0.19] #np.arange(-0.15, -0.05, 0.005)
+    nus = [-0.10] #np.arange(-0.15, -0.05, 0.005)
     sigmas = [15]
     t_0 = tmax
-    x_0 = -4
+    x_0 = -20
     X_max = []
     for sigma in sigmas:
         print("###### sigma = " + str(sigma) + " ######")
@@ -49,8 +49,10 @@ if __name__ == '__main__':
             operators = np.array([D2])
             fields_init = [U_1_init, U_2_init]
             grids = [t_grid, x_grid, 0]
-            gamma_real = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2))
-            gamma_img = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * 0
+            phase = - x_grid ** 2 / (2 * sigma ** 2) 
+            c = -8
+            gamma_real = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * np.real(np.exp(1j * c *phase))
+            gamma_img = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * np.imag(np.exp(1j * c *phase))
             gamma = [gamma_real, gamma_img]
             mu = mu_0 * np.ones(Nx)
 

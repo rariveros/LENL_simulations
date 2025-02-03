@@ -2,18 +2,7 @@ from functions import *
 from back_process import *
 from time_integrators import *
 
-def phis(alpha, beta, nu, mu, gamma, sigma, X, Y, x_grid, dx):
-    gamma_01 = gamma * np.exp(- X ** 2 / (2 * sigma ** 2))
-    gamma_02 = gamma * np.exp(- Y ** 2 / (2 * sigma ** 2))
-    delta_01 = - nu + np.sqrt(gamma_01 ** 2 - mu ** 2)
-    delta_02 = - nu + np.sqrt(gamma_02 ** 2 - mu ** 2)
-    theta_01 = 0.5 * np.arccos(mu / gamma_01)
-    theta_02 = 0.5 * np.arccos(mu / gamma_02)
-    phi_01 = (1 / (np.cosh(np.sqrt(delta_01 / alpha) * (x_grid - X)))) * np.sqrt(2 * delta_01) * np.cos(theta_01) * (beta ** (-2))
-    phi_02 = - (1 / (np.cosh(np.sqrt(delta_02 / alpha) * (x_grid - Y)))) * np.sqrt(2 * delta_02) * np.sin(theta_02) * (beta ** (-2))
-    Dphi_01 = np.append(np.diff(phi_01) / dx, 0)
-    Dphi_02 = np.append(np.diff(phi_02) / dx, 0)
-    return [phi_01, phi_02, Dphi_01, Dphi_02]
+
 
 
 if __name__ == '__main__':
@@ -28,8 +17,7 @@ if __name__ == '__main__':
     I = np.argmin(np.abs(Xs))
     J = np.argmin(np.abs(Ys))
     print(Xs[I], Ys[J])
-    nus = np.arange(-0.1, 0.0, 0.005)
-    EIGS = []
+    nus = np.arange(-0.2, 0.0, 0.005)
     for nu in nus:
         print("nu =" + f"{nu:.{3}f}")
         [alpha, beta, mu, nu, sigma, gamma] = [6.524, 1, 0.075, nu, 15, 0.18]
@@ -99,6 +87,12 @@ if __name__ == '__main__':
         D2_10 = G2_10[I, J]
         D2_01 = G2_01[I, J]
 
+        M = [[D1_10, D1_01], [D2_10, D2_01]]
+        eigenvalues, eigenvectors = np.linalg.eig(M)
+        for i in range(len(eigenvalues)):
+            plt.scatter(nu, np.real(eigenvalues[i]), c="b")
+            plt.scatter(nu, np.imag(eigenvalues[i]), c="r")
+
         D1_20 = G1_20[I, J]
         D1_11 = G1_11[I, J]
         D1_02 = G1_02[I, J]
@@ -132,7 +126,7 @@ if __name__ == '__main__':
         np.savetxt(savefile + '/D1.txt', D1, delimiter=',')
         np.savetxt(savefile + '/D2.txt', D2, delimiter=',')
         np.savetxt(savefile + '/parameters.txt', parameters, delimiter=',')
-
+    plt.show()
 
 
 

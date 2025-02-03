@@ -3,6 +3,7 @@ from functions import *
 from hamiltonians import *
 from jacobians import *
 
+"""
 def RK4_FD(eq, fields, parameters, grids, dt, Nt, operators, t_rate):
     t_grid = grids[0]
     x_grid = grids[1]
@@ -20,6 +21,36 @@ def RK4_FD(eq, fields, parameters, grids, dt, Nt, operators, t_rate):
         if i % t_rate == 0:
             fields_history.append(fields)
             time_grid.append(t_grid[i])
+    return fields, fields_history, time_grid
+"""
+
+def RK4_FD(eq, fields, parameters, grids, dt, Nt, operators, t_rate):
+    t_grid = grids[0]  # Time grid
+    x_grid = grids[1]  # Spatial grid (x)
+    y_grid = grids[2]  # Spatial grid (y)
+
+    fields_history = []
+    time_grid = []
+
+    for i in range(Nt - 1):
+        t = t_grid[i]  # Current time
+        old_fields = fields.copy()  # Ensure copy to avoid overwriting
+
+        # RK4 steps with correct time updates
+        k_1 = equations_FD(eq, old_fields, t, x_grid, y_grid, parameters, operators)
+        k_2 = equations_FD(eq, old_fields + 0.5 * dt * k_1, t + 0.5 * dt, x_grid, y_grid, parameters, operators)
+        k_3 = equations_FD(eq, old_fields + 0.5 * dt * k_2, t + 0.5 * dt, x_grid, y_grid, parameters, operators)
+        k_4 = equations_FD(eq, old_fields + dt * k_3, t + dt, x_grid, y_grid, parameters, operators)
+
+        # Update fields using weighted sum
+        new_fields = old_fields + dt * (k_1 + 2 * k_2 + 2 * k_3 + k_4) / 6
+        fields = new_fields  # Update for next iteration
+
+        # Save history every `t_rate` steps
+        if i % t_rate == 0:
+            fields_history.append(fields.copy())  # Store a copy to avoid referencing issues
+            time_grid.append(t)
+
     return fields, fields_history, time_grid
 
 
