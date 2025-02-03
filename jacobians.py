@@ -60,4 +60,38 @@ def jacobians_FD(eq, fields, t_grid, x_grid, y_grid, parameters, operators):
         J_1 = np.concatenate((J_11, J_12), axis=1)
         J_2 = np.concatenate((J_21, J_22), axis=1)
         J = np.concatenate((J_1, J_2), axis=0)
+
+    elif eq == 'duffing':
+        U_1 = fields[0]
+        U_2 = fields[1]
+
+        alpha = parameters[0]  # NONLINEAR COEFFICIENT
+        mu = parameters[1]  # DISSIPATION
+        gamma = parameters[2]  # 2.7                                    # DRIVE STRENGTH
+        k = parameters[3]  # 0.4216                                      # COUPLING (0.42)
+        w = parameters[4]
+        delta = parameters[5]
+
+        DD = operators[0]
+
+        j_11 = [np.zeros(len(U_1))]
+        j_12 = [np.ones(len(U_1))]
+        j_21 = [- 1 + 3 * alpha * U_1 ** 2 - 5 * U_1 ** 4]
+        j_22 = [-mu * np.ones(len(U_1))]
+
+        J_11 = diags(j_11, [0])
+        J_11 = J_11.toarray()
+
+        J_12 = diags(j_12, [0])
+        J_12 = J_12.toarray()
+
+        J_21 = diags(j_21, [0]) + k * DD
+        J_21 = J_21.toarray()
+
+        J_22 = diags(j_22, [0])
+        J_22 = J_22.toarray()
+
+        J_1 = np.concatenate((J_11, J_12), axis=1)
+        J_2 = np.concatenate((J_21, J_22), axis=1)
+        J = np.concatenate((J_1, J_2), axis=0)
     return J
