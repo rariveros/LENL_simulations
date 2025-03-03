@@ -3,8 +3,6 @@ from back_process import *
 from time_integrators import *
 
 
-
-
 if __name__ == '__main__':
     dx = 0.1
     x_grid = np.arange(-40, 40, dx)
@@ -119,7 +117,7 @@ if __name__ == '__main__':
         nu_str = f"{nu:.{3}f}"
         sigma_str = f"{sigma:.{2}f}"
         gamma_str = f"{gamma:.{3}f}"
-        savefile = 'D:/mnustes_science/simulation_data/FD/soliton_reduced/alpha=' + alpha_str + '/beta=' + beta_str + '/mu=' + mu_str + '/nu=' + nu_str + '/gamma=' + gamma_str + '/sigma=' + sigma_str
+        savefile = 'D:/mnustes_science/simulation_data/FD/soliton_reduced/gaussian_test/alpha=' + alpha_str + '/beta=' + beta_str + '/mu=' + mu_str + '/nu=' + nu_str + '/gamma=' + gamma_str + '/sigma=' + sigma_str
         if not os.path.exists(savefile):
             os.makedirs(savefile)
 

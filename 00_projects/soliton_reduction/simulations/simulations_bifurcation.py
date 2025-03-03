@@ -19,7 +19,7 @@ if __name__ == '__main__':
     sigma_str = f"{sigma:.{2}f}"
     gamma_str = f"{gamma:.{3}f}"
 
-    working_directory = 'D:/mnustes_science/simulation_data/FD/soliton_reduced/alpha=' + alpha_str + '/beta=' + beta_str + '/mu=' + mu_str
+    working_directory = 'D:/mnustes_science/simulation_data/FD/soliton_reduced/gaussian_test/alpha=' + alpha_str + '/beta=' + beta_str + '/mu=' + mu_str
     directories = [name for name in os.listdir(working_directory) if os.path.isdir(os.path.join(working_directory, name))]
     for directory in directories:
         dir = working_directory + "/" + directory

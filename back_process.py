@@ -545,15 +545,43 @@ def sparse_DD_neumann(Nx, dx):
     D2[-1, -2] = 1 / (dx ** 2)
     return D2.tocsr()
 
+
+def sparse_DD_absorbing(Nx, dx, absorption_coeff):
+    data = np.ones((3, Nx))
+    data[1] = -2 * data[1]
+    diags = [-1, 0, 1]
+    D2 = sparse.spdiags(data, diags, Nx, Nx) / (dx ** 2)
+    D2 = sparse.lil_matrix(D2)
+
+    # Apply absorbing boundary conditions using exponential damping
+    sigma_L = absorption_coeff / (dx ** 2)
+    sigma_R = absorption_coeff / (dx ** 2)
+
+    # Left boundary
+    D2[0, 0] = -2 / (dx ** 2) - sigma_L
+    D2[0, 1] = 2 / (dx ** 2)
+
+    # Right boundary
+    D2[-1, -1] = -2 / (dx ** 2) - sigma_R
+    D2[-1, -2] = 2 / (dx ** 2)
+
+    return D2.tocsr()
+
 def sparse_D_neumann(Nx, dx):
-    data = np.ones((2, Nx))
-    data[0] = -1 * data[0]
-    diags = [0, 1]
-    D1 = sparse.spdiags(data, diags, Nx, Nx) / dx
-    D1 = sparse.lil_matrix(D1)
-    D1[0, 0] = 0
-    D1[-1, -1] = 0
-    return D1
+    data = np.zeros((3, Nx))
+    data[0, 1:] = -0.5  # Lower diagonal (shifted backward)
+    data[2, :-1] = 0.5  # Upper diagonal (shifted forward)
+    diags = [-1, 0, 1]
+    D = sparse.spdiags(data, diags, Nx, Nx) / dx
+    D = sparse.lil_matrix(D)
+
+    # Neumann boundary conditions (zero derivative)
+    D[0, 0] = -1 / dx
+    D[0, 1] = 1 / dx
+    D[-1, -1] = 1 / dx
+    D[-1, -2] = -1 / dx
+
+    return D.tocsr()
 
 def sparse_D(Nx, dx):
     data = np.ones((3, Nx))
@@ -1004,8 +1032,10 @@ def phis(alpha, beta, nu, mu, gamma, sigma, X, Y, x_grid, dx):
     delta_02 = - nu + np.sqrt(gamma_02 ** 2 - mu ** 2)
     theta_01 = 0.5 * np.arccos(mu / gamma_01)
     theta_02 = 0.5 * np.arccos(mu / gamma_02)
-    phi_01 = (1 / (np.cosh(np.sqrt(delta_01 / alpha) * (x_grid - X)))) * np.sqrt(2 * delta_01) * np.cos(theta_01) * (beta ** (-2))
-    phi_02 = - (1 / (np.cosh(np.sqrt(delta_02 / alpha) * (x_grid - Y)))) * np.sqrt(2 * delta_02) * np.sin(theta_02) * (beta ** (-2))
+    #phi_01 = (1 / (np.cosh(np.sqrt(delta_01 / alpha) * (x_grid - X)))) * np.sqrt(2 * delta_01) * np.cos(theta_01) * (beta ** (-2))
+    #phi_02 = - (1 / (np.cosh(np.sqrt(delta_02 / alpha) * (x_grid - Y)))) * np.sqrt(2 * delta_02) * np.sin(theta_02) * (beta ** (-2))
+    phi_01 = np.exp(-0.89 * np.sqrt(delta_01 / alpha) ** 2 * (x_grid - X) ** 2) * np.sqrt(2 * delta_01) * np.cos(theta_01) * (beta ** (-2))
+    phi_02 = - np.exp(-0.89*np.sqrt(delta_02 / alpha) ** 2 * (x_grid - Y) ** 2) * np.sqrt(2 * delta_02) * np.sin(theta_02) * (beta ** (-2))
     Dphi_01 = np.append(np.diff(phi_01) / dx, 0)
     Dphi_02 = np.append(np.diff(phi_02) / dx, 0)
     return [phi_01, phi_02, Dphi_01, Dphi_02]

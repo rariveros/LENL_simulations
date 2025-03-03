@@ -6,17 +6,17 @@ if __name__ == '__main__':
 
     # Definiendo parámetros
     project_name = '/PT_drift/responses/double'
-    disc = 'C:/'                                        # DISCO DE TRABAJO
+    disc = 'D:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
     t_rate = 10                                        # CADA CUANTAS ITERACIONES GUARDA
-    dt = 0.01
-    T = 2000
+    dt = 0.05
+    T = 5000
     dx = 1 #en milimetros
-    ies = np.arange(185, 50, -4)
+    ies = np.arange(100, 50, -2)
 
     [tmin, tmax, dt] = [0, T, dt]
-    [xmin, xmax, dx] = [-150, 150, dx]
+    [xmin, xmax, dx] = [-250, 250, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax
@@ -43,11 +43,6 @@ if __name__ == '__main__':
         print('mu = ' + mu_str)
         print("dist = " + str(dist))
 
-        # Definición de la grilla
-
-
-        # Initial Conditions Pattern
-
         # Empaquetamiento de parametros, campos y derivadas para integración
         L = xmax - xmin
         D2 = sparse_DD_neumann(Nx, dx)
@@ -55,19 +50,9 @@ if __name__ == '__main__':
         fields_init = [U_1_init, U_2_init]
         grids = [t_grid, x_grid, 0]
         phi = np.pi
-        gamma_l = 1
-        gamma_r = 1
-        gamma_real = gamma_0 * (gamma_l * np.exp(- (x_grid - dist / 2) ** 2 / (2 * sigma ** 2)) + gamma_r * np.cos(phi) * np.exp(- (x_grid + dist / 2) ** 2 / (2 * sigma ** 2)))
-        gamma_img = gamma_r * np.sin(phi) * np.exp(- (x_grid + dist / 2) ** 2 / (2 * sigma ** 2))
-
-        #gamma_real = gamma_0 * (gamma_real / np.amax(gamma_real))
-        #gamma_img = gamma_0 * (gamma_img / np.amax(gamma_img))
+        gamma_real = gamma_0 * (np.cos(0) * np.exp(- (x_grid - dist / 2) ** 2 / (2 * sigma ** 2)) + np.cos(phi) * np.exp(- (x_grid + dist / 2) ** 2 / (2 * sigma ** 2)))
+        gamma_img = gamma_0 * (np.sin(0) * np.exp(- (x_grid - dist / 2) ** 2 / (2 * sigma ** 2)) + np.sin(phi) * np.exp(- (x_grid + dist / 2) ** 2 / (2 * sigma ** 2)))
         gamma = [gamma_real, gamma_img]
-
-        #aaa = 20
-        #exp = np.exp(x_grid / aaa)
-        #mu_array = mu * ((2 / (exp + 1)) - 1)
-        #mu_array = mu * (gamma_l * np.exp(- (x_grid - dist / 2) ** 2 / (2 * sigma ** 2)) + gamma_r * np.cos(phi) * np.exp(- (x_grid + dist / 2) ** 2 / (2 * sigma ** 2)))
 
         parameters = [alpha, beta, gamma, mu, nu]
 
@@ -129,7 +114,6 @@ if __name__ == '__main__':
         plt.xlabel('$x$', size='20')
         plt.ylabel('$t$', size='20')
         plt.grid(linestyle='--', alpha=0.5)
-        plt.title('$\gamma_0 = ' + gamma_str + '\ \\alpha = ' + alpha_str  + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$', size='12')
         plt.savefig(file + subfile + '/module_spacetime.png', dpi=300)
         plt.close()
 
@@ -140,7 +124,6 @@ if __name__ == '__main__':
         plt.xlabel('$x$', size='20')
         plt.ylabel('$t$', size='20')
         plt.grid(linestyle='--', alpha=0.5)
-        plt.title('$\gamma_0 = ' + gamma_str + '\ \\alpha = ' + alpha_str  + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$', size='12')
         plt.savefig(file + subfile + '/arg_spacetime.png', dpi=300)
         plt.close()
 
@@ -151,7 +134,6 @@ if __name__ == '__main__':
         plt.xlabel('$x$', size='20')
         plt.ylabel('$t$', size='20')
         plt.grid(linestyle='--', alpha=0.5)
-        plt.title('$\gamma_0 = ' + gamma_str + '\ \\alpha = ' + alpha_str  + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$', size='12')
         plt.savefig(file + subfile + '/real_spacetime.png', dpi=300)
         plt.close()
 
@@ -162,28 +144,19 @@ if __name__ == '__main__':
         plt.xlabel('$x$', size='20')
         plt.ylabel('$t$', size='20')
         plt.grid(linestyle='--', alpha=0.5)
-        plt.title('$\gamma_0 = ' + gamma_str + '\ \\alpha = ' + alpha_str  + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$', size='12')
         plt.savefig(file + subfile + '/img_spacetime.png', dpi=300)
         plt.close()
 
-        plt.plot(x_grid, modulo_light_1[-1, :], label="$A_f$")
-        plt.plot(x_grid, modulo_light_1[0, :], label="$A_i$")
+        plt.plot(x_grid, U1_light[-1, :], label="$\\textrm{Re}\ A$", color="b", zorder=5, lw=2)
+        plt.plot(x_grid, U2_light[-1, :], label="$\\textrm{Im}\ A$", color="r", zorder=5, lw=2)
+        plt.plot(x_grid, 0.5 * np.amax(modulo_light_1[-1, :]) * (gamma[0] / gamma_0), label="$\\gamma_0$", color="k", lw=2)
         plt.xlabel('$x$', size='25')
-        plt.ylabel('$A(x)$', size='25')
         plt.legend(fontsize=18)
         plt.xlim([-200, 200])
         plt.grid(alpha=0.3)
         plt.tight_layout()
-        plt.savefig(file + subfile + '/final_profile.png', dpi=200)
+        plt.savefig(file + subfile + '/final_profiles.png', dpi=200)
         plt.close()
 
-        T = 500
-        [tmin, tmax, dt] = [0, T, dt]
-        [xmin, xmax, dx] = [-150, 150, dx]
-        t_grid = np.arange(tmin, tmax + dt, dt)
-        x_grid = np.arange(xmin, xmax, dx)
-        T = tmax
-        Nt = t_grid.shape[0]
-        Nx = x_grid.shape[0]
         U_1_init = U1_light[-1, :]
         U_2_init = U2_light[-1, :]
