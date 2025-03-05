@@ -167,21 +167,20 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         dB_NL01 = Der(D, np.abs(B) ** 2 * B)
         dA_NL02 = np.abs(A) ** 2 * dA
         dB_NL02 = np.abs(B) ** 2 * dB
-        epsilon = np.sqrt(alpha) / sigma
 
-        F = ((delta - gamma * ((x_grid + d / 2) ** 2 / (2 * sigma ** 2))) * A - 0.5 * mu * A
-             + (2 * alpha * nu / (mu)) * ddA * epsilon ** 2
-             - (2 * 1j * np.sqrt(alpha * nu) / (mu)) * (dA_NL01 + 2 * dA_NL02) * epsilon
+        F = ((delta - gamma * ((x_grid + d / 2) ** 2 / (2 * sigma ** 2))) * A - 0.0 * (mu ** 2 / mu) * A
+             + (2 * alpha * nu / mu) * ddA
+             - (2 * 1j * np.sqrt(alpha * nu) / mu) * (dA_NL01 + 2 * dA_NL02)
              - (9 / (2 * mu)) * np.abs(A) ** 4 * A
-             - (2 * 1j * np.sqrt(alpha * nu) * gamma / (mu)) * dB * epsilon
-             - (0.5 * A ** 2 * np.conjugate(B) + np.abs(A) ** 2 * B - 1.5 * np.abs(B) ** 2 * B))
+             - (2 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dB
+             - (0.0 / mu) * (0.5 * A ** 2 * np.conjugate(B) + np.abs(A) ** 2 * B - 1.5 * np.abs(B) ** 2 * B))
 
-        G = ((delta - gamma * ((x_grid - d / 2) ** 2 / (2 * sigma ** 2))) * B  - 0.5 * mu * B
-             + (2 * alpha * nu / (mu)) * ddB * epsilon ** 2
-             - (2 * 1j * np.sqrt(alpha * nu) / (mu)) * (dB_NL01 + 2 * dB_NL02) * epsilon
+        G = ((delta - gamma * ((x_grid - d / 2) ** 2 / (2 * sigma ** 2))) * B  - 0.0 * (mu ** 2 / mu) *  B
+             + (2 * alpha * nu / mu) * ddB
+             - (2 * 1j * np.sqrt(alpha * nu) / mu) * (dB_NL01 + 2 * dB_NL02)
              - (9 / (2 * mu)) * np.abs(B) ** 4 * B
-             + (2 * 1j * np.sqrt(alpha * nu) * gamma / (mu)) * dA * epsilon
-             - (0.5 * B ** 2 * np.conjugate(A) + np.abs(B) ** 2 * A - 1.5 * np.abs(A) ** 2 * A))
+             + (2 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dA
+             + (0.0/ mu) * (0.5 * B ** 2 * np.conjugate(A) + np.abs(B) ** 2 * A - 1.5 * np.abs(A) ** 2 * A))
 
         fields = np.array([F, G])
 
