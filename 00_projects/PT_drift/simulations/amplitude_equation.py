@@ -13,11 +13,11 @@ if __name__ == '__main__':
     dt = 0.02
     T = 2000
     dx = 1 #en milimetros
-    ies = [60] #np.arange(100, 50, -2)
-    jotas = [0.35]
+    ies = [80] #np.arange(100, 50, -2)
+    jotas = np.arange(0.25, 0.18, - 0.01)
 
     [tmin, tmax, dt] = [0, T, dt]
-    [xmin, xmax, dx] = [-300, 300, dx]
+    [xmin, xmax, dx] = [-150, 150, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax

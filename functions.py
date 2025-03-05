@@ -157,7 +157,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         D = operators[0]
         DD = operators[1]
 
-        delta = gamma - (mu + (1 / sigma) * np.sqrt(alpha * nu))
+        delta = gamma - (mu + (0 / sigma) * np.sqrt(alpha * nu))
 
         dA = Der(D, A)
         dB = Der(D, B)
@@ -173,14 +173,14 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
              - (2 * 1j * np.sqrt(alpha * nu) / mu) * (dA_NL01 + 2 * dA_NL02)
              - (9 / (2 * mu)) * np.abs(A) ** 4 * A
              - (2 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dB
-             - (0.0 / mu) * (0.5 * A ** 2 * np.conjugate(B) + np.abs(A) ** 2 * B - 1.5 * np.abs(B) ** 2 * B))
+             - (0 / mu) * (0.5 * A ** 2 * np.conjugate(B) + np.abs(A) ** 2 * B - 1.5 * np.abs(B) ** 2 * B))
 
         G = ((delta - gamma * ((x_grid - d / 2) ** 2 / (2 * sigma ** 2))) * B  - 0.0 * (mu ** 2 / mu) *  B
              + (2 * alpha * nu / mu) * ddB
              - (2 * 1j * np.sqrt(alpha * nu) / mu) * (dB_NL01 + 2 * dB_NL02)
              - (9 / (2 * mu)) * np.abs(B) ** 4 * B
              + (2 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dA
-             + (0.0/ mu) * (0.5 * B ** 2 * np.conjugate(A) + np.abs(B) ** 2 * A - 1.5 * np.abs(A) ** 2 * A))
+             + (0 / mu) * (0.5 * B ** 2 * np.conjugate(A) + np.abs(B) ** 2 * A - 1.5 * np.abs(A) ** 2 * A))
 
         fields = np.array([F, G])
 
