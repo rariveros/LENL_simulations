@@ -697,6 +697,7 @@ def filtro_array(n, funcion):
     Z_filtered = filtfilt(b, a, funcion)
     return Z_filtered
 
+#COMENTARIO
 
 def filtro_superficie(Z, intensidad, sentido):
     X_len = len(Z[:, 0])

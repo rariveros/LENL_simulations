@@ -13,8 +13,8 @@ if __name__ == '__main__':
     dt = 0.02
     T = 2000
     dx = 1 #en milimetros
-    ies = [80] #np.arange(100, 50, -2)
-    jotas = np.arange(0.25, 0.18, - 0.01)
+    ies = [30] #np.arange(100, 50, -2)
+    jotas = [0.3] #np.arange(0.25, 0.18, - 0.01)
 
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-150, 150, dx]
@@ -81,10 +81,11 @@ if __name__ == '__main__':
             U2_light = np.array(fields_history)[:, 1]
             t_light = time_grid
 
-            Kc = np.sqrt(nu / alpha)
+            K1c = np.sqrt(nu / alpha) + (gamma_0 - mu) * np.abs(U1_light) ** 2
+            K2c = np.sqrt(nu / alpha) + (gamma_0 - mu) * np.abs(U2_light) ** 2
 
-            psi_A = U1_light * np.exp(1j * Kc * (x_grid + dist / 2)) + np.conjugate(U1_light * np.exp(1j * Kc * (x_grid + dist / 2)))
-            psi_B = U2_light * np.exp(1j * Kc * (x_grid - dist / 2)) + np.conjugate(U2_light * np.exp(1j * Kc * (x_grid - dist / 2)))
+            psi_A = U1_light * np.exp(1j * K1c * (x_grid + dist / 2)) + np.conjugate(U1_light * np.exp(1j * K1c * (x_grid + dist / 2)))
+            psi_B = U2_light * np.exp(1j * K2c * (x_grid - dist / 2)) + np.conjugate(U2_light * np.exp(1j * K2c * (x_grid - dist / 2)))
             psi = psi_A + 1j * psi_B
 
             # Definiendo variables finales
