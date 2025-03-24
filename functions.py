@@ -677,6 +677,24 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         G2 = + (1j * Delta - gamma / 2) * V2 - 2 * 1j * Omega * V1 - 1j * k * U2 + 2 * 1j * g * np.abs(V2) ** 2 * V2
         fields = np.array([F1, F2, G1, G2])
 
+    elif eq == 'pdnlS_dimer':
+        U1 = field_slices[0]
+        U2 = field_slices[1]
+        V1 = field_slices[2]
+        V2 = field_slices[3]
+
+        nu = parameters[0]
+        mu = parameters[1]
+        gamma = parameters[2]
+        k = parameters[3]
+        g = parameters[4]
+
+        F1 = - (mu + 1j * nu) * U1 - 1j * k * V1 - 1j * g * np.abs(U1) ** 2 * U1 + gamma * U2
+        F2 = - (mu - 1j * nu) * U2 + 1j * k * V2 + 1j * g * np.abs(U2) ** 2 * U2 + gamma * U1
+        G1 = - (mu + 1j * nu) * V1 - 1j * k * U1 - 1j * g * np.abs(V1) ** 2 * V1 - gamma * V2
+        G2 = - (mu - 1j * nu) * V2 + 1j * k * U2 + 1j * g * np.abs(V2) ** 2 * V2 - gamma * V1
+        fields = np.array([F1, F2, G1, G2])
+
     elif eq == 'reduced_soliton':
         U = field_slices[0]
         V = field_slices[1]
