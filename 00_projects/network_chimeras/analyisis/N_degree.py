@@ -31,6 +31,7 @@ if __name__ == '__main__':
     MEAN_DEGREES = np.array(MEAN_DEGREES)
     N_QUIM = np.array(N_QUIM)
     N_QUIM_std = np.array(N_QUIM_std)
+    np.savetxt(save_directory + '/data.txt', [MEAN_DEGREES, N_QUIM, N_QUIM_std], delimiter=',')
 
     fig, ax = plt.subplots(1, 1, figsize=(5, 3))
     ax.errorbar(MEAN_DEGREES, N_QUIM, yerr=N_QUIM_std, marker='o', ls='', ecolor="k", mec='black', color="k")

@@ -6,15 +6,15 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = "/soliton_control/chirped_test"
+    project_name = "/chirped_soliton"
     disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'
     save_rate = 100
     plots = "si"
     file = disc + route + project_name
-    [tmin, tmax, dt] = [0, 1000, 0.01]
-    [xmin, xmax, dx] = [-50, 50, 0.5]
+    [tmin, tmax, dt] = [0, 2000, 0.01]
+    [xmin, xmax, dx] = [-60, 60, 0.5]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax
@@ -22,21 +22,23 @@ if __name__ == '__main__':
     Nx = x_grid.shape[0]
     beta_adim = 0.004811649356064012
     gammas = [0.18] #np.arange(0.15, 0.205, 0.005)#np.arange(0.1, 0.25, 0.01) + 0.005
-    nus = [-0.10] #np.arange(-0.15, -0.05, 0.005)
-    sigmas = [15]
+    nus = [-0.14] #np.arange(-0.15, -0.05, 0.005)
+    Cs = np.arange(0, 0.6, 0.02)
     t_0 = tmax
-    x_0 = -20
-    X_max = []
-    for sigma in sigmas:
-        print("###### sigma = " + str(sigma) + " ######")
+    x_0 = -5
+    mods = []
+    for c in Cs:
+        print("###### c = " + str(c) + " ######")
         for gamma_0 in gammas:
             print("###### gamma = " + str(gamma_0) + " ######")
             nu = nus[0]
             alpha = 6.524  # 5.721
             beta = 1
             mu_0 = 0.075
-            #sigma = 15
+            sigma = 15
             gamma = 0.18
+            #c = 0.5
+
             delta = np.sqrt(- nu + np.sqrt(gamma_0 ** 2 - mu_0 ** 2))
             [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu_0, nu, sigma, gamma_0], 0)
 
@@ -49,10 +51,9 @@ if __name__ == '__main__':
             operators = np.array([D2])
             fields_init = [U_1_init, U_2_init]
             grids = [t_grid, x_grid, 0]
-            phase = - x_grid ** 2 / (2 * sigma ** 2) 
-            c = -8
-            gamma_real = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * np.real(np.exp(1j * c *phase))
-            gamma_img = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * np.imag(np.exp(1j * c *phase))
+            gamma_complex = gamma_0 * np.exp((- x_grid ** 2 / (2 * sigma ** 2)) * (1 + 1j * c))
+            gamma_real = np.real(gamma_complex)
+            gamma_img = np.imag(gamma_complex)
             gamma = [gamma_real, gamma_img]
             mu = mu_0 * np.ones(Nx)
 
@@ -84,21 +85,21 @@ if __name__ == '__main__':
             amplitude_envelope_1 = np.abs(analytical_signal_1)
 
             # Guardando datos
-
-            subfile = pdnlS_name([alpha, beta, mu_0, nu, sigma, gamma_0], "ABMNSG")
+            c_str = f"{c:.{4}f}"
+            subfile = pdnlS_name([alpha, beta, mu_0, nu, sigma, gamma_0], "ABMNSG") + '/c=' + c_str
             parameters_np = np.array([alpha, beta, gamma_0, mu_0, nu, sigma])
 
             U_1_init = U1_light[-1, :]
             U_2_init = U2_light[-1, :]
+            mods.append(modulo_light_1[-1, :])
 
             if not os.path.exists(file + subfile):
                 os.makedirs(file + subfile)
-            #np.savetxt(file + subfile + '/field_real.txt', U1_light, delimiter=',')
-            #np.savetxt(file + subfile + '/field_img.txt', U2_light, delimiter=',')
-            #np.savetxt(file + subfile + '/parameters.txt', parameters_np, delimiter=',')
-            #np.savetxt(file + subfile + '/final_envelope.txt', amplitude_envelope_1, delimiter=',')
-            #np.savetxt(file + subfile + '/X.txt', x_grid, delimiter=',')
-            #np.savetxt(file + subfile + '/T.txt', t_light, delimiter=',')
+            np.savetxt(file + subfile+ '/field_real.txt', U1_light, delimiter=',')
+            np.savetxt(file + subfile + '/field_img.txt', U2_light, delimiter=',')
+            np.savetxt(file + subfile + '/parameters.txt', parameters_np, delimiter=',')
+            np.savetxt(file + subfile + '/X.txt', x_grid, delimiter=',')
+            np.savetxt(file + subfile + '/T.txt', t_light, delimiter=',')
 
             if plots == "si":
                 pcm = plt.pcolormesh(x_grid, t_light, modulo_light_1, cmap=parula_map, shading='auto')
@@ -132,7 +133,7 @@ if __name__ == '__main__':
 
                 pcm = plt.pcolormesh(x_grid, t_light, U1_light, cmap=parula_map, shading='auto')
                 cbar = plt.colorbar(pcm, shrink=1)
-                cbar.set_label('$A_R(x, t)$', rotation=0, size=20, labelpad=-27, y=1.1)
+                cbar.set_label('$A_R$', rotation=0, size=20, labelpad=-27, y=1.1)
                 cbar.ax.tick_params(labelsize=15)
                 plt.xlim([x_grid[0], x_grid[-1]])
                 plt.xlabel('$x$', size='25')
@@ -146,7 +147,7 @@ if __name__ == '__main__':
 
                 pcm = plt.pcolormesh(x_grid, t_light, U2_light, cmap=parula_map, shading='auto')
                 cbar = plt.colorbar(pcm, shrink=1)
-                cbar.set_label('$A_I(x, t)$', rotation=0, size=20, labelpad=-27, y=1.1)
+                cbar.set_label('$A_I$', rotation=0, size=20, labelpad=-27, y=1.1)
                 cbar.ax.tick_params(labelsize=15)
                 plt.xlim([x_grid[0], x_grid[-1]])
                 plt.xlabel('$x$', size='25')
@@ -158,23 +159,12 @@ if __name__ == '__main__':
                 plt.savefig(file + subfile + '/img_spacetime.png', dpi=200)
                 plt.close()
 
-                plt.plot(x_grid, gamma_real, label="$\gamma_R$")
-                plt.plot(x_grid, gamma_img, label="$\gamma_I$")
+                plt.plot(x_grid, gamma_real, label="$\gamma_R$", color="b")
+                plt.plot(x_grid, gamma_img, label="$\gamma_I$", color="r")
                 plt.xlabel('$x$', size='25')
                 plt.ylabel('$\gamma(x)$', size='25')
                 plt.legend(fontsize=18)
                 plt.savefig(file + subfile + '/forcing_01.png', dpi=200)
-                plt.close()
-
-                plt.plot(x_grid, modulo_light_1[-1, :], label="$A_f$")
-                plt.plot(x_grid, modulo_light_1[0, :], label="$A_i$")
-                plt.xlabel('$x$', size='25')
-                plt.ylabel('$A(x)$', size='25')
-                plt.legend(fontsize=18)
-                plt.xlim([-50, 50])
-                plt.grid(alpha=0.3)
-                plt.tight_layout()
-                plt.savefig(file + subfile + '/final_profile.png', dpi=200)
                 plt.close()
 
                 plt.plot(x_grid, np.unwrap(arg_light_1[-1, :], period=2 * np.pi))
@@ -183,3 +173,7 @@ if __name__ == '__main__':
                 plt.tight_layout()
                 plt.savefig(file + subfile + '/final_phase.png', dpi=200)
                 plt.close()
+    final_file = pdnlS_name([alpha, beta, mu_0, nu, sigma, gamma_0], "ABMNSG")
+    np.savetxt(file + final_file + '/final_profiles.txt', mods, delimiter=',')
+    np.savetxt(file + final_file + '/X.txt', x_grid, delimiter=',')
+    np.savetxt(file + final_file + '/Cs.txt', Cs, delimiter=',')

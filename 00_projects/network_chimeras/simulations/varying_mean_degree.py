@@ -1,11 +1,6 @@
 import networkx as nx
-import random
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.sparse import diags
-from scipy.sparse import diags, hstack, vstack, identity
-from scipy.linalg import expm
-from back_process import filtro_array
 from scipy import integrate
 import os
 import time
@@ -66,7 +61,7 @@ if __name__ == '__main__':
     project_name = '/network_chimeras/erdos_renyi'
     disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
-    mean_degrees = np.arange(25, 33, 1)
+    mean_degrees = np.arange(25, 32, 1)         #DESDE MEANDEGREE = 25 PARA ARRIBA HAY QUE USAR T TOTAL 15000, PARA ABAJO DE ESE VALOR SE PUEDE USAR T TOTAL DE 10000
     samples = [0, 1, 2]
     for mean_degree in mean_degrees:
         print("########### MEAN DEGREE = " + str(mean_degree) + " ###########")
@@ -78,7 +73,6 @@ if __name__ == '__main__':
 
             ########### NETWORK PARAMETERS ###########
             n = 501
-            #mean_degree = 30
             p = mean_degree / (n - 1)
             graph = erdos_renyi_graph(n, p)
             adj_matrix = nx.adjacency_matrix(graph).toarray()
@@ -171,7 +165,7 @@ if __name__ == '__main__':
 
             #### AVERAGES AND CHARACTERIZATION OF THE STATIONARY FINAL STATE ####
 
-            t_init =14000
+            t_init = 14000
             t_final = 15000
             i_0 = np.argmin(np.abs(t_light - t_init))
             i_f = np.argmin(np.abs(t_light - t_final))

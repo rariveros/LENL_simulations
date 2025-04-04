@@ -6,7 +6,7 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/pdnlS_dimer'
+    project_name = '/pdnlS_dimer_test'
     disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'pdnlS_dimer'
@@ -14,8 +14,8 @@ if __name__ == '__main__':
 
     nu = 0.0
     mu = 0.1
-    Gammas = np.arange(0.09, 0.305, 0.005)
-    K = [0.1, 0.15, 0.2]#np.arange(0.00, 0.51, 0.02)
+    Gammas = np.arange(0.09, 0.2, 0.02)
+    K = [0.1]#np.arange(0.00, 0.51, 0.02)
     g = 1.0
 
     # Definición de la grilla
