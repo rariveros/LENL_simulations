@@ -5,19 +5,19 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/PT_drift/amplitude_eq/test'
-    disc = 'D:/'                                        # DISCO DE TRABAJO
+    project_name = '/PT_drift/amplitude_eq/test_02'
+    disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'amplitude_bigaussian'                         # ECUACION
     t_rate = 40                                         # CADA CUANTAS ITERACIONES GUARDA
     dt = 0.02
-    T = 2000
+    T = 1000
     dx = 1 #en milimetros
-    ies = [30] #np.arange(100, 50, -2)
-    jotas = [0.3] #np.arange(0.25, 0.18, - 0.01)
+    ies = [40] #np.arange(100, 50, -2)
+    jotas = [0.25] #np.arange(0.25, 0.18, - 0.005)
 
     [tmin, tmax, dt] = [0, T, dt]
-    [xmin, xmax, dx] = [-150, 150, dx]
+    [xmin, xmax, dx] = [-100, 100, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax
@@ -26,12 +26,13 @@ if __name__ == '__main__':
     #IC_directory = "D:/mnustes_science/simulation_data/FD/PT_drift/amplitude_eq/test/alpha=6.5240/beta=1.000/mu=0.1000/nu=0.1000/sigma=60.000/gamma=0.2100/dist=80.000"
     #IC_R = np.loadtxt(IC_directory + "/field_real.txt", delimiter=',', dtype=complex)
     #IC_I = np.loadtxt(IC_directory + '/field_img.txt', delimiter=',', dtype=complex)
-    U_1_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
-    U_2_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
+
     #U_1_init = IC_R[-1, :]
     #U_2_init = IC_I[-1, :]
-    print("N° of simulations: " + str(len(ies)))
+    print("N° of simulations: " + str(len(ies) * len(jotas)))
     for i in ies:
+        U_1_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
+        U_2_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
         for j in jotas:
             alpha = 6.524  #5.721
             beta = 1
@@ -81,8 +82,8 @@ if __name__ == '__main__':
             U2_light = np.array(fields_history)[:, 1]
             t_light = time_grid
 
-            K1c = np.sqrt(nu / alpha) + (gamma_0 - mu) * np.abs(U1_light) ** 2
-            K2c = np.sqrt(nu / alpha) + (gamma_0 - mu) * np.abs(U2_light) ** 2
+            K1c = np.sqrt(nu / alpha) #+ (gamma_0 - mu) * np.abs(U1_light) ** 2
+            K2c = np.sqrt(nu / alpha) #+ (gamma_0 - mu) * np.abs(U2_light) ** 2
 
             psi_A = U1_light * np.exp(1j * K1c * (x_grid + dist / 2)) + np.conjugate(U1_light * np.exp(1j * K1c * (x_grid + dist / 2)))
             psi_B = U2_light * np.exp(1j * K2c * (x_grid - dist / 2)) + np.conjugate(U2_light * np.exp(1j * K2c * (x_grid - dist / 2)))
@@ -222,6 +223,16 @@ if __name__ == '__main__':
             plt.ylabel('$t$', size='20')
             plt.grid(linestyle='--', alpha=0.5)
             plt.savefig(file + subfile + '/pdnlS_imag_spacetime.png', dpi=300)
+            plt.close()
+
+            plt.plot(x_grid, np.real(psi)[-1, :], label="$\\textrm{Re}\ A$", color="b", zorder=5, lw=2)
+            plt.plot(x_grid, np.imag(psi)[-1, :], label="$\\textrm{Im}\ A$", color="r", zorder=5, lw=2)
+            plt.xlabel('$x$', size='25')
+            plt.legend(fontsize=18)
+            plt.xlim([-200, 200])
+            plt.grid(alpha=0.3)
+            plt.tight_layout()
+            plt.savefig(file + subfile + '/final_profiles.png', dpi=200)
             plt.close()
 
             U_1_init = U1_light[-1, :]

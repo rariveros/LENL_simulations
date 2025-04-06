@@ -4,7 +4,7 @@ from back_process import *
 from time_integrators import *
 
 if __name__ == '__main__':
-    directory = "D:/mnustes_science/simulation_data/FD/chirped_soliton/alpha=6.524/beta=1.000/mu=0.075/nu=-0.140/sigma=15.000/gamma=0.180"
+    directory = "C:/mnustes_science/simulation_data/FD/chirped_soliton/alpha=6.524/beta=1.000/mu=0.075/nu=-0.130/sigma=15.000/gamma=0.180"
     mods = np.loadtxt(directory + '/final_profiles.txt', delimiter=',')
     x_grid = np.loadtxt(directory + '/X.txt', delimiter=',')
     Cs = np.loadtxt(directory + '/Cs.txt', delimiter=',')

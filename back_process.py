@@ -2,7 +2,7 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import pandas as pd
+#import pandas as pd
 from matplotlib import rc
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import LinearSegmentedColormap
@@ -24,7 +24,7 @@ rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 #rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
-import cv2
+#import cv2
 
 #### SCIPY ###
 from scipy.signal import filtfilt

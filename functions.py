@@ -158,7 +158,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         DD = operators[1]
 
         delta = gamma - (mu + (0 / sigma) * np.sqrt(alpha * nu))
-
+        sigma_r = sigma #np.sqrt(sigma * np.sqrt(nu * alpha)/ mu)
         dA = Der(D, A)
         dB = Der(D, B)
         ddA = Der(DD, A)
@@ -168,19 +168,19 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         dA_NL02 = np.abs(A) ** 2 * dA
         dB_NL02 = np.abs(B) ** 2 * dB
 
-        F = ((delta - gamma * ((x_grid + d / 2) ** 2 / (2 * sigma ** 2))) * A - 0.0 * (mu ** 2 / mu) * A
+        F = ((delta - gamma * ((x_grid + d / 2) ** 2 / (2 * sigma_r ** 2))) * A - 0.0 * (mu ** 2 / mu) * A
              + (2 * alpha * nu / mu) * ddA
              - (2 * 1j * np.sqrt(alpha * nu) / mu) * (dA_NL01 + 2 * dA_NL02)
              - (9 / (2 * mu)) * np.abs(A) ** 4 * A
-             - (2 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dB
-             - (0 / mu) * (0.5 * A ** 2 * np.conjugate(B) + np.abs(A) ** 2 * B - 1.5 * np.abs(B) ** 2 * B))
+             - (1 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dB
+             - (gamma / mu) * (0.5 * A ** 2 * np.conjugate(B) + np.abs(A) ** 2 * B - 1.5 * np.abs(B) ** 2 * B))
 
-        G = ((delta - gamma * ((x_grid - d / 2) ** 2 / (2 * sigma ** 2))) * B  - 0.0 * (mu ** 2 / mu) *  B
+        G = ((delta - gamma * ((x_grid - d / 2) ** 2 / (2 * sigma_r ** 2))) * B - 0.0 * (mu ** 2 / mu) *  B
              + (2 * alpha * nu / mu) * ddB
              - (2 * 1j * np.sqrt(alpha * nu) / mu) * (dB_NL01 + 2 * dB_NL02)
              - (9 / (2 * mu)) * np.abs(B) ** 4 * B
-             + (2 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dA
-             + (0 / mu) * (0.5 * B ** 2 * np.conjugate(A) + np.abs(B) ** 2 * A - 1.5 * np.abs(A) ** 2 * A))
+             + (1 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dA
+             + (gamma / mu) * (0.5 * B ** 2 * np.conjugate(A) + np.abs(B) ** 2 * A - 1.5 * np.abs(A) ** 2 * A))
 
         fields = np.array([F, G])
 
@@ -694,6 +694,26 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         G1 = - (mu + 1j * nu) * V1 - 1j * k * U1 - 1j * g * np.abs(V1) ** 2 * V1 - gamma * V2
         G2 = - (mu - 1j * nu) * V2 + 1j * k * U2 + 1j * g * np.abs(V2) ** 2 * V2 - gamma * V1
         fields = np.array([F1, F2, G1, G2])
+
+    elif eq == 'pdnlS_dimer_tranformed':
+        U = field_slices[0]
+        V = field_slices[1]
+
+        nu = parameters[0]
+        mu = parameters[1]
+        gamma = parameters[2]
+        k = parameters[3]
+        g = parameters[4]
+
+        U_conj = np.conjugate(U)
+        V_conj = np.conjugate(V)
+        Z1 = 0.5 * (U + U_conj) + 0.5 * (V - V_conj)
+        Z2 = 0.5 * (U - U_conj) + 0.5 * (V + V_conj)
+        Z1_conj = np.conjugate(Z1)
+        Z2_conj = np.conjugate(Z2)
+        F = (- mu + gamma - 1j * k) * U - 1j * nu * V - (1j * g / 2) * (np.abs(Z1) ** 2 * (Z1 - Z1_conj) + np.abs(Z2) ** 2 * (Z2 + Z2_conj))
+        G = (- mu - gamma - 1j * k) * V - 1j * nu * U - (1j * g / 8) * (np.abs(Z1) ** 2 * (Z1 + Z1_conj) + np.abs(Z2) ** 2 * (Z2 - Z2_conj))
+        fields = np.array([F, G])
 
     elif eq == 'reduced_soliton':
         U = field_slices[0]

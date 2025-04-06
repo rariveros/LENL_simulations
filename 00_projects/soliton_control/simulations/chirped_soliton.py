@@ -7,7 +7,7 @@ if __name__ == '__main__':
 
     # Definiendo parámetros
     project_name = "/chirped_soliton"
-    disc = 'D:/'
+    disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'
     save_rate = 100
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     Nx = x_grid.shape[0]
     beta_adim = 0.004811649356064012
     gammas = [0.18] #np.arange(0.15, 0.205, 0.005)#np.arange(0.1, 0.25, 0.01) + 0.005
-    nus = [-0.14] #np.arange(-0.15, -0.05, 0.005)
+    nus = [-0.13] #np.arange(-0.15, -0.05, 0.005)
     Cs = np.arange(0, 0.6, 0.02)
     t_0 = tmax
     x_0 = -5
