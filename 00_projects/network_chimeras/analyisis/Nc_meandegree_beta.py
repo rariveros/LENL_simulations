@@ -13,7 +13,7 @@ if __name__ == '__main__':
     ax.text(21, 0.1, "$\kappa = 1.5 \\times 10^{-2}$", fontsize=15)
     ax.text(21, 0., "$N = 501$", fontsize=15)
     plt.tight_layout()
-    plt.savefig('mock_characterization.png', dpi=200)
+    plt.savefig('Fig03.png', dpi=200)
 
     # HIPOTESIS 0: en osciladores de duffing, para tales parametros (referencias), coexisten quimeras (caos) y estados sincronizados.
     # HIPOTESIS 1: k efectivo atrae a la quimera, incluso en redes de baja clusterización hay correlación entre centralidad y caos.

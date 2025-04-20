@@ -13,6 +13,8 @@ if __name__ == '__main__':
     OMEGAS = []
     Rs = []
     Ss = []
+    THETA = []
+    PHI = []
     for directory_01 in directories:
         dir_01 = working_directory + "/" + directory_01
         params = np.loadtxt(dir_01 + '/parameters.txt', delimiter=',')
@@ -25,7 +27,7 @@ if __name__ == '__main__':
 
         T = T[t0:] - T[t0]
         U1 = U1[t0:]
-        V2 = V2[t0:]
+        V1 = V2[t0:]
         Nt = len(T)
         dt = T[1] - T[0]
         CCF = np.correlate(np.abs(np.imag(U1)), np.abs(np.imag(U1)  ), "full")
@@ -54,8 +56,12 @@ if __name__ == '__main__':
         FREQS.append(freq)
         OMEGAS.append(omega)
         Rs.append(np.amax(np.abs(U1)))
-        Ss.append(np.amax(np.abs(V2)))
-        plt.plot(np.abs(U1), np.abs(V2), color="k")
+        Ss.append(np.amax(np.abs(V1)))
+        theta = np.arctan(np.amax(np.abs(V1)) * np.cos(np.angle(U1[-1])) / (np.amax(np.abs(U1)) * np.sin(np.angle(V1[-1]))))
+        phi = np.arctan(-(np.amax(np.abs(U1)) * np.sin(np.angle(U1[-1]))) / (np.amax(np.abs(V1)) * np.cos(np.angle(V1[-1]))))
+        THETA.append(theta)
+        PHI.append(phi)
+        plt.plot(np.abs(U1), np.abs(V1), color="k")
     plt.show()
     FREQS = np.array(FREQS)
     OMEGAS = np.array(OMEGAS)
@@ -74,8 +80,11 @@ if __name__ == '__main__':
     R0 = P0 = np.sqrt(-nu + np.sqrt(OMEGAS ** 2 - mu ** 2))
     R1 = (R0 / OMEGAS) * ((np.sqrt(OMEGAS ** 2 - mu ** 2) + mu) / (- 2 * nu + 4 * np.sqrt(OMEGAS ** 2 - mu ** 2)))
     P1 = -(P0 / OMEGAS) * ((np.sqrt(OMEGAS ** 2 - mu ** 2) + mu) / (- 2 * nu + 4 * np.sqrt(OMEGAS ** 2 - mu ** 2)))
-    R = R0 + k * R1 #np.sqrt(-nu + np.sqrt(OMEGAS ** 2 - (mu - k) ** 2))
-    P = P0 + k * P1 #np.sqrt(-nu + np.sqrt(OMEGAS ** 2 - (mu + k) ** 2))
+    R = R0 + 0.5 * k * R1  # 0.336 #
+    P = P0 + 0.5 * k * P1  # 0.23 #
+
+    #R = np.sqrt(-nu + np.sqrt(OMEGAS ** 2 - (mu - k) ** 2))
+    #P = np.sqrt(-nu + np.sqrt(OMEGAS ** 2 - (mu + k) ** 2))
 
     plt.scatter(OMEGAS, Rs, c="b")
     plt.scatter(OMEGAS, Ss, c="r")
@@ -84,4 +93,10 @@ if __name__ == '__main__':
     plt.plot(OMEGAS, R0, color="k")
     plt.show()
     plt.close()
+
+
+
+    plt.scatter(OMEGAS, THETA, color='b')
+    plt.scatter(OMEGAS, PHI, color='r')
+    plt.show()
 

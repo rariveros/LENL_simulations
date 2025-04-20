@@ -712,7 +712,7 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         Z1_conj = np.conjugate(Z1)
         Z2_conj = np.conjugate(Z2)
         F = (- mu + gamma - 1j * k) * U - 1j * nu * V - (1j * g / 2) * (np.abs(Z1) ** 2 * (Z1 - Z1_conj) + np.abs(Z2) ** 2 * (Z2 + Z2_conj))
-        G = (- mu - gamma - 1j * k) * V - 1j * nu * U - (1j * g / 8) * (np.abs(Z1) ** 2 * (Z1 + Z1_conj) + np.abs(Z2) ** 2 * (Z2 - Z2_conj))
+        G = (- mu - gamma - 1j * k) * V - 1j * nu * U - (1j * g / 2) * (np.abs(Z1) ** 2 * (Z1 + Z1_conj) + np.abs(Z2) ** 2 * (Z2 - Z2_conj))
         fields = np.array([F, G])
 
     elif eq == 'reduced_soliton':

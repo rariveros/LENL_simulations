@@ -45,4 +45,4 @@ if __name__ == '__main__':
     ax.text(13.5, 0.92, "$\kappa = 1.5 \\times 10^{-2}$", fontsize=12)
     ax.text(13.5, 0.8, "$N = 501$", fontsize=12)
     plt.tight_layout()
-    plt.savefig('mock_characterization.png', dpi=200)
+    plt.savefig('Fig03.png', dpi=200)
