@@ -5,15 +5,15 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/bi_localized_drift/amplitude_eq'
+    project_name = '/bi_localized_drift/one_envelope'
     disc = 'D:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
-    eq = 'amplitude_bigaussian'                         # ECUACION
+    eq = 'amplitude_one_envelope'                         # ECUACION
     t_rate = 10                                         # CADA CUANTAS ITERACIONES GUARDA
     dt = 0.02
-    T = 6000
+    T = 2500
     dx = 1 #en milimetros
-    ies = [0.18] #np.arange(0.18, 0.26, 0.02)
+    ies = np.arange(0.19, 0.20, 0.01)
     jotas = [1] #np.arange(0.25, 0.18, - 0.005)
 
     [tmin, tmax, dt] = [0, T, dt]
@@ -23,16 +23,10 @@ if __name__ == '__main__':
     T = tmax
     Nt = t_grid.shape[0]
     Nx = x_grid.shape[0]
-    #IC_directory = "D:/mnustes_science/simulation_data/FD/PT_drift/amplitude_eq/test/alpha=6.5240/beta=1.000/mu=0.1000/nu=0.1000/sigma=60.000/gamma=0.2100/dist=80.000"
-    #IC_R = np.loadtxt(IC_directory + "/field_real.txt", delimiter=',', dtype=complex)
-    #IC_I = np.loadtxt(IC_directory + '/field_img.txt', delimiter=',', dtype=complex)
 
-    #U_1_init = IC_R[-1, :]
-    #U_2_init = IC_I[-1, :]
     print("N° of simulations: " + str(len(ies) * len(jotas)))
     for i in ies:
-        U_1_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
-        U_2_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
+        U_1_init = 0.01 * np.random.rand(Nx)
         for j in jotas:
             alpha = 6.524  #5.721
             beta = 1
@@ -56,7 +50,7 @@ if __name__ == '__main__':
             D1 = sparse_D_neumann(Nx, dx)
             D2 = sparse_DD_neumann(Nx, dx)
             operators = np.array([D1, D2])
-            fields_init = [U_1_init, U_2_init]
+            fields_init = [U_1_init]
             grids = [t_grid, x_grid, 0]
             phi = np.pi
             gamma_real = gamma_0
@@ -79,23 +73,23 @@ if __name__ == '__main__':
 
             # Reobteniendo campos
             U1_light = np.array(fields_history)[:, 0]
-            U2_light = np.array(fields_history)[:, 1]
             t_light = time_grid
+
+            DU1 = []
+            for i in range(len(t_light)):
+                DU1.append(np.append(np.diff(U1_light[i, :]), 0) / dx)
+            DU1 = np.array(DU1)
 
             K1c = np.sqrt(nu / alpha) #+ (gamma_0 - mu) * np.abs(U1_light) ** 2
             K2c = np.sqrt(nu / alpha) #+ (gamma_0 - mu) * np.abs(U2_light) ** 2
 
-            psi_A = U1_light * np.exp(1j * K1c * (x_grid + dist / 2)) + np.conjugate(U1_light * np.exp(1j * K1c * (x_grid + dist / 2)))
-            psi_B = U2_light * np.exp(1j * K2c * (x_grid - dist / 2)) + np.conjugate(U2_light * np.exp(1j * K2c * (x_grid - dist / 2)))
-            psi = psi_A + 1j * psi_B
+            psi_1 = U1_light * np.exp(1j * K1c * x_grid)
+            psi_2a = (-1 / (2 * mu))* (3 * 1j * U1_light ** 3 - 2 * np.sqrt(nu / alpha) * DU1) * np.exp(1j * K1c * x_grid)
+            psi_2b = (1 / (8 * nu)) * U1_light ** 3 * np.exp(3 * 1j * K1c * x_grid)
+            psi = psi_1 + np.conjugate(psi_1) + psi_2a - np.conjugate(psi_2a) + psi_2b + np.conjugate(psi_2b)
 
             # Definiendo variables finales
             modulo_light_1 = np.absolute(U1_light)
-            modulo_light_2 = np.absolute(U2_light)
-            arg_light_1 = np.angle(U1_light)
-            arg_light_1 = (2 * np.pi + arg_light_1) * (arg_light_1 < 0) + arg_light_1 * (arg_light_1 > 0)
-            arg_light_2 = np.angle(U2_light)
-            arg_light_2 = (2 * np.pi + arg_light_2) * (arg_light_2 < 0) + arg_light_2 * (arg_light_1 > 0)
 
             # Guardando datos
             file = disc + route + project_name
@@ -104,8 +98,7 @@ if __name__ == '__main__':
 
             if not os.path.exists(file + subfile):
                 os.makedirs(file + subfile)
-            np.savetxt(file + subfile + '/field_real.txt', U1_light, delimiter=',')
-            np.savetxt(file + subfile + '/field_img.txt', U2_light, delimiter=',')
+            np.savetxt(file + subfile + '/field.txt', U1_light, delimiter=',')
             np.savetxt(file + subfile + '/parameters.txt', parameters_np, delimiter=',')
             np.savetxt(file + subfile + '/X.txt', x_grid, delimiter=',')
             np.savetxt(file + subfile + '/T.txt', t_light, delimiter=',')
@@ -120,80 +113,6 @@ if __name__ == '__main__':
             plt.grid(linestyle='--', alpha=0.5)
             plt.savefig(file + subfile + '/A_module.png', dpi=300)
             plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, arg_light_1, cmap=parula_map, shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$\\textrm{arg}(A)$', rotation=0, size=20, labelpad=-20, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.savefig(file + subfile + '/A_arg.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, np.real(U1_light), cmap=parula_map,vmin=-np.amax(np.real(U1_light)), vmax=np.amax(np.real(U1_light)), shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$A_R(x, t)$', rotation=0, size=20, labelpad=-27, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.savefig(file + subfile + '/A_real.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, np.imag(U1_light), cmap=parula_map, shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$A_I(x, t)$', rotation=0, size=20, labelpad=-27, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.savefig(file + subfile + '/A_img.png', dpi=300)
-            plt.close()
-
-            #####################################################
-
-            pcm = plt.pcolormesh(x_grid, t_light, modulo_light_2, cmap=parula_map, shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$|A|$', rotation=0, size=20, labelpad=-27, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.savefig(file + subfile + '/B_module.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, arg_light_2, cmap=parula_map, shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$\\textrm{arg}(A)$', rotation=0, size=20, labelpad=-20, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.savefig(file + subfile + '/B_arg.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, np.real(U2_light), cmap=parula_map,vmin=-np.amax(np.real(U1_light)), vmax=np.amax(np.real(U1_light)), shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$A_R(x, t)$', rotation=0, size=20, labelpad=-27, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.savefig(file + subfile + '/B_real.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, np.imag(U2_light), cmap=parula_map, shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$A_I(x, t)$', rotation=0, size=20, labelpad=-27, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.savefig(file + subfile + '/B_img.png', dpi=300)
-            plt.close()
-
-            #####################################################
 
             pcm = plt.pcolormesh(x_grid, t_light, np.abs(psi), cmap=parula_map, shading='auto')
             cbar = plt.colorbar(pcm, shrink=1)
@@ -236,4 +155,3 @@ if __name__ == '__main__':
             plt.close()
 
             U_1_init = U1_light[-1, :]
-            U_2_init = U2_light[-1, :]

@@ -1,25 +1,19 @@
-from back_process import *
 from functions import *
-from time_integrators import *
-
-
-from functions import *
-from back_process import *
 from back_process import *
 from time_integrators import *
 
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/pdnlS_2D'
-    disc = 'C:/'
+    project_name = '/pdnlS_2D/drift'
+    disc = 'D:/'
     eq = 'pdnlS_2D'
 
     alpha = 1
     beta = 1
-    gamma_0 = 0.28
-    nu = 0.32
-    sigma = 4
+    gamma_0 = 0.14
+    nu = 0.2
+    sigma = 15
     mu = 0.1
 
     gamma_str = str(int(gamma_0 * 1000) * 0.001)
@@ -30,16 +24,16 @@ if __name__ == '__main__':
     print('mu = ' + mu_str)
 
     # Definición de la grilla
-    Lx = 120
-    Ly = 120
+    Lx = 240
+    Ly = 100
     ti = 0
-    tf = 2500
+    tf = 5000
 
     t_rate = 25
 
-    dx = 0.5
-    dy = 0.5
-    dt = 0.05
+    dx = 1
+    dy = 1
+    dt = 0.1
 
     [tmin, tmax, dt] = [0, tf, dt]
     [xmin, xmax, dx] = [- Lx / 2,  Lx / 2, dx]
@@ -52,8 +46,8 @@ if __name__ == '__main__':
     Nx = x_grid.shape[0]
     Ny = y_grid.shape[0]
     X, Y = np.meshgrid(x_grid, y_grid)
-    R = 15
-    N = 6
+    R = 30
+    N = 2
     Zs = []
     for i in range(N):
         x_i = R * np.cos(2 * np.pi * i / N)
@@ -69,12 +63,13 @@ if __name__ == '__main__':
     subfile = nombre_pndls_gaussian(gamma_0, mu, nu, sigma) #+ '/a=' + A_str
     if not os.path.exists(file + subfile):
         os.makedirs(file + subfile)
-    pcm = plt.pcolormesh(x_grid, y_grid, Z, cmap=parula_map, shading='auto')
+    fig, ax = plt.subplots(figsize=(5, 4))
+    pcm = ax.pcolormesh(x_grid, y_grid, Z, cmap=parula_map, shading='auto')
     cbar = plt.colorbar(pcm, shrink=1)
     cbar.set_label('$\gamma(\\vec{x})$', rotation=0, size=20, labelpad=-27, y=1.15)
-    plt.xlabel('$y$', size='20')
-    plt.ylabel('$x$', size='20')
-    plt.grid(linestyle='--', alpha=0.5)
+    ax.set(xlim=(xmin, xmax), ylim=(ymin, ymax))
+    ax.set_aspect('equal')
+    ax.grid(linestyle='--', alpha=0.5)
     plt.tight_layout()
     plt.savefig(file + subfile + '/forcing.png', dpi=300)
     plt.close()
@@ -124,8 +119,9 @@ if __name__ == '__main__':
     U2_light_reshaped = U2_light.reshape(U2_light.shape[0], -1)
 
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.set(xlim=(-40, 40), ylim=(-40, 40))
-    cax = ax.pcolormesh(x_grid, y_grid, modulo_light_1[0], vmin=0, vmax=0.55,cmap="turbo", shading='auto')
+    ax.set(xlim=(xmin, xmax), ylim=(ymin, ymax))
+    ax.set_aspect('equal')
+    cax = ax.pcolormesh(x_grid, y_grid, modulo_light_1[0], vmin=0, vmax=0.75,cmap="turbo", shading='auto')
     cbar = fig.colorbar(cax)
     cbar.set_label('$|A(x, y)|$', rotation=0, size=20, labelpad=-27, y=1.13)
     def animate(i):

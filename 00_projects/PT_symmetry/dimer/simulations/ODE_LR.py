@@ -24,7 +24,7 @@ if __name__ == '__main__':
     dt = 1
     T = 5000
 
-    disco = 'C:/'
+    disco = 'D:/'
     initial_dir_data = str(disco) + 'Users/mnustes_science/PT_fluids/mnustes_science/simulation_data'
     root = tk.Tk()
     root.withdraw()
@@ -41,9 +41,9 @@ if __name__ == '__main__':
 
     dx = x_grid[1] - x_grid[0]
     #N_resample = 4
-    #[Z_r_00, Z_i_00, Z_r_01, Z_i_01], x_grid = resample([Z_r_00, Z_i_00, Z_r_01, Z_i_01], x_grid, N_resample)
+    [Z_r_00, Z_i_00, Z_r_01, Z_i_01] = [Z_r_00[-1, :], Z_i_00[-1, :], Z_r_01[-1, :], Z_i_01[-1, :]]
 
-    distances = np.arange(10, 60, 0.25)
+    distances = np.arange(30, 60, 2)
     PHI_Rs = []
     PHI_Ls = []
     times = []
@@ -69,8 +69,8 @@ if __name__ == '__main__':
         phi_01 = PHI_L - 1j * PHI_R
         phi_02 = PHI_L + 1j * PHI_R
 
-        [alpha, beta, gamma_0, mu, nu, sigma, phi] = params_00
-        gamma = -(gaussian(x_grid, gamma_0, -d / 2, sigma) - gaussian(x_grid, gamma_0, d / 2, sigma))
+        [alpha, beta, gamma_0, DIST, sigma, mu, nu] = params_00
+        gamma = -gamma_0 * (np.exp(- (x_grid - d / 2) ** 2 / (2 * sigma ** 2)) - np.exp(- (x_grid + d / 2) ** 2 / (2 * sigma ** 2)))
 
         Gamma_0 = integrate.simpson(phi_01 * phi_02, x_grid)
         Gamma_1 = integrate.simpson(phi_01 ** 2, x_grid)

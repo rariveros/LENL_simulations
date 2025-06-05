@@ -308,7 +308,7 @@ cm_data = [[0.2422, 0.1504, 0.6603],
 [0.9769, 0.9839, 0.0805]]
 
 parula_map = LinearSegmentedColormap.from_list('parula', cm_data)
-matplotlib.rcParams['animation.ffmpeg_path'] = r'C:\PATH_programs\ffmpeg.exe'
+matplotlib.rcParams['animation.ffmpeg_path'] = r'C:\ffmpeg\bin\ffmpeg.exe'
 
 def triangle(length, amplitude):
     section = length // 4
@@ -545,6 +545,24 @@ def sparse_DD_neumann(Nx, dx):
     D2[-1, -2] = 1 / (dx ** 2)
     return D2.tocsr()
 
+def sparse_D_periodic(Nx, dx):
+    data = np.zeros((3, Nx))
+    data[0, :] = -0.5
+    data[2, :] = 0.5
+    diags = [-1, 0, 1]
+    D = sparse.spdiags(data, diags, Nx, Nx, format='lil') / dx
+    D[0, -1] = -0.5 / dx
+    D[-1, 0] = 0.5 / dx
+    return D.tocsr()
+
+def sparse_DD_periodic(Nx, dx):
+    data = np.ones((3, Nx))
+    data[1, :] = -2.0
+    diags = [-1, 0, 1]
+    D2 = sparse.spdiags(data, diags, Nx, Nx, format='lil') / dx**2
+    D2[0, -1] = 1.0 / dx**2
+    D2[-1, 0] = 1.0 / dx**2
+    return D2.tocsr()
 
 def sparse_DD_absorbing(Nx, dx, absorption_coeff):
     data = np.ones((3, Nx))
@@ -569,17 +587,18 @@ def sparse_DD_absorbing(Nx, dx, absorption_coeff):
 
 def sparse_D_neumann(Nx, dx):
     data = np.zeros((3, Nx))
-    data[0, 1:] = -0.5  # Lower diagonal (shifted backward)
-    data[2, :-1] = 0.5  # Upper diagonal (shifted forward)
+    data[0, 1:] = -0.5  # lower
+    data[2, :-1] = 0.5  # upper
     diags = [-1, 0, 1]
     D = sparse.spdiags(data, diags, Nx, Nx) / dx
-    D = sparse.lil_matrix(D)
+    D = D.tolil()
 
-    # Neumann boundary conditions (zero derivative)
+    # Neumann BCs: forward/backward difference at the ends
     D[0, 0] = -1 / dx
     D[0, 1] = 1 / dx
-    D[-1, -1] = 1 / dx
     D[-1, -2] = -1 / dx
+    D[-1, -1] = 1 / dx
+    return D.tocsr()
 
     return D.tocsr()
 
@@ -631,19 +650,29 @@ def sparse_DDD(Nx, dx):
     return D3
 
 
-def sparse_DDDD_neumann(Nx, dx):
-    data = np.ones((5, Nx))
-    data[1] = -4 * data[1]
-    data[4] = 6 * data[2]
-    data[3] = -4 * data[3]
-    diags = [-2, -1, 0, 1, 2]
-    D2 = sparse.spdiags(data, diags, Nx, Nx) / (dx ** 4)
-    D2 = sparse.lil_matrix(D2)
-    D2[0, :] = np.zeros(Nx)
-    D2[1, :] = np.zeros(Nx)
-    D2[-1, :] = np.zeros(Nx)
-    D2[-2, :] = np.zeros(Nx)
-    return D2
+def  sparse_DDDD_neumann(Nx, dx):
+    # Interior stencil for 4th derivative: [1, -4, 6, -4, 1]
+    diagonals = [
+        np.ones(Nx - 2),                # -2
+        -4 * np.ones(Nx - 1),           # -1
+        6 * np.ones(Nx),                #  0
+        -4 * np.ones(Nx - 1),           # +1
+        np.ones(Nx - 2)                 # +2
+    ]
+    offsets = [-2, -1, 0, 1, 2]
+
+    D4 = sparse.diags(diagonals, offsets, shape=(Nx, Nx), format='lil') / dx**4
+
+    # Neumann boundary conditions (approximate with forward/backward biased stencils)
+    # Left boundary (x = 0)
+    D4[0, 0:5] = [16, -64, 96, -64, 16]  # From 5-point forward difference
+    D4[1, 0:5] = [1, -4, 6, -4, 1]       # Normal central stencil starts at i=1
+
+    # Right boundary (x = Nx-1)
+    D4[-1, -5:] = [16, -64, 96, -64, 16]  # From 5-point backward difference
+    D4[-2, -5:] = [1, -4, 6, -4, 1]       # Normal central stencil at i=Nx-2
+
+    return D4.tocsr()
 
 
 def sparse_DDDD(Nx, dx):

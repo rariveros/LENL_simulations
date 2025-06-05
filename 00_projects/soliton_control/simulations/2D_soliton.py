@@ -7,15 +7,15 @@ if __name__ == '__main__':
 
     # Definiendo parámetros
     project_name = '/soliton_control/2D'
-    disc = 'C:/'
+    disc = 'D:/'
     eq = 'pdnlS_2D'
 
     alpha = 1 #4 * 6.524
     beta = 1
-    gamma_0 = 0.45
-    nu = -0.68
-    sigma = 0 * np.sqrt(4 * 6.524)
-    mu = 0.25
+    gamma_0 = 0.12
+    nu = -0.07
+    sigma = 15
+    mu = 0.1
 
     gamma_str = str(int(gamma_0 * 1000) * 0.001)
     nu_str = str(int(nu * 1000) * 0.001)
@@ -25,16 +25,16 @@ if __name__ == '__main__':
     print('mu = ' + mu_str)
 
     # Definición de la grilla
-    Lx = 120
-    Ly = 120
+    Lx = 80
+    Ly = 80
     ti = 0
-    tf = 500
+    tf = 1000
 
     t_rate = 25
 
     dx = 0.5
     dy = 0.5
-    dt = 0.02
+    dt = 0.05
 
     [tmin, tmax, dt] = [0, tf, dt]
     [xmin, xmax, dx] = [- Lx / 2,  Lx / 2, dx]
@@ -48,13 +48,14 @@ if __name__ == '__main__':
     Ny = y_grid.shape[0]
     X, Y = np.meshgrid(x_grid, y_grid)
 
-    Z = np.ones((Ny, Nx))#np.exp((-X ** 2 - Y ** 2) / (2 * sigma ** 2))
+    c = 0.5
+    Z = np.exp((- (X ** 2 + Y ** 2) / (2 * sigma ** 2)) * (1 + 1j * c)) #np.ones((Nx, Ny)) #
 
     file = disc + 'mnustes_science/simulation_data/FD' + project_name
     subfile = nombre_pndls_gaussian(gamma_0, mu, nu, sigma) #+ '/a=' + A_str
     if not os.path.exists(file + subfile):
         os.makedirs(file + subfile)
-    pcm = plt.pcolormesh(x_grid, y_grid, Z, cmap=parula_map, shading='auto')
+    pcm = plt.pcolormesh(x_grid, y_grid, np.abs(Z), cmap=parula_map, shading='auto')
     cbar = plt.colorbar(pcm, shrink=1)
     cbar.set_label('$\gamma(\\vec{x})$', rotation=0, size=20, labelpad=-27, y=1.15)
     plt.xlabel('$y$', size='20')
@@ -66,8 +67,8 @@ if __name__ == '__main__':
 
     # Initial Conditions
     delta = np.sqrt(- nu + np.sqrt(gamma_0 ** 2 - mu ** 2))
-    x_0 = 1
-    y_0 = 1
+    x_0 = 0
+    y_0 = 0
     #U_1_init = U_2_init = 0.05 * np.random.rand(Ny, Nx)
     U_1_init = (np.sqrt(2) * delta / np.cosh(delta * (np.sqrt((X - x_0) ** 2 + (Y - y_0) ** 2) / np.sqrt(alpha)))) * np.real(np.exp(-1j * 0.5 * np.arccos(mu / gamma_0)))
     U_2_init = (np.sqrt(2) * delta / np.cosh(delta * (np.sqrt((X - x_0) ** 2 + (Y - y_0) ** 2) / np.sqrt(alpha)))) * np.imag(np.exp(-1j * 0.5 * np.arccos(mu / gamma_0)))
@@ -79,7 +80,7 @@ if __name__ == '__main__':
     operators = np.array([D2x, D2y])
     fields_init = [U_1_init, U_2_init]
     grids = [t_grid, x_grid, y_grid]
-    gamma = [gamma_0 * Z, 0]
+    gamma = [np.real(gamma_0 * Z), np.imag(gamma_0 * Z)]
 
     parameters = [alpha, beta, gamma, mu, nu]
 
@@ -114,7 +115,8 @@ if __name__ == '__main__':
     U2_light_reshaped = U2_light.reshape(U2_light.shape[0], -1)
 
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.set(xlim=(-40, 40), ylim=(-40, 40))
+    ax.set(xlim=(xmin, xmax), ylim=(ymin, ymax))
+    ax.grid()
     cax = ax.pcolormesh(x_grid, y_grid, modulo_light_1[0], vmin=0, vmax=0.55,cmap="turbo", shading='auto')
     cbar = fig.colorbar(cax)
     cbar.set_label('$|A(x, y)|$', rotation=0, size=20, labelpad=-27, y=1.13)

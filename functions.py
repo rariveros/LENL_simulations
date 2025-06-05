@@ -154,10 +154,12 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         sigma = parameters[5]
         d = parameters[6]
 
+        #[alpha, beta, gamma, mu, nu, sigma, dist]
+
         D = operators[0]
         DD = operators[1]
 
-        delta = gamma - (mu + (0 / sigma) * np.sqrt(alpha * nu))
+        delta = gamma - mu #- (1 / sigma) * np.sqrt(alpha * nu)
         sigma_r = sigma #np.sqrt(sigma * np.sqrt(nu * alpha)/ mu)
         dA = Der(D, A)
         dB = Der(D, B)
@@ -168,21 +170,59 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         dA_NL02 = np.abs(A) ** 2 * dA
         dB_NL02 = np.abs(B) ** 2 * dB
 
-        F = ((delta - gamma * ((x_grid + d / 2) ** 2 / (2 * sigma_r ** 2))) * A - 0.0 * (mu ** 2 / mu) * A
+        F = ((delta - mu * ((x_grid + d / 2) ** 2 / (2 * sigma_r ** 2))) * A - 0.5 * (mu ** 2 / mu) * A
              + (2 * alpha * nu / mu) * ddA
              - (2 * 1j * np.sqrt(alpha * nu) / mu) * (dA_NL01 + 2 * dA_NL02)
              - (9 / (2 * mu)) * np.abs(A) ** 4 * A
-             - (1 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dB
-             - (gamma / mu) * (0.5 * A ** 2 * np.conjugate(B) + np.abs(A) ** 2 * B - 1.5 * np.abs(B) ** 2 * B))
+             - (2 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dB
+             - 1 * (1 * (gamma / mu) * (0.5 * A ** 2 * np.conjugate(B) + np.abs(A) ** 2 * B - 1.5 * np.abs(B) ** 2 * B)))
 
-        G = ((delta - gamma * ((x_grid - d / 2) ** 2 / (2 * sigma_r ** 2))) * B - 0.0 * (mu ** 2 / mu) *  B
+        G = ((delta - mu * ((x_grid - d / 2) ** 2 / (2 * sigma_r ** 2))) * B - 0.5 * (mu ** 2 / mu) *  B
              + (2 * alpha * nu / mu) * ddB
              - (2 * 1j * np.sqrt(alpha * nu) / mu) * (dB_NL01 + 2 * dB_NL02)
              - (9 / (2 * mu)) * np.abs(B) ** 4 * B
-             + (1 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dA
-             + (gamma / mu) * (0.5 * B ** 2 * np.conjugate(A) + np.abs(B) ** 2 * A - 1.5 * np.abs(A) ** 2 * A))
+             + (2 * 1j * np.sqrt(alpha * nu) * gamma / mu) * dA
+             - 1 * (1 * (mu / mu) * (0.5 * B ** 2 * np.conjugate(A) + np.abs(B) ** 2 * A - 1.5 * np.abs(A) ** 2 * A)))
 
         fields = np.array([F, G])
+
+    elif eq == 'amplitude_one_envelope':
+        A = field_slices[0]
+        alpha = parameters[0]
+        beta = parameters[1]
+        gammas = parameters[2]
+        gamma = gammas[0]
+        mu = parameters[3]
+        nu = parameters[4]
+        sigma = parameters[5]
+        d = parameters[6]
+
+        D = operators[0]
+        DD = operators[1]
+
+        delta = gamma - (mu + 0 * (1 / sigma) * np.sqrt(alpha * nu))
+        sigma_r = sigma
+        ddA = Der(DD, A)
+
+        F = (delta - gamma * (x_grid ** 2 / (2 * sigma_r ** 2))) * A + (2 * alpha * nu / mu) * ddA - (9 / (2 * mu)) * np.abs(A) ** 4 * A
+
+        fields = np.array([F])
+
+    elif eq == 'SH':
+        U = field_slices[0]
+        [delta, gamma, q, epsilon] = parameters
+
+        D = operators[0]
+        DD = operators[1]
+        DDDD = operators[2]
+
+        dU = Der(D, U)
+        ddU = Der(DD, U)
+        ddddU = Der(DD, ddU)
+
+        F = epsilon * U - U ** 3 - ddddU - 2 * q ** 2 * ddU - q ** 4 * U + gamma * dU# + delta * U ** 2
+
+        fields = np.array([F])
 
     elif eq == 'PT_dimer':
         U1 = field_slices[0]
@@ -724,8 +764,41 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         F1 = D1[0] + D1[1] * U + D1[2] * V + (1 / 2) * (D1[3] * U ** 2 + 2 * D1[4] * U * V + D1[5] * V ** 2) + (1 / 6) * (D1[6] * U ** 3 + 3 * D1[7] * U ** 2 * V + 3 * D1[8] * U * V ** 2 + D1[9] * V ** 3)
         F2 = D2[0] + D2[1] * U + D2[2] * V + (1 / 2) * (D2[3] * U ** 2 + 2 * D2[4] * U * V + D2[5] * V ** 2) + (1 / 6) * (D2[6] * U ** 3 + 3 * D2[7] * U ** 2 * V + 3 * D2[8] * U * V ** 2 + D2[9] * V ** 3)
         fields = np.array([F1, F2])
-    return fields
 
+    elif eq == 'LLG_DMI':
+        mx, my, mz = field_slices
+        [A, D, gamma, alpha, h, dh, omega, K] = parameters
+        D1, D2 = operators[:2]  # D1 = 1ª derivada, D2 = 2ª derivada
+        [hx, hy, hz] = h
+        [Kx, Ky, Kz] = K
+
+        dmx = Der(D1, mx)
+        dmy = Der(D1, my)
+        dmz = Der(D1, mz)
+
+        ddmx = Der(D2, mx)
+        ddmy = Der(D2, my)
+        ddmz = Der(D2, mz)
+
+        hz_t = hz + dh * np.cos(omega * t_i)
+
+        # H_eff components
+        Hx = 2 * A * ddmx - D * dmy + hx - Kx * mx
+        Hy = 2 * A * ddmy + D * dmx + hy - Ky * my
+        Hz = 2 * A * ddmz + hz_t - Kz * mz
+
+        # Scalar product m ⋅ H_eff
+        mdotH = mx * Hx + my * Hy + mz * Hz
+
+        # Time derivatives according to explicit LLG
+        prefac = -gamma / (1 + alpha ** 2)
+
+        dmx_dt = prefac * (my * Hz - mz * Hy + alpha * (mx * mdotH - Hx))
+        dmy_dt = prefac * (mz * Hx - mx * Hz + alpha * (my * mdotH - Hy))
+        dmz_dt = prefac * (mx * Hy - my * Hx + alpha * (mz * mdotH - Hz))
+
+        fields = np.array([dmx_dt, dmy_dt, dmz_dt])
+    return fields
 
 def equations_FFT(eq, field_slices, parameters, x_grid, kappa):
     if eq == 'PNDLS_forced':

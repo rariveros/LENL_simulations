@@ -5,13 +5,13 @@ from scipy.special import factorial
 
 if __name__ == '__main__':
     # PARAMETERS
-    N = 8
+    N = 10
     Delta = 0.01
     Omega = 0.01
-    kappa = 0.4
+    kappa = 0.2
     g = 0.01
     gamma = 0.001
-    T = 500
+    T = 3000
     dt = 0.1
     steps = int(T / dt)
     times = np.linspace(0, T, steps)
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     phase = 0.5 * np.pi
     alpha1 = 0.0 + 0.0 * 1j
-    alpha2 = 0.01 * np.exp(-1j * phase) # alpha1 * 1j #
+    alpha2 = 0.1 * np.exp(-1j * phase) # alpha1 * 1j #
     coh1 = coherent_state(alpha1, N)
     coh2 = coherent_state(alpha2, N)
     psi0 = np.kron(coh1, coh2)

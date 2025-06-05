@@ -74,6 +74,55 @@ def RK4_FD_ham(eq, fields, parameters, grids, dt, Nt, operators, t_rate):
             time_grid.append(t_grid[i])
     return fields, fields_history, time_grid
 
+def RK5_FD(eq, fields, parameters, grids, dt, Nt, operators, t_rate):
+    t_grid = grids[0]       # Time grid
+    x_grid = grids[1]       # Spatial grid (x)
+    y_grid = grids[2]       # Spatial grid (y)
+
+    fields_history = []
+    time_grid = []
+
+    # Coefficients for Cash-Karp RK5 (Fehlberg tableau)
+    a = [0, 1/5, 3/10, 3/5, 1, 7/8]
+    b = [
+        [],
+        [1/5],
+        [3/40, 9/40],
+        [3/10, -9/10, 6/5],
+        [-11/54, 5/2, -70/27, 35/27],
+        [1631/55296, 175/512, 575/13824, 44275/110592, 253/4096]
+    ]
+    c = [37/378, 0, 250/621, 125/594, 0, 512/1771]  # 5th-order solution
+
+    for i in range(Nt - 1):
+        t = t_grid[i]
+        old_fields = fields.copy()
+
+        # Preallocate k1 to k6
+        k = [None] * 6
+
+        # Compute stages
+        k[0] = equations_FD(eq, old_fields, t, x_grid, y_grid, parameters, operators)
+        for j in range(1, 6):
+            y_temp = old_fields.copy()
+            for l in range(j):
+                y_temp += dt * b[j][l] * k[l]
+            k[j] = equations_FD(eq, y_temp, t + a[j]*dt, x_grid, y_grid, parameters, operators)
+
+        # Combine stages to update field (5th order accurate)
+        new_fields = old_fields.copy()
+        for j in range(6):
+            new_fields += dt * c[j] * k[j]
+
+        fields = new_fields
+
+        # Save history every t_rate steps
+        if i % t_rate == 0:
+            fields_history.append(fields.copy())
+            time_grid.append(t)
+
+    return fields, fields_history, time_grid
+
 
 def RK4_ode(eq, vector, t_grid, parameters, dt, Nt):
     vector_history = []
