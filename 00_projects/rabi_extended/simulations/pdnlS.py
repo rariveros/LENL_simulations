@@ -5,15 +5,15 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/rabi_extended'
+    project_name = '/rabi_windows'
     disc = 'D:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
     t_rate = 100                                        # CADA CUANTAS ITERACIONES GUARDA
     dt = 0.01
-    T = 5000
+    T = 2000
     dx = 1
-    ies = np.arange(30.5, 50.5, 1)
+    ies = [1]
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-100, 100, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
@@ -21,17 +21,17 @@ if __name__ == '__main__':
     T = tmax
     Nt = t_grid.shape[0]
     Nx = x_grid.shape[0]
-    U_1_init = 0.1 * np.random.rand(Nx)#
-    U_2_init = 0.1 * np.random.rand(Nx)#
+    U_1_init = 0.01 * np.random.rand(Nx)#
+    U_2_init = 0.01 * np.random.rand(Nx)#
     print("N° of simulations: " + str(len(ies)))
     for i in ies:
-        alpha = 2 * 6.524
+        alpha = 4
         beta = 1
         nu = 0.018
         mu = 0.1
-        dist = i
-        gamma_0 = 0.157
-        sigma = 12.67 #6 * m / n
+        dist = 28
+        gamma_0 = 0.16
+        sigma = 12 #6 * m / n
 
         [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu, nu, sigma, gamma_0], 0)
         gamma_str = str(int(gamma_0 * 1000) * 0.001)
@@ -89,6 +89,7 @@ if __name__ == '__main__':
         np.savetxt(file + subfile + '/field_real.txt', U1_light, delimiter=',')
         np.savetxt(file + subfile + '/field_img.txt', U2_light, delimiter=',')
         np.savetxt(file + subfile + '/parameters.txt', parameters_np, delimiter=',')
+        np.savetxt(file + subfile + '/final_envelope.txt', amplitude_envelope_1, delimiter=',')
         np.savetxt(file + subfile + '/X.txt', x_grid, delimiter=',')
         np.savetxt(file + subfile + '/T.txt', t_light, delimiter=',')
 
@@ -112,7 +113,7 @@ if __name__ == '__main__':
         plt.savefig(file + subfile + '/forcing.png', dpi=300)
         plt.close()
 
-        pcm = plt.pcolormesh(x_grid, t_light, modulo_light_1 / np.sqrt(beta), cmap=parula_map, shading='auto')
+        pcm = plt.pcolormesh(x_grid, t_light / (w_1 / (2 * np.pi)), modulo_light_1 / np.sqrt(beta), cmap=parula_map, shading='auto')
         cbar = plt.colorbar(pcm, shrink=1)
         cbar.set_label('$|A|$', rotation=0, size=20, labelpad=-27, y=1.1)
         plt.xlim([x_grid[0], x_grid[-1]])
