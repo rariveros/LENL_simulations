@@ -5,15 +5,15 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/rabi_windows'
+    project_name = '/rabi_extended'
     disc = 'D:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
     t_rate = 100                                        # CADA CUANTAS ITERACIONES GUARDA
     dt = 0.01
-    T = 2000
+    T = 5000
     dx = 1
-    ies = [1]
+    ies = np.arange(31.5, 29.9, -0.5)
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-100, 100, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
@@ -21,17 +21,19 @@ if __name__ == '__main__':
     T = tmax
     Nt = t_grid.shape[0]
     Nx = x_grid.shape[0]
-    U_1_init = 0.01 * np.random.rand(Nx)#
-    U_2_init = 0.01 * np.random.rand(Nx)#
+
+    IC_directory = "D:/mnustes_science/simulation_data/FD/rabi_extended/alpha=13.0480/beta=1.000/mu=0.1000/nu=0.0180/sigma=12.6700/gamma=0.1570/dist=32.000"
+    U_1_init = np.loadtxt(IC_directory + "/field_real.txt", delimiter=',')[-1, :] #0.01 * np.random.rand(Nx) #
+    U_2_init = np.loadtxt(IC_directory + "/field_img.txt", delimiter=',')[-1, :] #0.01 * np.random.rand(Nx) #
     print("N° of simulations: " + str(len(ies)))
     for i in ies:
-        alpha = 4
+        alpha = 13.0480
         beta = 1
         nu = 0.018
         mu = 0.1
-        dist = 28
-        gamma_0 = 0.16
-        sigma = 12 #6 * m / n
+        dist = i
+        gamma_0 = 0.1570
+        sigma = 12.67 #6 * m / n
 
         [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu, nu, sigma, gamma_0], 0)
         gamma_str = str(int(gamma_0 * 1000) * 0.001)
@@ -71,6 +73,9 @@ if __name__ == '__main__':
         U2_light = np.array(fields_history)[:, 1]
         U_complex = U1_light + 1j * U2_light
         t_light = time_grid
+
+        U_1_init = U1_light[-1, :]  # 0.01 * np.random.rand(Nx) #
+        U_2_init = U2_light[-1, :]  # 0.01 * np.random.rand(Nx) #
 
         # Definiendo variables finales
         modulo_light_1 = np.absolute(U_complex)
@@ -113,7 +118,8 @@ if __name__ == '__main__':
         plt.savefig(file + subfile + '/forcing.png', dpi=300)
         plt.close()
 
-        pcm = plt.pcolormesh(x_grid, t_light / (w_1 / (2 * np.pi)), modulo_light_1 / np.sqrt(beta), cmap=parula_map, shading='auto')
+        #t_light/ (w_1 / (2 * np.pi))
+        pcm = plt.pcolormesh(x_grid, t_light, modulo_light_1 / np.sqrt(beta), cmap=parula_map, shading='auto')
         cbar = plt.colorbar(pcm, shrink=1)
         cbar.set_label('$|A|$', rotation=0, size=20, labelpad=-27, y=1.1)
         plt.xlim([x_grid[0], x_grid[-1]])

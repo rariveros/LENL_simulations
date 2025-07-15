@@ -24,7 +24,7 @@ rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 #rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
-#import cv2
+import cv2
 
 #### SCIPY ###
 from scipy.signal import filtfilt

@@ -5,7 +5,7 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/rabi_windows/dimensionless/var_dist'
+    project_name = '/rabi_windows/test'
     disc = 'D:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
@@ -13,8 +13,8 @@ if __name__ == '__main__':
     dt = 0.025
     T = 1000
     dx = 0.25
-    ies = np.arange(0.25, 40.1, 0.25)
-    jotas = [0.27, 0.28, 0.29, 0.30]
+    ies = [20] #np.arange(0.25, 40.1, 0.25)
+    jotas = [0.28] #[0.27, 0.28, 0.29, 0.30]
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-70, 70, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
@@ -49,7 +49,7 @@ if __name__ == '__main__':
             operators = np.array([D2])
             fields_init = [U_1_init, U_2_init]
             grids = [t_grid, x_grid, 0]
-            phi = np.pi
+            phi = 1.0 * np.pi
             gamma_complex = gamma_0 * (np.exp(- (x_grid - dist / 2) ** 2 / (2 * sigma ** 2)) + np.exp(1j * phi) * np.exp(- (x_grid + dist / 2) ** 2 / (2 * sigma ** 2)))
             gamma_real = np.real(gamma_complex)
             gamma_img = np.imag(gamma_complex)

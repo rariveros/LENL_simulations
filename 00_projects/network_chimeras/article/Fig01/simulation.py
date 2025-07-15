@@ -63,7 +63,7 @@ if __name__ == '__main__':
     project_name = '/network_chimeras/FIG01/erdos_renyi'
     disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
-    mean_degrees = [22]         #DESDE MEANDEGREE = 25 PARA ARRIBA HAY QUE USAR T TOTAL 15000, PARA ABAJO DE ESE VALOR SE PUEDE USAR T TOTAL DE 10000
+    mean_degrees = [18, 26]         #DESDE MEANDEGREE = 25 PARA ARRIBA HAY QUE USAR T TOTAL 15000, PARA ABAJO DE ESE VALOR SE PUEDE USAR T TOTAL DE 10000
     samples = [0]
     for mean_degree in mean_degrees:
         print("########### MEAN DEGREE = " + str(mean_degree) + " ###########")
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
             ########### PREPARING SIMULATION ########
             N_nodes = n
-            [tmin, tmax, dt] = [0, 10000, 0.05]
+            [tmin, tmax, dt] = [0, 5000, 0.05]
             t_grid = np.arange(tmin, tmax + dt, dt)             # TEMPORAL GRID DEFINITION
             [xmin, xmax, dx] = [0, N_nodes, 1]
             x_grid = np.arange(xmin, xmax, dx)                  # SPATIAL GRID DEFINITION
@@ -135,12 +135,18 @@ if __name__ == '__main__':
             if not os.path.exists(file + subfile):
                 os.makedirs(file + subfile)
 
-            np.savetxt(file + subfile + '/U.txt', U_light, delimiter=',')
-            np.savetxt(file + subfile + '/V.txt', V_light, delimiter=',')
-            np.savetxt(file + subfile + '/T.txt', t_light, delimiter=',')
+
+            np.savetxt(file + subfile + '/U.txt', U_light[::10], delimiter=',')
+            np.savetxt(file + subfile + '/V.txt', V_light[::10], delimiter=',')
+            np.savetxt(file + subfile + '/T.txt', t_light[::10], delimiter=',')
             np.savetxt(file + subfile + '/X.txt', x_grid, delimiter=',')
             np.savetxt(file + subfile + '/params.txt', parameters_np, delimiter=',')
             np.savetxt(file + subfile + '/L.txt', L_dense, delimiter=',')
+
+            N_init = int(0.9 * Nt)
+            np.savetxt(file + subfile + '/U_lyap.txt', U_light[N_init:, :], delimiter=',')
+            np.savetxt(file + subfile + '/V_lyap.txt', V_light[N_init:, :], delimiter=',')
+            np.savetxt(file + subfile + '/T_lyap.txt', t_light[N_init:], delimiter=',')
 
             now = datetime.datetime.now()
             print('Hora de Término: ' + str(now.hour) + ':' + str(now.minute) + ':' + str(now.second))

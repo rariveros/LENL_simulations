@@ -54,10 +54,10 @@ def jacobians_FD(eq, fields, t_grid, x_grid, y_grid, parameters, operators):
 
 if __name__ == '__main__':
 
-    dir = "D:/mnustes_science/simulation_data/FD/network_chimeras/FIG01/erdos_renyi/k=0.0150/mean_degree=22.00"
-    U_light = np.loadtxt(dir + '/U.txt', delimiter=',')
-    V_light = np.loadtxt(dir + '/V.txt', delimiter=',')
-    t_light = np.loadtxt(dir + '/T.txt', delimiter=',')
+    dir = "D:/mnustes_science/simulation_data/FD/network_chimeras/FIG01/erdos_renyi/k=0.0150/mean_degree=26.00"
+    U_light = np.loadtxt(dir + '/U_lyap.txt', delimiter=',')
+    V_light = np.loadtxt(dir + '/V_lyap.txt', delimiter=',')
+    t_light = np.loadtxt(dir + '/T_lyap.txt', delimiter=',')
     x_grid = np.loadtxt(dir + '/X.txt', delimiter=',')
     laplacian = np.loadtxt(dir + '/L.txt', delimiter=',')
     parameters_np = np.loadtxt(dir + '/params.txt', delimiter=',')
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     p = mean_degree / (n - 1)
 
     t_init = 0
-    t_final = 10000
+    t_final = 5000
     i_0 = np.argmin(np.abs(t_light - t_init))
     i_f = np.argmin(np.abs(t_light - t_final))
     power_threshold = 1.5
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     print('Hora de Inicio: ' + str(now.hour) + ':' + str(now.minute) + ':' + str(now.second))
     time_init = time.time()
 
-    T_00 = int(0.95 * Nt)
+    T_00 = int(0.8 * Nt)
     T_01 = int(1.00 * Nt)
     I = np.eye(2 * Nx)
     lyap = []
@@ -166,6 +166,7 @@ if __name__ == '__main__':
     np.savetxt(file + '/arg_lyap.txt', arg_lyap_pos, delimiter=',')
     np.savetxt(file + '/x_lyap.txt', x, delimiter=',')
     np.savetxt(file + '/lyap_spectrum.txt', lyap_mean, delimiter=',')
+    np.savetxt(file + '/Q_pos.txt', Q_pos, delimiter=',')
 
     #### SPATIOTEMPORAL DIAGRAMS ####
 

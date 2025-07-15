@@ -12,27 +12,27 @@ if __name__ == '__main__':
     I0L = np.argmin(np.abs(XL - X0L))
     I0R = np.argmin(np.abs(XR - X0R))
 
-    fig, ax1 = plt.subplots(nrows=1, ncols=1, figsize=(9, 4), facecolor='black')
+    fig, ax1 = plt.subplots(nrows=1, ncols=1, figsize=(9, 4))#, facecolor='black')
     ax1.set_xlim([-6, 6])
     ax1.set_ylim([-1.1, 1.1])
-    ax1.set_facecolor('black')
-    ax1.tick_params(colors='white', labelsize=18)  # color de las marcas y números
-    ax1.spines['bottom'].set_color('white')
-    ax1.spines['top'].set_color('white')
-    ax1.spines['right'].set_color('white')
-    ax1.spines['left'].set_color('white')
-    ax1.yaxis.label.set_color('white')
-    ax1.xaxis.label.set_color('white')
-    ax1.set_xlabel("$t\ \\textrm{(s)}$", fontsize=20)
+    #ax1.set_facecolor('black')
+    ax1.tick_params(colors='k', labelsize=18)  # color de las marcas y números
+    #ax1.spines['bottom'].set_color('white')
+    #ax1.spines['top'].set_color('white')
+    #ax1.spines['right'].set_color('white')
+    #ax1.spines['left'].set_color('white')
+    #ax1.yaxis.label.set_color('white')
+    #ax1.xaxis.label.set_color('white')
+    ax1.set_xlabel("$x\ \\textrm{(mm)}$", fontsize=20)
     #ax1.set_ylabel("$\Delta M$", fontsize=20)
 
     # Punto animado
     line_1, = ax1.plot(XL, np.real(F1 * np.exp(-1j * t[0])), color="r", zorder=10, lw=2)
     line_2, = ax1.plot(XR, np.real(F2 * np.exp(-1j * t[0])), color="b", zorder=10, lw=2)
-    scat_1 = ax1.scatter(X0L, np.real(F1[I0L] * np.exp(-1j * t[0])), s=80, c="w", zorder=10)
-    scat_2 = ax1.scatter(X0L, np.real(F2[I0R] * np.exp(-1j * t[0])), s=80, c="w", zorder=10)
-    scat_3 = ax1.scatter(X0L, np.real(F2[0] * np.exp(-1j * t[0])), s=80, c="w", zorder=10)
-    ax1.hlines(0, -6, 6, colors="white", linestyles="dashed", lw=1)
+    scat_1 = ax1.scatter(X0L, np.real(F1[I0L] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
+    scat_2 = ax1.scatter(X0L, np.real(F2[I0R] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
+    scat_3 = ax1.scatter(X0L, np.real(F2[0] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
+    ax1.hlines(0, -6, 6, colors="k", linestyles="dashed", lw=1)
     plt.tight_layout()
 
     # Función de animación

@@ -20,8 +20,9 @@ if __name__ == '__main__':
     tau = np.tanh(k * d)
     w_1 = np.sqrt(g * k * tau)
 
-
     FREQS = []
+    FREQS_STD = []
+    AMPDS = []
     DISTS = []
     for directory_01 in directories:
         dir_02 = working_directory + "/" + directory_01
@@ -36,7 +37,7 @@ if __name__ == '__main__':
 
         T = T / (w_1 / np.pi)
         Nt = len(T)
-        t0 = int(0.25 * Nt)
+        t0 = int(0.2 * Nt)
         Nx = len(X)
 
         T = T[t0:] - T[t0]
@@ -69,13 +70,13 @@ if __name__ == '__main__':
             freq = 1 / np.mean(np.diff(tau_R))
             freq_std = 1 * np.abs(np.std(np.diff(tau_R)) / np.mean(np.diff(tau_R)) ** 2)
         beta = 0.004811649356064012
-        FREQS.append(np.amax(Z_mod) / np.sqrt(beta))
+        FREQS.append(freq)
+        FREQS_STD.append(freq_std)
+        AMPDS.append(np.amax(Z_mod) / np.sqrt(beta))
         DISTS.append(dist)
     FREQS = np.array(FREQS)
     DISTS = np.array(DISTS)
-    plt.plot(DISTS, FREQS, color="r", lw=2)
-    plt.xlim(30, 50)
-    #plt.ylim(0, 100)
-    plt.show()
-    #np.savetxt(save_directory + '/frequencies.txt', FREQS, delimiter=',')
-    #np.savetxt(save_directory + '/dists.txt', DISTS, delimiter=',')
+    np.savetxt(save_directory + '/frequencies.txt', FREQS, delimiter=',')
+    np.savetxt(save_directory + '/dists.txt', DISTS, delimiter=',')
+    np.savetxt(save_directory + '/freq_std.txt', FREQS_STD, delimiter=',')
+    np.savetxt(save_directory + '/ampds.txt', AMPDS, delimiter=',')
