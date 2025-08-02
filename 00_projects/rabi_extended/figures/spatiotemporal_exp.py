@@ -14,7 +14,7 @@ if __name__ == "__main__":
     Z = filtro_superficie(Z, 2, "YX")
     Nx = len(X)
     # FIXES
-    fig, ax = plt.subplots()
+
     ti, tf = 10, 49
     xi, xf = -100, 100
 

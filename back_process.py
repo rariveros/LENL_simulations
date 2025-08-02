@@ -421,6 +421,26 @@ def pix_to_mm(img, scale):
     cv2.destroyAllWindows()
     return pix_to_mm
 
+def injection_length(img, scale):
+    def click_event(event, x, y, flags, params):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            points_i = (x, y)
+            points.append(points_i)
+            cv2.circle(img, (x, y), radius=4, color=(0, 0, 255), thickness=-1)
+            cv2.imshow('image', img)
+            if len(points) >= 2:
+                cv2.line(img, (points[-1]), (points[-2]), (0, 255, 0), thickness=2, lineType=8)
+                cv2.circle(img, (points[-1]), radius=4, color=(0, 0, 255), thickness=-1)
+                cv2.circle(img, (points[-2]), radius=4, color=(0, 0, 255), thickness=-1)
+            cv2.imshow('image', img)
+    cv2.imshow('image', img)
+    points = []
+    cv2.setMouseCallback('image', click_event)
+    cv2.waitKey(0)
+    injection_left, injection_right = np.abs(points[-1][0] / scale), np.abs(points[-2][0] / scale)
+    cv2.destroyAllWindows()
+    return injection_left, injection_right
+
 
 def define_window(img, scale):
     def click_event(event, x, y, flags, params):
