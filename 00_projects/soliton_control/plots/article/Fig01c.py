@@ -15,8 +15,8 @@ if __name__ == '__main__':
     centers_std = np.loadtxt(working_directory + '/std_1.txt', delimiter=',')
     nus = np.loadtxt(working_directory + '/nus_1.txt', delimiter=',')
 
-    fig, ax = plt.subplots(1, 1, figsize=(5.68, 2.6), dpi=300)
-    ax.errorbar(nus[:-1], -centers[:-1], centers_std[:-1], marker='o', ls='', ecolor="k", mec='black', color="k", ms=10, zorder=10)
+    fig, ax = plt.subplots(1, 1, figsize=(4.5, 2.6), dpi=300)
+    ax.errorbar(nus[:-1], -centers[:-1], centers_std[:-1], marker='o', ls='', ecolor="k", mec='black', color="k", ms=8, zorder=10)
     ax.hlines(0, -0.11, -0.06, colors="k", lw=0.8)
     ax.set_xlim([-0.107, -0.064])
     ax.set_xlabel(r'$\nu$', size=17)

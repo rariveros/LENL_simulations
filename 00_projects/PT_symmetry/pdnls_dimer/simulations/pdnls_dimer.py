@@ -12,7 +12,7 @@ if __name__ == '__main__':
     eq = 'pdnlS_dimer'
     t_rate = 1
 
-    nu = 0.0
+    nu = 0.1
     mu = 0.1
     Gammas = np.arange(0.09, 0.2, 0.02)
     K = [0.1]#np.arange(0.00, 0.51, 0.02)
@@ -34,9 +34,9 @@ if __name__ == '__main__':
     V2_init = np.conjugate(V1_init)
     for gamma in Gammas:
         for k in K:
-            Delta_str = f"{nu:.{4}f}"
-            gamma_str = f"{mu:.{4}f}"
-            Omega_str = f"{gamma:.{4}f}"
+            nu_str = f"{nu:.{4}f}"
+            mu_str = f"{mu:.{4}f}"
+            gamma_str = f"{gamma:.{4}f}"
             k_str = f"{k:.{4}f}"
 
             print("####### " + k_str + " #######")
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
             # Guardando datos
             file = disc + route + project_name
-            subfile = "/nu=" + Delta_str + "/mu=" + gamma_str + "/k=" + k_str + "/gamma=" + Omega_str
+            subfile = "/nu=" + nu_str + "/mu=" + mu_str + "/gamma=" + gamma_str + "/k=" + k_str
             if not os.path.exists(file + subfile):
                 os.makedirs(file + subfile)
 

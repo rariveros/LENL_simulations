@@ -97,7 +97,7 @@ if __name__ == '__main__':
     delta = 0.0
 
     # PARAMETROS INICIALES (P = CANTIDAD CONSERVADA, X = PORCENTAJE DE INFORMACIÓN INICIAL EN DIMERO 2) ####### Vale pico esto, encuentra los puntos estacionarios como la gente
-    Ns = [15.0] #[5.0, 10.0, 15.0, 20.0, 25.0, 30.0]
+    Ns = [20.0] #[5.0, 10.0, 15.0, 20.0, 25.0, 30.0]
     theta_0 = 0.0
 
     [tmin, tmax, dt] = [0, 300, 0.025]
@@ -111,13 +111,13 @@ if __name__ == '__main__':
     U_init = []
     V_init = []
     phi_initial = []
-    phi = [-2 * np.pi, np.pi, 0.0, -np.pi, 2 * np.pi] #np.arange(-2 * np.pi, 2.01 * np.pi, 0.5 * np.pi)
+    phi = np.arange(-2 * np.pi, 2 * np.pi, 0.025 * np.pi) #[-2 * np.pi, np.pi, 0.0, -np.pi, 2 * np.pi] #np.arange(-2 * np.pi, 2.01 * np.pi, 0.5 * np.pi)
     for i in range(len(Ns)):
         N = Ns[i]
         z_plus = ((N + 2) ** 2 - (2 * gamma ** 2) / (k**2) + ((2 * gamma * (-1) ** n) / (k)) * (gamma ** 2 / (k ** 2) - 4 * (1 + N)) ** 0.5) ** 0.5
         z_minus = ((N + 2) ** 2 - (2 * gamma ** 2) / (k**2) - ((2 * gamma * (-1) ** n) / (k)) * (gamma ** 2 / (k ** 2) - 4 * (1 + N)) ** 0.5) ** 0.5
         dz = N / 12
-        z = np.arange(-N + dz, N - dz, dz) #
+        z = np.array([0])#np.arange(-N + dz, N - dz, dz) #
          #[-0.1, 0.1] #np.arange(0, np.pi, np.pi * 0.99) #n * np.pi
         Nphi = len(phi)
         R0 = np.sqrt(N / 2)
@@ -144,6 +144,16 @@ if __name__ == '__main__':
     U_init = np.array([x for arr in U_init for x in arr])
     V_init = np.array([x for arr in V_init for x in arr])
     phi_initial = np.array([x for arr in phi_initial for x in arr])
+
+    z_extra = [-17, -18]
+    phi_extra = [0, 0]
+    for i in range(len(z_extra)):
+        R1 = np.sqrt((N - z_extra[i]) / 2)
+        R2 = np.sqrt((N + z_extra[i]) / 2)
+        U_init = np.append(U_init, R1 * np.exp(1j * theta_0))
+        V_init = np.append(V_init, R2 * np.exp(1j * (theta_0 + phi_extra[i])))
+        phi_initial = np.append(phi_initial, phi_extra[i])
+
     # EMPAQUETAMIENTO DE PARAMETROS PARA SIMULACIÓN
     operators = [0]
     fields_init = [U_init, V_init]
@@ -198,64 +208,34 @@ if __name__ == '__main__':
     z_mp_1 = -((N + 2) ** 2 - (2 * gamma ** 2) / (k ** 2) + ((2 * gamma) / (k ** 2)) * (
                 gamma ** 2 - 4 * k * (-1) ** n * (1 + N)) ** 0.5) ** 0.5
 
-    """
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.view_init(elev=10, azim=-137)
-    for i in range(len(N_variable[0, :])):
-        #ax.plot3D(N_variable[:, i], z_variable[:, i], np.unwrap(arg_variable, axis=0)[:, i], label='3D curve', color=COLOR[i], lw=0.2)
-        ax.plot3D(N_variable[:, i], z_variable[:, i], np.unwrap(arg_variable, axis=0)[:, i], label='3D curve', color="k", lw=0.5)
-        ax.plot3D(N_variable[:, i], z_variable[:, i], -np.unwrap(arg_variable, axis=0)[:, i], label='3D curve', color="k", lw=0.5)
-    ax.set_xlim([0, 30])
-    ax.set_ylim([-30, 30])
-    ax.set_zlim([-np.pi / 2, np.pi / 2])
-    ax.set_xlabel('$N$')
-    ax.set_ylabel('$z$')
-    ax.set_zlabel(r'$\phi$')
-    ax.set_box_aspect([3, 1, 1])
-
-    # Etiquetas de ejes
-    ax.set_xlabel('$N$', color='black')
-    ax.set_ylabel('$z$', color='black')
-    ax.set_zlabel(r'$\phi$', color='black')
-
-    ax.tick_params(colors='black')  # ticks en negro
-    ax.xaxis.label.set_color('black')
-    ax.yaxis.label.set_color('black')
-    ax.zaxis.label.set_color('black')
-
-    # Quitar fondo gris (los "panels")
-    ax.xaxis.pane.fill = False
-    ax.yaxis.pane.fill = False
-    ax.zaxis.pane.fill = False
-
-    # Quitar grid
-    ax.grid(False)
-
-    # Opcional: eliminar líneas de los "spines" (bordes de la caja)
-    ax.xaxis._axinfo['grid']['color'] = (1, 1, 1, 0)
-    ax.yaxis._axinfo['grid']['color'] = (1, 1, 1, 0)
-    ax.zaxis._axinfo['grid']['color'] = (1, 1, 1, 0)
-
-    plt.show()
-    plt.close()
-    """
-
     fig, ax = plt.subplots(1, 1, figsize=(8, 4))
 
-    ax.scatter(0, 0,zorder=5, color="g", s=10)
-    ax.scatter(np.pi, 0,zorder=5, color="g", s=10)
-    ax.scatter(0, z_mp_0,zorder=5, color="g", s=10)
-    ax.scatter(0, z_pp_0, zorder=5, color="g", s=10)
-    ax.scatter(0, z_pm_0, zorder=5, color="r", s=10)
-    ax.scatter(0, z_mm_0, zorder=5, color="r", s=10)
+    scattersize = 70
 
-    ax.plot(arg_variable, z_variable[::], color="k", lw=1)
-    ax.plot(arg_variable, -z_variable[::], color="k", lw=1)
+    ax.scatter(0, 0, zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
+    ax.scatter(np.pi, 0,zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
+    ax.scatter(-np.pi, 0, zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
+    ax.scatter(0, z_mp_0,zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
+    ax.scatter(0, z_pp_0, zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
+    ax.scatter(0, z_pm_0, zorder=5, color="w", edgecolor="k", s=scattersize, linewidths=2)
+    ax.scatter(0, z_mm_0, zorder=5, color="w", edgecolor="k", s=scattersize, linewidths=2)
+
+    xticks = [-2 * np.pi, -np.pi, 0, np.pi, 2 * np.pi]
+    xtick_labels = [r"$-2\pi$", r"$-\pi$", r"$0$", r"$\pi$", r"$2\pi$"]
+    ax.set_xticks(xticks)
+    ax.set_xticklabels(xtick_labels)
+    ax.tick_params(axis="both", direction="in", labelsize=23)
+
+    ax.plot(arg_variable, z_variable[::], color="gray", lw=0.7)
+    ax.plot(arg_variable, -z_variable[::], color="gray", lw=0.7)
+    ax.plot(arg_variable + 2 * np.pi, z_variable[::], color="gray", lw=0.7)
+    ax.plot(arg_variable + 2 * np.pi, -z_variable[::], color="gray", lw=0.7)
+    ax.plot(arg_variable - 2 * np.pi, z_variable[::], color="gray", lw=0.7)
+    ax.plot(arg_variable - 2 * np.pi, -z_variable[::], color="gray", lw=0.7)
     ax.set_xlim([-2 * np.pi, 2 * np.pi])
-    ax.set_ylim([-N, N])
-    ax.set_xlabel('r$\phi$')
-    ax.set_ylabel('$z$')
+    ax.set_ylim([-N * 1.02, N * 1.02])
+    ax.set_xlabel('$\phi$', fontsize=28)
+    ax.set_ylabel('$z$', fontsize=28)
 
     plt.tight_layout()
     plt.savefig("test.png", dpi=300)

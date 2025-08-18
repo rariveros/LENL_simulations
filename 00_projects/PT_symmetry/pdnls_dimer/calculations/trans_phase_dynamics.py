@@ -5,8 +5,8 @@ from time_integrators import *
 
 if __name__ == '__main__':
     # Define the grid
-    phi1 = np.arange(-np.pi, np.pi, 0.005)
-    phi2 = np.arange(-np.pi, np.pi, 0.005)
+    phi1 = np.arange(-np.pi, np.pi, 0.02)
+    phi2 = np.arange(-np.pi, np.pi, 0.02)
     PHI1, PHI2 = np.meshgrid(phi1, phi2)
 
     # Define the functions F and G
@@ -27,16 +27,16 @@ if __name__ == '__main__':
 
 
     # Parameters
-    [nu, mu, k] = [0.1, 0.1, 0.05]
-
-    gamma1 = 0.195
-    F_values1 = F(PHI1, PHI2, gamma1, nu, mu, k)
-    G_values1 = G(PHI1, PHI2, gamma1, nu, mu, k)
+    [nu, mu, k] = [0., 0.1, 0.05]
+    gamma = 0.14
+    k1 = 0.0
+    F_values1 = F(PHI1, PHI2, gamma, nu, mu, k1)
+    G_values1 = G(PHI1, PHI2, gamma, nu, mu, k1)
 
     # Compute values for gamma = 0.35 (Right plot)
-    gamma2 = 0.25
-    F_values2 = F(PHI1, PHI2, gamma2, nu, mu, k)
-    G_values2 = G(PHI1, PHI2, gamma2, nu, mu, k)
+    k2 = 0.03
+    F_values2 = F(PHI1, PHI2, gamma, nu, mu, k2)
+    G_values2 = G(PHI1, PHI2, gamma, nu, mu, k2)
 
     # Create figure with 2 subplots
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))  # 1 row, 2 columns
@@ -49,10 +49,10 @@ if __name__ == '__main__':
     cbar.set_label(r"$|\vec{F}(\phi_1, \phi_2)|$", rotation=0, size=18, labelpad=-50, y=1.1)
     axes[0].set_xlabel(r'$\phi$', fontsize=20)
     axes[0].set_ylabel(r'$\theta$', fontsize=20)
-    axes[0].set_title(r'$\gamma = 0.195$', fontsize=15)
+    axes[0].set_title(r'$\kappa = 0.00$', fontsize=15)
     axes[0].tick_params(axis="y", direction="in", labelsize=15, left=True, right=True, labelleft=True, labelright=False)
     axes[0].tick_params(axis="x", direction="in", labelsize=15, top=True, bottom=True, labeltop=False, labelbottom=True)
-    #axes[0].set_xlim(-np.pi, np.pi)
+    axes[0].set_xlim(-np.pi, np.pi)
 
     # Right subplot: Streamplot for gamma = 0.35
     axes[1].streamplot(PHI1, PHI2, F_values2, G_values2, color='k', density=4, linewidth=1)
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     cbar.set_label(r"$|\vec{F}(\phi_1, \phi_2)|$", rotation=0, size=18, labelpad=-30, y=1.1)
     axes[1].set_xlabel(r'$\phi$', fontsize=20)
     axes[1].set_ylabel(r'$\theta$', fontsize=20)
-    axes[1].set_title(r'$\gamma = 0.250$', fontsize=15)
+    axes[1].set_title(r'$\kappa = 0.03$', fontsize=15)
     axes[1].tick_params(axis="y", direction="in", labelsize=15, left=True, right=True, labelleft=False, labelright=False)
     axes[1].tick_params(axis="x", direction="in", labelsize=15, top=True, bottom=True, labeltop=False, labelbottom=True)
 

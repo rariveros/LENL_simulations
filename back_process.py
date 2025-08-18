@@ -15,6 +15,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import proj3d
 
+import networkx as nx
+
 import warnings
 #warnings.filterwarnings("ignore", category=SyntaxWarning)
 
@@ -39,6 +41,8 @@ from scipy.integrate import solve_ivp
 from scipy.sparse import diags
 from scipy import integrate
 from scipy.optimize import fsolve
+from scipy.sparse import diags, hstack, vstack, identity
+from scipy.linalg import expm
 
 #### OTROS ###
 import numpy as np

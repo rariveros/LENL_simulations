@@ -22,7 +22,7 @@ if __name__ == '__main__':
     eq = 'PT_dimer'
     t_rate = 1
     dt = 0.4
-    T = 1500
+    T = 5000
 
     disco = 'D:/'
     initial_dir_data = str(disco) + 'Users/mnustes_science/PT_fluids/mnustes_science/simulation_data'
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     dx = x_grid[1] - x_grid[0]
     #[Z_r_00, Z_i_00, Z_r_01, Z_i_01] = [Z_r_00[-1, :], Z_i_00[-1, :], Z_r_01[-1, :], Z_i_01[-1, :]]
 
-    distances = np.arange(5, 40, 5)
+    distances = np.arange(5, 40, 0.25)
     PHI_Rs = []
     PHI_Ls = []
     times = []
@@ -50,6 +50,10 @@ if __name__ == '__main__':
     UR_Is = []
     UL_Rs = []
     UL_Is = []
+    U1_Rs = []
+    U1_Is = []
+    U2_Rs = []
+    U2_Is = []
 
     SIGMAS = []
     PIS = []
@@ -77,36 +81,36 @@ if __name__ == '__main__':
         [alpha, beta, gamma_0, mu, nu, sigma, phi] = params_00
         gamma = -gamma_0 * (np.exp(- (x_grid - d / 2) ** 2 / (2 * sigma ** 2)) - np.exp(- (x_grid + d / 2) ** 2 / (2 * sigma ** 2)))
 
-        Gamma_0 = integrate.simpson(phi_01 * phi_02, x_grid)
-        Gamma_1 = integrate.simpson(phi_01 ** 2, x_grid)
-        Gamma_2 = integrate.simpson(phi_02 ** 2, x_grid)
+        Gamma_0 = integrate.simpson(np.conjugate(phi_01) * phi_02, x_grid)
+        Gamma_1 = integrate.simpson(np.abs(phi_01) ** 2, x_grid)
+        Gamma_2 = integrate.simpson(np.abs(phi_02) ** 2, x_grid)
 
         ddx_phi_01 = alpha * np.append(0, np.append(np.diff(np.diff(phi_01)) / (dx ** 2), 0))
         ddx_phi_02 = alpha * np.append(0, np.append(np.diff(np.diff(phi_02)) / (dx ** 2), 0))
 
-        Sigma_11 = integrate.simpson(phi_01 * ddx_phi_01, x_grid) / Gamma_1
-        Sigma_12 = integrate.simpson(phi_01 * ddx_phi_02, x_grid) / Gamma_1
-        Sigma_21 = integrate.simpson(phi_02 * ddx_phi_01, x_grid) / Gamma_2
-        Sigma_22 = integrate.simpson(phi_02 * ddx_phi_02, x_grid) / Gamma_2
+        Sigma_11 = integrate.simpson(np.conjugate(phi_01) * ddx_phi_01, x_grid) / Gamma_1
+        Sigma_12 = integrate.simpson(np.conjugate(phi_01) * ddx_phi_02, x_grid) / Gamma_1
+        Sigma_21 = integrate.simpson(np.conjugate(phi_02) * ddx_phi_01, x_grid) / Gamma_2
+        Sigma_22 = integrate.simpson(np.conjugate(phi_02) * ddx_phi_02, x_grid) / Gamma_2
 
-        Pi_11 = integrate.simpson(phi_01 * np.conjugate(phi_01) * gamma, x_grid) / Gamma_1
-        Pi_12 = integrate.simpson(phi_01 * np.conjugate(phi_02) * gamma, x_grid) / Gamma_1
-        Pi_21 = integrate.simpson(phi_02 * np.conjugate(phi_01) * gamma, x_grid) / Gamma_2
-        Pi_22 = integrate.simpson(phi_02 * np.conjugate(phi_02) * gamma, x_grid) / Gamma_2
+        Pi_11 = integrate.simpson(np.conjugate(phi_01) * np.conjugate(phi_01) * gamma, x_grid) / Gamma_1
+        Pi_12 = integrate.simpson(np.conjugate(phi_01) * np.conjugate(phi_02) * gamma, x_grid) / Gamma_1
+        Pi_21 = integrate.simpson(np.conjugate(phi_02) * np.conjugate(phi_01) * gamma, x_grid) / Gamma_2
+        Pi_22 = integrate.simpson(np.conjugate(phi_02) * np.conjugate(phi_02) * gamma, x_grid) / Gamma_2
 
-        Delta_11 = (1) * integrate.simpson(phi_01 * np.abs(phi_02) ** 2 * phi_02, x_grid) / Gamma_1
-        Delta_21 = (2) * integrate.simpson(phi_01 * np.abs(phi_02) ** 2 * phi_01, x_grid) / Gamma_1
-        Delta_31 = (2) * integrate.simpson(phi_01 * np.abs(phi_01) ** 2 * phi_02, x_grid) / Gamma_1
-        Delta_41 = (1) * integrate.simpson(phi_01 * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_1
-        Delta_51 = (1) * integrate.simpson(phi_01 * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_1
-        Delta_61 = (1) * integrate.simpson(phi_01 * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_1
+        Delta_11 = (1) * integrate.simpson(np.conjugate(phi_01) * np.abs(phi_02) ** 2 * phi_02, x_grid) / Gamma_1
+        Delta_21 = (2) * integrate.simpson(np.conjugate(phi_01) * np.abs(phi_02) ** 2 * phi_01, x_grid) / Gamma_1
+        Delta_31 = (2) * integrate.simpson(np.conjugate(phi_01) * np.abs(phi_01) ** 2 * phi_02, x_grid) / Gamma_1
+        Delta_41 = (1) * integrate.simpson(np.conjugate(phi_01) * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_1
+        Delta_51 = (1) * integrate.simpson(np.conjugate(phi_01) * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_1
+        Delta_61 = (1) * integrate.simpson(np.conjugate(phi_01) * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_1
 
-        Delta_12 = (1) * integrate.simpson(phi_02 * np.abs(phi_02) ** 2 * phi_02, x_grid) / Gamma_2
-        Delta_22 = (2) * integrate.simpson(phi_02 * np.abs(phi_02) ** 2 * phi_01, x_grid) / Gamma_2
-        Delta_32 = (2) * integrate.simpson(phi_02 * np.abs(phi_01) ** 2 * phi_02, x_grid) / Gamma_2
-        Delta_42 = (1) * integrate.simpson(phi_02 * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_2
-        Delta_52 = (1) * integrate.simpson(phi_02 * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_2
-        Delta_62 = (1) * integrate.simpson(phi_02 * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_2
+        Delta_12 = (1) * integrate.simpson(np.conjugate(phi_02) * np.abs(phi_02) ** 2 * phi_02, x_grid) / Gamma_2
+        Delta_22 = (2) * integrate.simpson(np.conjugate(phi_02) * np.abs(phi_02) ** 2 * phi_01, x_grid) / Gamma_2
+        Delta_32 = (2) * integrate.simpson(np.conjugate(phi_02) * np.abs(phi_01) ** 2 * phi_02, x_grid) / Gamma_2
+        Delta_42 = (1) * integrate.simpson(np.conjugate(phi_02) * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_2
+        Delta_52 = (1) * integrate.simpson(np.conjugate(phi_02) * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_2
+        Delta_62 = (1) * integrate.simpson(np.conjugate(phi_02) * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_2
 
         dJ = np.array([[- mu + np.imag(Sigma_11) + np.real(Pi_11), - nu - np.real(Sigma_11) + np.imag(Pi_11)  , np.imag(Sigma_21) + np.real(Sigma_21), -np.real(Sigma_21) + np.imag(Pi_21)],
                        [+ nu + np.real(Sigma_11) + np.imag(Pi_11), - mu + np.imag(Sigma_11) - np.real(Pi_11), np.real(Sigma_21) + np.imag(Pi_21), np.real(Sigma_21) - np.real(Pi_21)],
@@ -168,31 +172,36 @@ if __name__ == '__main__':
         U2_light = np.array(fields_history)[:, 1]
         t_light = time_grid
 
-        plt.plot(t_grid[:-1], np.real(U1_light), label="$Re U_1$", color="b")
-        plt.plot(t_grid[:-1], np.real(U2_light), label="$Re U_2$", color="b", ls="--")
-        plt.plot(t_grid[:-1], np.imag(U1_light), label="$Im U_1$", color="r")
-        plt.plot(t_grid[:-1], np.imag(U2_light), label="$Im U_2$", color="r", ls="--")
-        plt.legend()
-        plt.xlim(1000, 1500)
-        plt.show()
-        plt.close()
 
         UL = (U1_light + U2_light)
         UR = - 1j * (U1_light - U2_light)
+        U1 = U1_light
+        U2 = U2_light
 
+        U1_flatten = []
+        U2_flatten = []
         UL_flatten = []
         UR_flatten = []
         for i in range(len(UL)):
             UL_flatten.append(UL[i, 0])
             UR_flatten.append(UR[i, 0])
+            U1_flatten.append(U1[i, 0])
+            U2_flatten.append(U2[i, 0])
         UL = UL_flatten
         UR = UR_flatten
+        U1 = U1_flatten
+        U2 = U2_flatten
         PHI_Rs.append(PHI_R)
         PHI_Ls.append(PHI_L)
         UR_Rs.append(np.real(UR))
         UR_Is.append(np.imag(UR))
         UL_Rs.append(np.real(UL))
         UL_Is.append(np.imag(UL))
+        U1_Rs.append(np.real(U1))
+        U1_Is.append(np.imag(U1))
+        U2_Rs.append(np.real(U2))
+        U2_Is.append(np.imag(U2))
+
     save_directory = directory + "/analysis"
     if not os.path.exists(save_directory):
         os.makedirs(save_directory)
@@ -222,6 +231,7 @@ if __name__ == '__main__':
 
     for i in range(4):
         ax21.plot(distances, np.real(np.array(PIS)[:, i]), label=labels_02[i])
+        #ax21.plot(distances, np.imag(np.array(PIS)[:, i]), label=labels_02[i], ls="--")
         #ax21.legend(fontsize=10, loc="upper right")
         ax22.plot(distances, np.imag(np.array(PIS)[:, i]), label=labels_02[i])
         ax22.legend(fontsize=10, loc="upper right")
@@ -249,4 +259,8 @@ if __name__ == '__main__':
     np.savetxt(save_directory + '/UR_Is.txt',np.array(UR_Is), delimiter=',')
     np.savetxt(save_directory + '/UL_Rs.txt', np.array(UL_Rs), delimiter=',')
     np.savetxt(save_directory + '/UL_Is.txt', np.array(UL_Is), delimiter=',')
+    np.savetxt(save_directory + '/U1_Rs.txt', np.array(U1_Rs), delimiter=',')
+    np.savetxt(save_directory + '/U1_Is.txt',np.array(U1_Is), delimiter=',')
+    np.savetxt(save_directory + '/U2_Rs.txt', np.array(U2_Rs), delimiter=',')
+    np.savetxt(save_directory + '/U2_Is.txt', np.array(U2_Is), delimiter=',')
     np.savetxt(save_directory + '/dists.txt', distances, delimiter=',')

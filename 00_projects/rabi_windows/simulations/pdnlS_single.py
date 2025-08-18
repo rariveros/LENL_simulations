@@ -6,14 +6,14 @@ if __name__ == '__main__':
 
     # Definiendo parámetros
     project_name = '/PT_dimer'
-    disc = 'C:/'                                        # DISCO DE TRABAJO
+    disc = 'D:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
     t_rate = 1000                                      # CADA CUANTAS ITERACIONES GUARDA
     dt = 0.01
     T = 2000
     dx = 0.25#en milimetros
-    ies = np.arange(0.01, 0.32, 0.02)
+    ies = [0.28] #np.arange(0.01, 0.32, 0.02)
     jes = [0, np.pi] #np.arange(150, 50, -4)
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-70, 70, dx]

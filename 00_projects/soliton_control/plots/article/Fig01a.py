@@ -31,9 +31,9 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(3, 1, figsize=(3, 3.5), gridspec_kw={'height_ratios': [1, 1, 1]}, dpi=300)
     ax[0].axis('off')
     ax[2].axis('off')
-
+    print(np.amax(Z_shifted))
     # legend
-    pcm = ax[1].pcolormesh(X_shifted, T_shifted, np.flip(Z_shifted, axis=1), cmap=parula_map, shading='auto')
+    pcm = ax[1].pcolormesh(X_shifted, T_shifted, np.flip(Z_shifted, axis=1), cmap=parula_map, shading='auto', vmin=0, vmax=4.5)
     cbar = plt.colorbar(pcm, aspect=10)
     cbar.set_label('$|A|$', rotation=0, size=15, labelpad=-14, y=1.3)
     cbar.set_ticks([0, 2, 4])

@@ -729,10 +729,10 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         k = parameters[3]
         g = parameters[4]
 
-        F1 = - (mu + 1j * nu) * U1 - 1j * k * V1 - 1j * g * np.abs(U1) ** 2 * U1 + gamma * U2
-        F2 = - (mu - 1j * nu) * U2 + 1j * k * V2 + 1j * g * np.abs(U2) ** 2 * U2 + gamma * U1
-        G1 = - (mu + 1j * nu) * V1 - 1j * k * U1 - 1j * g * np.abs(V1) ** 2 * V1 - gamma * V2
-        G2 = - (mu - 1j * nu) * V2 + 1j * k * U2 + 1j * g * np.abs(V2) ** 2 * V2 - gamma * V1
+        F1 = - (mu + 1j * nu) * U1 - 1j * k * V1 - 1j * g * np.abs(U1) ** 2 * U1 + gamma * np.conjugate(U1)
+        F2 = np.conjugate(F1)
+        G1 = - (mu + 1j * nu) * V1 - 1j * k * U1 - 1j * g * np.abs(V1) ** 2 * V1 - gamma * np.conjugate(V1)
+        G2 = np.conjugate(G1)
         fields = np.array([F1, F2, G1, G2])
 
     elif eq == 'pdnlS_dimer_tranformed':

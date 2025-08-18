@@ -49,15 +49,15 @@ if __name__ == '__main__':
     delta = 0.0
 
     # PARAMETROS INICIALES (P = CANTIDAD CONSERVADA, X = PORCENTAJE DE INFORMACIÓN INICIAL EN DIMERO 2) ####### Vale pico esto, encuentra los puntos estacionarios como la gente
-    Ns = np.array([6, 10, 14, 18, 22, 26])
-    colors = ["r", "r", "g", "g", "b", "b"]
+    Ns = np.array([16, 18, 20, 22])
+    colors = ["r", "r", "g", "g"]
     theta_0 = 0.0
     n = 0
     phi_01 = np.arcsin(beta / k)
     phi_02 = np.pi - np.arcsin(beta / k)
-    z_0 = np.arange(0, 1, 0.2)
+    z_0 = [0.1]#np.arange(0, 1, 0.2)
     z = z_0
-    phi = np.array([phi_01, phi_01, phi_01, phi_01, phi_01, phi_01])  # n * np.pi
+    phi = np.array([phi_01] * len(Ns))  # n * np.pi
     Nphi = len(phi)
 
     # CONDICIONES INICIALES EN TERMINOS DE P Y X
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     V_init = np.array(V_init)
 
     # DEFINICIÓN DE GRILLA TEMPORAL, ESPACIAL SE DEFINE COMO ARRAY CERO POR COMO FUNCIONA EL CODIGO
-    [tmin, tmax, dt] = [0, 1000, 0.025]
+    [tmin, tmax, dt] = [0, 5000, 0.025]
     t_grid = np.arange(tmin, tmax + dt, dt)         # TEMPORAL GRID DEFINITION
     x_grid = np.array([0])           # SPATIAL GRID DEFINITION
     T = tmax
@@ -109,44 +109,13 @@ if __name__ == '__main__':
     N_variable = P1 + P2
     z_variable = P2 - P1
     arg_variable = np.angle(U_light * np.conjugate(V_light))
+
     ############### GENERIC INITIAL AND FINAL TIME ###############
-    t_init = 0
-    t_final = 50
-    i_0 = np.argmin(np.abs(t_light - t_init))
-    i_f = np.argmin(np.abs(t_light - t_final))
-
-    ############### GRAFICO DE P1, P2 Y P EN EL TIEMPO ###############
-
-    #fig, ax = plt.subplots(1, 1, figsize=(7, 3))
-    #ax.plot(t_light[i_0:i_f], P1[i_0:i_f], color='b', label="$|u_1(t)|^2$")
-    #ax.plot(t_light[i_0:i_f], P2[i_0:i_f], color='r', label="$|u_2(t)|^2$")
-    #ax.plot(t_light[i_0:i_f], P1[i_0:i_f] + P2[i_0:i_f], color='k', label="$P(t)$")
-    #ax.legend(fontsize=10, loc="upper right")
-    #ax.set_xlabel("$t$", fontsize=15)
-    #ax.set_xlim(t_init, t_final)
-    #plt.show()
-    #plt.close()
-
-    #Q = k * np.imag(U_light[:-1, :] * np.diff(np.conjugate(U_light), axis=0) / dt - V_light[:-1, :] * np.diff(np.conjugate(V_light), axis=0) / dt)
-    R1_variable = np.abs(U_light)
-    R2_variable = np.abs(V_light)
-    N1_variable = R1_variable + R2_variable
-    N2_variable = R1_variable - R2_variable
-    Q = R1_variable[:-1, :] * np.diff(R2_variable, axis=0) / dt  - R2_variable[:-1, :] * np.diff(R1_variable, axis=0) / dt
-    fig, ax = plt.subplots(1, 1, figsize=(7, 3))
-    for i in range(len(N_variable[0, :])):
-        ax.plot(t_light[:-1], Q[:, i], color=COLOR[i])
-    ax.legend(fontsize=10, loc="upper right")
-    ax.set_xlabel("$t$", fontsize=15)
-    ax.set_xlim(t_init, t_final)
-    plt.show()
-    plt.close()
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     for i in range(len(N_variable[0, :])):
-        #ax.plot3D(N_variable[:, i], z_variable[:, i], np.unwrap(arg_variable, axis=0)[:, i], label='3D curve', color=COLOR[i], lw=0.2)
-        ax.plot3D(N1_variable[:, i], N2_variable[:, i], np.unwrap(arg_variable, axis=0)[:, i], label='3D curve', color=COLOR[i], lw=0.2)
+        ax.plot3D(N_variable[:, i], z_variable[:, i], np.unwrap(arg_variable, axis=0)[:, i], label='3D curve', color=COLOR[i], lw=0.2)
     ax.set_zlim([-np.pi, np.pi])
     ax.set_xlabel('$N_{1}$')
     ax.set_ylabel('$N_{2}$')
