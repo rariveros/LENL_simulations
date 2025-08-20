@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     # Definiendo parámetros
     project_name = '/LLG_DMI'
-    disc = 'D:/'                                        # DISCO DE TRABAJO
+    disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'
     eq = 'LLG_DMI'
 

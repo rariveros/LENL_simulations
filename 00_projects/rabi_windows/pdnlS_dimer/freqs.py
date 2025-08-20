@@ -35,7 +35,7 @@ if __name__ == '__main__':
         tau_R = []
         maxval = np.amax(CCF)
         for j in range(len(tau_max)):
-            if CCF_max[j] > 0.7 * maxval:
+            if CCF_max[j] > 0.3 * maxval:
                 tau_R.append(tau_max[j])
         if np.std(np.imag(U)) < 0.05:
             freq = 0
@@ -57,6 +57,6 @@ if __name__ == '__main__':
     plt.scatter(K, FREQS, c="k")
     plt.xlabel("$\kappa$")
     plt.ylabel("$\Omega$")
-    plt.savefig(save_directory + "freqs.png", dpi=300)
+    plt.savefig(save_directory + "/freqs.png", dpi=300)
     plt.close()
 

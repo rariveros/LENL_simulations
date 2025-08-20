@@ -6,15 +6,15 @@ if __name__ == '__main__':
 
     # Definiendo parámetros
     project_name = '/rabi_windows/test'
-    disc = 'D:/'                                        # DISCO DE TRABAJO
+    disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
-    t_rate = 20                                        # CADA CUANTAS ITERACIONES GUARDA
+    t_rate = 80                                        # CADA CUANTAS ITERACIONES GUARDA
     dt = 0.025
-    T = 1000
+    T = 4000
     dx = 0.25
-    ies = [20] #np.arange(0.25, 40.1, 0.25)
-    jotas = [0.28] #[0.27, 0.28, 0.29, 0.30]
+    ies = [0.32]
+    jotas = np.arange(1.0, 40.1, 1.0) #[0.28] #[0.27, 0.28, 0.29, 0.30]
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-70, 70, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)
@@ -24,24 +24,26 @@ if __name__ == '__main__':
     Nx = x_grid.shape[0]
     U_1_init = 0.01 * np.random.rand(Nx)#
     U_2_init = 0.01 * np.random.rand(Nx)#
-    print("N° of simulations: " + str(len(ies)))
+    print("N° of simulations: " + str(len(ies) * len(jotas)))
+    n = 0
     for i in ies:
         for j in jotas:
+            n = n + 1
             alpha = 1
             beta = 1
-            nu = 0.32
+            nu = i
             mu = 0.1
-            dist = i
-            gamma_0 = j
+            dist = j
+            gamma_0 = 0.28
             sigma = 3
 
             [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu, nu, sigma, gamma_0], 0)
             gamma_str = str(int(gamma_0 * 1000) * 0.001)
             nu_str = str(int(nu * 1000) * 0.001)
             mu_str = str(int(mu * 1000) * 0.001)
-            print('gamma = ' + gamma_str)
+            print('#### ' + str(n) + '/' + str(len(ies) * len(jotas)) + ' ####')
             print('nu = ' + nu_str)
-            print('mu = ' + mu_str)
+            print('d = ' + str(dist)[:5])
 
             # Empaquetamiento de parametros, campos y derivadas para integración
             L = xmax - xmin
@@ -94,66 +96,13 @@ if __name__ == '__main__':
             np.savetxt(file + subfile + '/X.txt', x_grid, delimiter=',')
             np.savetxt(file + subfile + '/T.txt', t_light, delimiter=',')
 
-            g = 9790
-            l_y = 16
-            d = 20
-            k_y = np.pi / l_y
-            k = k_y
-            tau = np.tanh(k * d)
-            w_1 = np.sqrt(g * k * tau)
-            beta = 1
-
-            # Guardando gráficos
-            plt.plot(x_grid, gamma_real, color="b", lw=2)
-            plt.plot(x_grid, gamma_img, color="r", lw=2)
-            plt.xlabel('$x\ \\textrm{(mm)}$', size='25')
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.ylabel('$\gamma(x)$', size='25')
-            plt.ylim([-gamma_0 * 1.1, gamma_0 * 1.1])
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.savefig(file + subfile + '/forcing.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, modulo_light_1 / np.sqrt(beta), cmap=parula_map, shading='auto')
+            pcm = plt.pcolormesh(x_grid, t_light, modulo_light_1, cmap=parula_map, shading='auto')
             cbar = plt.colorbar(pcm, shrink=1)
             cbar.set_label('$|A|$', rotation=0, size=20, labelpad=-27, y=1.1)
             plt.xlim([x_grid[0], x_grid[-1]])
             plt.xlabel('$x$', size='20')
             plt.ylabel('$t$', size='20')
             plt.grid(linestyle='--', alpha=0.5)
-            plt.title('$\gamma_0 = ' + gamma_str + '\ \\alpha = ' + alpha_str  + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$', size='12')
-            plt.savefig(file + subfile + '/module_spacetime.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, arg_light_1, cmap=parula_map, shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$\\textrm{arg}(A)$', rotation=0, size=20, labelpad=-20, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.title('$\gamma_0 = ' + gamma_str + '\ \\alpha = ' + alpha_str  + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$', size='12')
-            plt.savefig(file + subfile + '/arg_spacetime.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, U1_light, cmap=parula_map,vmin=-np.amax(U1_light), vmax=np.amax(U1_light), shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$A_R(x, t)$', rotation=0, size=20, labelpad=-27, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.title('$\gamma_0 = ' + gamma_str + '\ \\alpha = ' + alpha_str  + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$', size='12')
-            plt.savefig(file + subfile + '/real_spacetime.png', dpi=300)
-            plt.close()
-
-            pcm = plt.pcolormesh(x_grid, t_light, U2_light, cmap=parula_map, shading='auto')
-            cbar = plt.colorbar(pcm, shrink=1)
-            cbar.set_label('$A_I(x, t)$', rotation=0, size=20, labelpad=-27, y=1.1)
-            plt.xlim([x_grid[0], x_grid[-1]])
-            plt.xlabel('$x$', size='20')
-            plt.ylabel('$t$', size='20')
-            plt.grid(linestyle='--', alpha=0.5)
-            plt.title('$\gamma_0 = ' + gamma_str + '\ \\alpha = ' + alpha_str  + '\ \\textrm{mm}^{2}' + '\ \\beta = ' + beta_str + '\ \\nu = ' + nu_str + '$', size='12')
-            plt.savefig(file + subfile + '/img_spacetime.png', dpi=300)
+            plt.title('$\\nu = ' + nu_str + 'd = ' + str(dist)[:5] + '$', size=12)
+            plt.savefig(file + subfile + '/module_spacetime.png', dpi=200)
             plt.close()

@@ -7,14 +7,14 @@ if __name__ == '__main__':
 
     # Definiendo parámetros
     project_name = '/pdnlS_dimer'
-    disc = 'D:/'
+    disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'pdnlS_dimer'
     t_rate = 1
 
-    nu = 0.1
+    nus = np.arange(0.15, 0.26, 0.01)
     mu = 0.1
-    Gammas = [0.18] #np.arange(0.09, 0.2, 0.02)
+    gamma = 0.20 #np.arange(0.09, 0.2, 0.02)
     K = np.arange(0.00, 0.08, 0.002)
     g = 1.0
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     Uconj_init = np.conjugate(U_init)
     V_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
     Vconj_init = np.conjugate(V_init)
-    for gamma in Gammas:
+    for nu in nus:
         for k in K:
             nu_str = f"{nu:.{4}f}"
             mu_str = f"{mu:.{4}f}"

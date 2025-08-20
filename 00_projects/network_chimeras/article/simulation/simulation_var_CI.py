@@ -61,18 +61,18 @@ def Der(D, f): #función de diferenciación
 
 if __name__ == '__main__':
 
-    project_name = '/network_chimeras/FIG03a/erdos_renyi'
-    disc = 'D:/'
-    route = 'mnustes_science/simulation_data/FD'
-    Ks = [0.016] #np.arange(0.02, 0.025, 0.0005)         #DESDE MEANDEGREE = 25 PARA ARRIBA HAY QUE USAR T TOTAL 15000, PARA ABAJO DE ESE VALOR SE PUEDE USAR T TOTAL DE 10000
-    samples = np.arange(0, 50)
+    project_name = '/network_chimeras/data/FIG03a/erdos_renyi'
+    disc = 'G:/'
+    route = 'My Drive/02. Académico/Investigación/Proyectos/[2025] Network Chimeras'
+    Ks = [0.017] #np.arange(0.02, 0.025, 0.0005)         #DESDE MEANDEGREE = 25 PARA ARRIBA HAY QUE USAR T TOTAL 15000, PARA ABAJO DE ESE VALOR SE PUEDE USAR T TOTAL DE 10000
+    samples = np.arange(34, 50)
 
     ########### NETWORK PARAMETERS ###########
     mean_degree = 20
     n = 501
-    #p = mean_degree / (n - 1)
-    #graph = erdos_renyi_graph(n, p)
-    adj_matrix = np.loadtxt(r"D:\mnustes_science\simulation_data\FD\network_chimeras\FIG03b\erdos_renyi\k=0.0100\mean_degree=20.00\sample=0.00\Adj_matrix.txt", delimiter=',') #nx.adjacency_matrix(graph).toarray()
+    p = mean_degree / (n - 1)
+    graph = erdos_renyi_graph(n, p)
+    adj_matrix = np.loadtxt(r"G:\My Drive\02. Académico\Investigación\Proyectos\[2025] Network Chimeras\network_chimeras\data\FIG03b\erdos_renyi\k=0.0100\mean_degree=20.00\sample=0.00\Adj_matrix.txt", delimiter=',') #nx.adjacency_matrix(graph).toarray()
     degrees = np.sum(adj_matrix, axis=1)
     D = np.diag(degrees)
 
