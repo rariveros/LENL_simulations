@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-
 from back_process import *
 from functions import *
 from back_process import *

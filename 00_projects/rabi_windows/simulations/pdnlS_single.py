@@ -13,7 +13,7 @@ if __name__ == '__main__':
     dt = 0.01
     T = 2000
     dx = 0.25#en milimetros
-    ies = [0.28] #np.arange(0.01, 0.32, 0.02)
+    ies = [0.24, 0.25, 0.26, 0.27, 0.29, 0.30, 0.31] #np.arange(0.01, 0.32, 0.02)
     jes = [0, np.pi] #np.arange(150, 50, -4)
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-70, 70, dx]

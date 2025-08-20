@@ -97,7 +97,7 @@ if __name__ == '__main__':
     delta = 0.0
 
     # PARAMETROS INICIALES (P = CANTIDAD CONSERVADA, X = PORCENTAJE DE INFORMACIÓN INICIAL EN DIMERO 2) ####### Vale pico esto, encuentra los puntos estacionarios como la gente
-    Ns = [20.0] #[5.0, 10.0, 15.0, 20.0, 25.0, 30.0]
+    Ns = [26.0] #[5.0, 10.0, 15.0, 20.0, 25.0, 30.0]
     theta_0 = 0.0
 
     [tmin, tmax, dt] = [0, 300, 0.025]
@@ -145,8 +145,11 @@ if __name__ == '__main__':
     V_init = np.array([x for arr in V_init for x in arr])
     phi_initial = np.array([x for arr in phi_initial for x in arr])
 
-    z_extra = [-17, -18]
-    phi_extra = [0, 0]
+    #z_extra = [2, 4, 6, 8, 10, 11, 12, 13, 14]
+    #phi_extra = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    z_extra = []
+    phi_extra = []
     for i in range(len(z_extra)):
         R1 = np.sqrt((N - z_extra[i]) / 2)
         R2 = np.sqrt((N + z_extra[i]) / 2)
@@ -208,17 +211,17 @@ if __name__ == '__main__':
     z_mp_1 = -((N + 2) ** 2 - (2 * gamma ** 2) / (k ** 2) + ((2 * gamma) / (k ** 2)) * (
                 gamma ** 2 - 4 * k * (-1) ** n * (1 + N)) ** 0.5) ** 0.5
 
-    fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+    fig, ax = plt.subplots(1, 1, figsize=(8, 2.5))
 
     scattersize = 70
 
     ax.scatter(0, 0, zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
     ax.scatter(np.pi, 0,zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
     ax.scatter(-np.pi, 0, zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
-    ax.scatter(0, z_mp_0,zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
-    ax.scatter(0, z_pp_0, zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
-    ax.scatter(0, z_pm_0, zorder=5, color="w", edgecolor="k", s=scattersize, linewidths=2)
-    ax.scatter(0, z_mm_0, zorder=5, color="w", edgecolor="k", s=scattersize, linewidths=2)
+    #ax.scatter(0, z_mp_0,zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
+    #ax.scatter(0, z_pp_0, zorder=5, color="k", edgecolor="k", s=scattersize, linewidths=2)
+    #ax.scatter(0, z_pm_0, zorder=5, color="w", edgecolor="k", s=scattersize, linewidths=2)
+    #ax.scatter(0, z_mm_0, zorder=5, color="w", edgecolor="k", s=scattersize, linewidths=2)
 
     xticks = [-2 * np.pi, -np.pi, 0, np.pi, 2 * np.pi]
     xtick_labels = [r"$-2\pi$", r"$-\pi$", r"$0$", r"$\pi$", r"$2\pi$"]

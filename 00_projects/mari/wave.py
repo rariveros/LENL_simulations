@@ -6,15 +6,15 @@ if __name__ == '__main__':
     XR = np.arange(0, 6, 0.02)
     t = np.arange(0, 2 * np.pi, 0.05)
     F1 = np.exp(np.pi * 1j * XL)
-    F2 = np.exp(np.pi * 2 * 1j * XR)  # Crear figura y ejes
+    F2 = np.exp(np.pi * 1j * XR)  # Crear figura y ejes
     X0L = -4
     X0R = 4
     I0L = np.argmin(np.abs(XL - X0L))
     I0R = np.argmin(np.abs(XR - X0R))
 
-    fig, ax1 = plt.subplots(nrows=1, ncols=1, figsize=(9, 4))#, facecolor='black')
-    ax1.set_xlim([-6, 6])
-    ax1.set_ylim([-1.1, 1.1])
+    fig, ax1 = plt.subplots(nrows=1, ncols=1, figsize=(5, 2))#, facecolor='black')
+    ax1.set_xlim([-3, 3])
+    ax1.set_ylim([-1.2, 1.2])
     #ax1.set_facecolor('black')
     ax1.tick_params(colors='k', labelsize=18)  # color de las marcas y números
     #ax1.spines['bottom'].set_color('white')
@@ -27,22 +27,22 @@ if __name__ == '__main__':
     #ax1.set_ylabel("$\Delta M$", fontsize=20)
 
     # Punto animado
-    line_1, = ax1.plot(XL, np.real(F1 * np.exp(-1j * t[0])), color="r", zorder=10, lw=2)
-    line_2, = ax1.plot(XR, np.real(F2 * np.exp(-1j * t[0])), color="b", zorder=10, lw=2)
-    scat_1 = ax1.scatter(X0L, np.real(F1[I0L] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
-    scat_2 = ax1.scatter(X0L, np.real(F2[I0R] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
-    scat_3 = ax1.scatter(X0L, np.real(F2[0] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
-    ax1.hlines(0, -6, 6, colors="k", linestyles="dashed", lw=1)
+    line_1, = ax1.plot(XL, np.real(F1 * np.exp(-1j * t[0])), color="k", zorder=10, lw=8)
+    line_2, = ax1.plot(XR, np.real(F2 * np.exp(-1j * t[0])), color="k", zorder=10, lw=8)
+    #scat_1 = ax1.scatter(X0L, np.real(F1[I0L] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
+    #scat_2 = ax1.scatter(X0L, np.real(F2[I0R] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
+    #scat_3 = ax1.scatter(X0L, np.real(F2[0] * np.exp(-1j * t[0])), s=80, c="k", zorder=10)
+    #ax1.hlines(0, -6, 6, colors="k", linestyles="dashed", lw=1)
     plt.tight_layout()
 
     # Función de animación
     def animate(i):
         line_1.set_data(XL, np.real(F1 * np.exp(-1j * t[i + 1])))
         line_2.set_data(XR, np.real(F2 * np.exp(-1j * t[i + 1])))
-        scat_1.set_offsets((X0L, np.real(F1[I0L] * np.exp(-1j * t[i + 1]))))
-        scat_2.set_offsets((X0R, np.real(F2[I0R] * np.exp(-1j * t[i + 1]))))
-        scat_3.set_offsets((0, np.real(F2[0] * np.exp(-1j * t[i + 1]))))
-        return line_1, line_2, scat_1, scat_2, scat_3,
+        #scat_1.set_offsets((X0L, np.real(F1[I0L] * np.exp(-1j * t[i + 1]))))
+        #scat_2.set_offsets((X0R, np.real(F2[I0R] * np.exp(-1j * t[i + 1]))))
+        #scat_3.set_offsets((0, np.real(F2[0] * np.exp(-1j * t[i + 1]))))
+        return line_1, line_2,# scat_1, scat_2, scat_3,
 
     # Animar
     ani = animation.FuncAnimation(fig, animate, frames=len(t) - 1, interval=50, blit=True, repeat=True)
