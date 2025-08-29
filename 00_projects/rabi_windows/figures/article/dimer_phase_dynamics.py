@@ -40,6 +40,7 @@ if __name__ == '__main__':
     # Create figure with 2 subplots
     fig, axes = plt.subplots(1, 2, figsize=(8, 2))  # 1 row, 2 columns
     ticks = [0, 0.1, 0.2, 0.3, 0.4]
+    #ola
 
     # Left subplot: Streamplot for gamma = 0.15
     axes[0].streamplot(PHI1, PHI2, F_values1, G_values1, color='k', density=2.2, linewidth=0.7, arrowsize=0.7)
