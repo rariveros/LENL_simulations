@@ -5,16 +5,16 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/rabi_windows/test'
+    project_name = '/rabi_windows/extended'
     disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
-    t_rate = 80                                        # CADA CUANTAS ITERACIONES GUARDA
+    t_rate = 40                                        # CADA CUANTAS ITERACIONES GUARDA
     dt = 0.025
     T = 4000
     dx = 0.25
-    ies = [0.32]
-    jotas = np.arange(1.0, 40.1, 1.0) #[0.28] #[0.27, 0.28, 0.29, 0.30]
+    ies = [0.24, 0.26, 0.28, 0.30]
+    jotas = np.arange(1.0, 40.1, 0.25) #[0.28] #[0.27, 0.28, 0.29, 0.30]
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-70, 70, dx]
     t_grid = np.arange(tmin, tmax + dt, dt)

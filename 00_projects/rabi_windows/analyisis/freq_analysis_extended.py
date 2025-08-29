@@ -54,12 +54,12 @@ if __name__ == '__main__':
         CCF_max, tau_max, CCF_I = max_finder(CCF[:-1], tau, Ntau, dtau)
         tau_R = []
         maxval = np.amax(CCF)
-        power = np.sum(np.abs(UR_R) ** 2 + np.abs(UI_R) ** 2) / (T[-1] - T[0])
-        power_std = np.std(np.abs(UR_R))
+        power = integrate.simpson(np.abs(UR_R + 1j * UI_R + UR_L + 1j * UI_L) ** 2, T) / (T[-1] - T[0])
+        power_std = np.std(np.abs(UR_R)) #np.sqrt(integrate.simpson(np.abs(UR_R + 1j * UI_R + UR_L + 1j * UI_L) ** 4, T) / (T[-1] - T[0]) - power ** 2) #
         for j in range(len(tau_max)):
             if CCF_max[j] > 0.25 * maxval:
                 tau_R.append(tau_max[j])
-        if power_std < 0.001 and power < 0.001:
+        if power_std < 0.0001 and power < 0.001:
             freq = 0
             freq_std = 0
         elif len(tau_R) == 1:
