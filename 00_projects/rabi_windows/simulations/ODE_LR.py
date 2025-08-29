@@ -22,7 +22,7 @@ if __name__ == '__main__':
     eq = 'PT_dimer'
     t_rate = 1
     dt = 0.4
-    T = 5000
+    T = 100 #5000
 
     disco = 'D:/'
     initial_dir_data = str(disco) + 'Users/mnustes_science/PT_fluids/mnustes_science/simulation_data'
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     dx = x_grid[1] - x_grid[0]
     #[Z_r_00, Z_i_00, Z_r_01, Z_i_01] = [Z_r_00[-1, :], Z_i_00[-1, :], Z_r_01[-1, :], Z_i_01[-1, :]]
 
-    distances = np.arange(5, 40, 0.25)
+    distances = np.arange(1, 40, 0.25)
     PHI_Rs = []
     PHI_Ls = []
     times = []
@@ -215,37 +215,80 @@ if __name__ == '__main__':
     plt.savefig(save_directory + "/eigen.png", dpi=200)
     plt.close()
 
-    labels_01 = ["$\Sigma_{++}$", "$\Sigma_{+-}$", "$\Sigma_{-+}$", "$\Sigma_{--}$"]
-    labels_02 = ["$\Pi_{++}$", "$\Pi_{+-}$", "$\Pi_{-+}$", "$\Pi_{--}$"]
+    labels_01 = ["$++$", "$+-$", "$-+$", "$--$"]
+    labels_02 = ["$++$", "$+-$", "$-+$", "$--$"]
     #[Delta_11, Delta_21, Delta_31, Delta_41, Delta_51, Delta_61, Delta_12, Delta_22, Delta_32, Delta_42, Delta_52, Delta_62]
-    labels_03 = ["$\Delta_1^{+}$", "$\Delta_2^{+}$", "$\Delta_3^{+}$", "$\Delta_4^{+}$", "$\Delta_5^{+}$", "$\Delta_6^{+}$"]
-    labels_04 = ["$\Delta_1^{-}$", "$\Delta_2^{-}$", "$\Delta_3^{-}$", "$\Delta_4^{-}$", "$\Delta_5^{-}$", "$\Delta_6^{-}$"]
+    labels_03 = ["$1$", "$2$", "$3$", "$4$", "$5$", "$6$"]
+    labels_04 = ["$1$", "$2$", "$3$", "$4$", "$5$", "$6$"]
 
-    fig, ((ax11, ax12), (ax21, ax22), (ax31, ax32), (ax41, ax42)) = plt.subplots(4, 2, figsize=(7, 12))
-    for i in range(4):
-        ax11.plot(distances, np.real(np.array(SIGMAS)[:, i]), label=labels_01[i])
-        #ax11.legend(fontsize=10, loc="upper right")
-        ax12.plot(distances, np.imag(np.array(SIGMAS)[:, i]), label=labels_01[i])
-        ax12.legend(fontsize=10, loc="upper right")
+    lava_colors = ["#46327e", "#365c8d", "#4ac16d", "#a0da39"]
+    colors_01 = ["#46327e", "#365c8d", "#4ac16d", "#a0da39"]
+    colors_02 = ["#46327e", "#365c8d", "#277f8e", "#1fa187", "#4ac16d", "#a0da39"] #["#FF1919", "#0237c9", "#d9c425", "#3ac73f", "#071847", "#db7516"]
 
+    fig, ((ax11, ax12), (ax21, ax22)) = plt.subplots(2, 2, figsize=(5.5, 4))
     for i in range(4):
-        ax21.plot(distances, np.real(np.array(PIS)[:, i]), label=labels_02[i])
-        #ax21.plot(distances, np.imag(np.array(PIS)[:, i]), label=labels_02[i], ls="--")
-        #ax21.legend(fontsize=10, loc="upper right")
-        ax22.plot(distances, np.imag(np.array(PIS)[:, i]), label=labels_02[i])
-        ax22.legend(fontsize=10, loc="upper right")
+        zorder = 1
+        if i == 0:
+            zorder = 5
+        elif i == 3:
+            zorder = 5
+        ax11.plot(distances, np.real(np.array(SIGMAS)[:, i]), label=labels_01[i], color=lava_colors[i], lw=2, zorder=zorder)
+        ax11.plot(distances, np.imag(np.array(SIGMAS)[:, i]), ls="--", color=lava_colors[i], lw=2, zorder=zorder)
+        ax11.legend(ncol=2, fontsize=6, loc="upper right")
+    for i in range(4):
+        zorder = 1
+        if i == 1:
+            zorder = 5
+        elif i == 2:
+            zorder = 5
+        ax12.plot(distances, np.real(np.array(PIS)[:, i]), label=labels_02[i], color=colors_01[i], lw=2, zorder=zorder)
+        ax12.plot(distances, np.imag(np.array(PIS)[:, i]), ls="--", color=colors_01[i], lw=2, zorder=zorder)
+        ax12.legend(ncol=2, fontsize=6, loc="upper right")
+    for i in range(6):
+        zorder = 1
+        if i == 1:
+            zorder = 5
+        elif i == 2:
+            zorder = 5
+        elif i == 4:
+            zorder = 5
+        ax21.plot(distances, np.real(np.array(DELTAS1)[:, i]), label=labels_03[i], color=colors_02[i], lw=2, zorder=zorder)
+        ax21.plot(distances, np.imag(np.array(DELTAS1)[:, i]), ls="--", color=colors_02[i], lw=2, zorder=zorder)
+        ax21.legend(ncol=2, fontsize=6, loc="upper right")
 
     for i in range(6):
-        ax31.plot(distances, np.real(np.array(DELTAS1)[:, i]), label=labels_03[i])
-        #ax31.legend(fontsize=10, loc="upper right")
-        ax32.plot(distances, np.imag(np.array(DELTAS1)[:, i]), label=labels_03[i])
-        ax32.legend(fontsize=10, loc="upper right")
+        zorder = 1
+        if i == 0:
+            zorder = 5
+        elif i == 3:
+            zorder = 5
+        elif i == 5:
+            zorder = 5
+        ax22.plot(distances, np.real(np.array(DELTAS2)[:, i]), label=labels_04[i], color=colors_02[i], lw=2, zorder=zorder)
+        ax22.plot(distances, np.imag(np.array(DELTAS2)[:, i]), ls="--", color=colors_02[i], lw=2, zorder=zorder)
+        ax22.legend(ncol=2, fontsize=6, loc="upper right")
 
-    for i in range(6):
-        ax41.plot(distances, np.real(np.array(DELTAS2)[:, i]), label=labels_04[i])
-        #ax41.legend(fontsize=10, loc="upper right")
-        ax42.plot(distances, np.imag(np.array(DELTAS2)[:, i]), label=labels_04[i])
-        ax42.legend(fontsize=10, loc="upper right")
+    ax11.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False)
+    ax12.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False, labelright=True, right=True, labelleft=False, left=False)
+    ax21.tick_params(axis="both", direction="in", labelsize=13)
+    ax22.tick_params(axis="both", direction="in", labelsize=13, labelbottom=True, labelright=True, right=True, labelleft=False, left=False)
+
+    ax11.set_xlim(0, 40)
+    ax12.set_xlim(0, 40)
+    ax21.set_xlim(0, 40)
+    ax22.set_xlim(0, 40)
+
+    ax21.set_xlabel("$d$", fontsize=17)
+    ax22.set_xlabel("$d$", fontsize=17)
+
+    ax11.set_ylabel("$\Sigma$", fontsize=17)
+    ax12.set_ylabel("$\Pi$", fontsize=17)
+    ax12.yaxis.set_label_position("right")
+    ax21.set_ylabel("$\Delta_{+}$", fontsize=17)
+    ax22.set_ylabel("$\Delta_{-}$", fontsize=17)
+    ax22.yaxis.set_label_position("right")
+
+    plt.subplots_adjust(wspace=0.1, hspace=0.1, left=0.15, right=0.85, bottom=0.2, top=0.95)
     plt.savefig("coefficients.png", dpi=300)
     plt.close()
 

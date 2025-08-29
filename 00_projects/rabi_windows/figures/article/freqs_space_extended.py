@@ -43,7 +43,7 @@ if __name__ == '__main__':
         # lo demás queda negro
 
         colors[red_mask] = "#DF0A00" #Damped
-        colors[blue_mask] = "#0005f6" #ROs
+        colors[blue_mask] = "#0005f6" #SP
 
         # tu scatter (edgecolor siempre negro)
         #ax.scatter(Ks, nus, 1000 * freqs[:, 0], c=colors, alpha=1.0, edgecolors="k", lw=1.0, s=20, zorder=5)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # ax.set_yticks([0.0, 0.05, 0.1, 0.150, 0.2], ["$0.00$", "$0.05$", "$0.10$", "$0.15$", "$0.20$"], fontsize=15)
     # ax.set_zticks([0.0, 0.05, 0.1, 0.150], ["$0.00$", "$0.05$", "$0.10$", "$0.15$"], fontsize=15)
     fig.subplots_adjust(left=0.12, right=0.98, bottom=0.2, top=0.98)
-    ax.set_box_aspect([1, 2, 1])
+    ax.set_box_aspect([1.5, 2, 1])
     # --- guardado (si quieres) ---
     plt.savefig("freq_space.png", dpi=300)
     # plt.savefig("freq_space_01.pdf", bbox_inches='tight')
