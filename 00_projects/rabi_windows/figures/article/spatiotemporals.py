@@ -4,9 +4,7 @@ from back_process import *
 from time_integrators import *
 
 if __name__ == "__main__":
-    principal_directory = "C:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras"
-
-    disc = "E:/"
+    disc = "D:/"
     T = np.loadtxt(disc + r'mnustes_science\simulation_data\FD\rabi_windows\test\alpha=1.000\beta=1.000\mu=0.1000\nu=0.3200\sigma=3.000\gamma=0.2800\dist=20.0000\T.txt', delimiter=',')
     x_grid = np.loadtxt(disc + r'mnustes_science\simulation_data\FD\rabi_windows\test\alpha=1.000\beta=1.000\mu=0.1000\nu=0.3200\sigma=3.000\gamma=0.2800\dist=20.0000\X.txt', delimiter=',')
     Zr = np.loadtxt(disc + r'mnustes_science\simulation_data\FD\rabi_windows\test\alpha=1.000\beta=1.000\mu=0.1000\nu=0.3200\sigma=3.000\gamma=0.2800\dist=20.0000\field_real.txt', delimiter=',')
@@ -28,7 +26,7 @@ if __name__ == "__main__":
     xi, xf = -70, 70
 
     #################################
-    fig, (ax1, ax2) = plt.subplots(figsize=(3, 3.2), nrows=2, ncols=1)
+    fig, (ax1, ax2) = plt.subplots(figsize=(5, 5), nrows=2, ncols=1)
 
     pc_01 = ax1.pcolor(x_grid, T - t0, 100 * Z_mod_ROs, cmap="jet")
     ax1.set_ylim(ti, tf)

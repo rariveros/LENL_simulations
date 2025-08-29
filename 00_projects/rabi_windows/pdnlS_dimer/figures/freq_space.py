@@ -28,24 +28,25 @@ if __name__ == '__main__':
         nus = np.loadtxt(dir_01 + '/nus.txt', delimiter=',')
 
         # umbral
-        thr = 1e-2
+        # umbral
+        thr1 = 0.01
+        thr2 = 0.01
 
         # columnas 0 y 1 de modules
         m0 = modules[:, 0]
         m1 = modules[:, 1]
 
         # arranque en negro y enmascarar
-        colors = np.full(m0.shape, "#6b03fc", dtype=object)
+        colors = np.full(m0.shape, "#5bf995", dtype=object)
 
-        red_mask = (m0 < thr) & (m1 < thr)  # ambos < 0.001  -> rojo
-        blue_mask = (m0 > thr) & (m1 > thr)  # ambos > 0.001  -> azul
+        red_mask = (m0 < thr1) & (m1 < thr2)  # ambos < 0.001  -> rojo
+        blue_mask = (m0 > thr1) & (m1 < thr2)  # ambos > 0.001  -> azul
         # lo demás queda negro
 
-        colors[red_mask] = "r" #Damped
-        colors[blue_mask] = "#16d904" #ROs
-
+        colors[red_mask] = "#DF0A00"  # Damped
+        colors[blue_mask] = "#0005f6"  # ROs
         # tu scatter (edgecolor siempre negro)
-        ax.scatter(100 * Ks, nus, 1000 * freqs, c=colors, zorder=4, alpha=1.0, edgecolors="k", lw=1.2, s=16)
+        ax.scatter(100 * Ks, nus, 1000 * freqs, c=colors, zorder=4, alpha=1.0, edgecolors="k", lw=0.6, s=20)
         ax.plot(100 * Ks, nus, 1000 * freqs, c="k", zorder=1)
     # --- tu vista intacta ---
     ax.view_init(30, -167, 0)
@@ -82,6 +83,7 @@ if __name__ == '__main__':
     # ax.set_yticks([0.0, 0.05, 0.1, 0.150, 0.2], ["$0.00$", "$0.05$", "$0.10$", "$0.15$", "$0.20$"], fontsize=15)
     # ax.set_zticks([0.0, 0.05, 0.1, 0.150], ["$0.00$", "$0.05$", "$0.10$", "$0.15$"], fontsize=15)
     fig.subplots_adjust(left=0.12, right=0.98, bottom=0.2, top=0.98)
+    ax.set_box_aspect([2, 2, 0.8])
     # --- guardado (si quieres) ---
     plt.savefig("freq_space.png", dpi=300)
     # plt.savefig("freq_space_01.pdf", bbox_inches='tight')
