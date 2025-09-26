@@ -183,7 +183,7 @@ if __name__ == '__main__':
                    shading='auto', cmap='inferno')
     plt.xlabel("Frequency")
     plt.ylabel("$\\kappa$")
-    plt.colorbar(label="S_U(ω)")
+    plt.colorbar(label="$S_U(\omega)$")
     plt.savefig("spectrum_vs_k_U.png", dpi=200)
     plt.close()
 
@@ -192,6 +192,6 @@ if __name__ == '__main__':
                    shading='auto', cmap='inferno')
     plt.xlabel("Frequency")
     plt.ylabel("$\\kappa$")
-    plt.colorbar(label="S_V(ω)")
+    plt.colorbar(label="$S_V(\omega)$")
     plt.savefig("spectrum_vs_k_V.png", dpi=200)
     plt.close()
