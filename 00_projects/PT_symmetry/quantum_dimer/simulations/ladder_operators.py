@@ -6,7 +6,7 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/ladder_operators/test'
+    project_name = '/coherent/test'
     disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'ladder_PDQHO'
@@ -14,8 +14,8 @@ if __name__ == '__main__':
 
     Delta = 0.1
     gamma = 0.1
-    Omegas = np.arange(0.0, 0.049, 0.01)
-    K = np.arange(0.00, 0.51, 0.02)
+    Omegas = [0.1] #np.arange(0.0, 0.049, 0.01)
+    K = [0.2] #np.arange(0.00, 0.51, 0.02)
     g = 1.0
 
     # Definición de la grilla
@@ -28,10 +28,8 @@ if __name__ == '__main__':
     Nx = x_grid.shape[0]
     operators = [0]
     ti = 0.
-    U1_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
-    U2_init = np.conjugate(U1_init)
-    V1_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
-    V2_init = np.conjugate(V1_init)
+    U_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
+    V_init = 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
     for Omega in Omegas:
         for k in K:
             Delta_str = f"{Delta:.{4}f}"
@@ -42,7 +40,7 @@ if __name__ == '__main__':
             print("####### " + k_str + " #######")
 
             # Empaquetamiento de parametros, campos y derivadas para integración
-            fields_init = [U1_init, U2_init, V1_init, V2_init]
+            fields_init = [U_init, V_init]
             grids = [t_grid, x_grid, 0]
 
             parameters_np = np.array([Delta, gamma, Omega, k, g])
@@ -60,10 +58,8 @@ if __name__ == '__main__':
             print(str(time_fin - time_init) + ' seg')
 
             # Reobteniendo campos
-            U1 = np.array(fields_history)[:, 0]
-            U2 = np.array(fields_history)[:, 1]
-            V1 = np.array(fields_history)[:, 2]
-            V2 = np.array(fields_history)[:, 3]
+            U = np.array(fields_history)[:, 0]
+            V = np.array(fields_history)[:, 1]
 
             # Guardando datos
             file = disc + route + project_name
@@ -71,30 +67,26 @@ if __name__ == '__main__':
             if not os.path.exists(file + subfile):
                 os.makedirs(file + subfile)
 
-            np.savetxt(file + subfile + '/U1.txt', U1, delimiter=',')
-            np.savetxt(file + subfile + '/U2.txt', U1, delimiter=',')
-            np.savetxt(file + subfile + '/V1.txt', V1, delimiter=',')
-            np.savetxt(file + subfile + '/V2.txt', V2, delimiter=',')
+            np.savetxt(file + subfile + '/U.txt', U, delimiter=',')
+            np.savetxt(file + subfile + '/V.txt', V, delimiter=',')
             np.savetxt(file + subfile + '/parameters.txt', parameters_np, delimiter=',')
             np.savetxt(file + subfile + '/T.txt', t_grid, delimiter=',')
 
             lightness = 1
-            U1_light = U1[0::lightness]
-            U2_light = U2[0::lightness]
-            V1_light = V1[0::lightness]
-            V2_light = V2[0::lightness]
+            U_light = U[0::lightness]
+            V_light = V[0::lightness]
             t_light = time_grid[0::lightness]
 
             fig, (ax1, ax2) = plt.subplots(2)
-            ax1.plot(t_light, np.real(U1_light), c="b")
-            ax1.plot(t_light, np.imag(U1_light), c="r")
+            ax1.plot(t_light, np.real(U_light), c="b")
+            ax1.plot(t_light, np.imag(U_light), c="r")
             plt.xlabel('$x$', size='20')
             plt.ylabel('$t$', size='20')
             ax1.set_xlim([ti * t_light[-1], t_light[-1]])
             ax1.grid(linestyle='--', alpha=0.5)
 
-            ax2.plot(t_light, np.real(V1_light), c="b")
-            ax2.plot(t_light, np.imag(V1_light), c="r")
+            ax2.plot(t_light, np.real(V_light), c="b")
+            ax2.plot(t_light, np.imag(V_light), c="r")
             plt.xlabel('$x$', size='20')
             plt.ylabel('$t$', size='20')
             ax2.set_xlim([ti * t_light[-1], t_light[-1]])
@@ -102,7 +94,7 @@ if __name__ == '__main__':
             plt.savefig(file + subfile + "/timeseries.png", dpi=300)
             plt.close()
 
-            U1_init = U1_light[-1] + 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
+            U1_init = U_light[-1] + 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
             U2_init = np.conjugate(U1_init)
-            V1_init = V1_light[-1] + 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
+            V1_init = V_light[-1] + 0.01 * (np.random.rand(Nx) + 1j * np.random.rand(Nx))
             V2_init = np.conjugate(V1_init)

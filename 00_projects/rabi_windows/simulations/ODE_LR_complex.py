@@ -20,7 +20,7 @@ if __name__ == '__main__':
     eq = 'PT_dimer'
     t_rate = 1
     dt = 0.4
-    T = 100 #5000
+    T = 5000 #5000
 
     disco = 'D:/'
     initial_dir_data = str(disco) + 'Users/mnustes_science/PT_fluids/mnustes_science/simulation_data'
@@ -79,37 +79,37 @@ if __name__ == '__main__':
         [alpha, beta, gamma_0, mu, nu, sigma, phi] = params_00
         gamma = -gamma_0 * (np.exp(- (x_grid - d / 2) ** 2 / (2 * sigma ** 2)) - np.exp(- (x_grid + d / 2) ** 2 / (2 * sigma ** 2)))
 
-        Gamma_0 = integrate.simpson(phi_01 * phi_02, x_grid)
+        Gamma_0 = integrate.simpson(np.abs(phi_01) * phi_02, x_grid)
         print(Gamma_0)
-        Gamma_1 = integrate.simpson(phi_01 ** 2, x_grid)
-        Gamma_2 = integrate.simpson(phi_02 ** 2, x_grid)
+        Gamma_1 = integrate.simpson(np.abs(phi_01) ** 2, x_grid)
+        Gamma_2 = integrate.simpson(np.abs(phi_02) ** 2, x_grid)
 
         ddx_phi_01 = alpha * np.append(0, np.append(np.diff(np.diff(phi_01)) / (dx ** 2), 0))
         ddx_phi_02 = alpha * np.append(0, np.append(np.diff(np.diff(phi_02)) / (dx ** 2), 0))
 
-        Sigma_11 = integrate.simpson(phi_01 * ddx_phi_01, x_grid) / Gamma_1
-        Sigma_12 = integrate.simpson(phi_01 * ddx_phi_02, x_grid) / Gamma_1
-        Sigma_21 = integrate.simpson(phi_02 * ddx_phi_01, x_grid) / Gamma_2
-        Sigma_22 = integrate.simpson(phi_02 * ddx_phi_02, x_grid) / Gamma_2
+        Sigma_11 = integrate.simpson(np.conjugate(phi_01) * ddx_phi_01, x_grid) / Gamma_1
+        Sigma_12 = integrate.simpson(np.conjugate(phi_01) * ddx_phi_02, x_grid) / Gamma_1
+        Sigma_21 = integrate.simpson(np.conjugate(phi_02) * ddx_phi_01, x_grid) / Gamma_2
+        Sigma_22 = integrate.simpson(np.conjugate(phi_02) * ddx_phi_02, x_grid) / Gamma_2
 
-        Pi_11 = integrate.simpson(phi_01 * np.conjugate(phi_01) * gamma, x_grid) / Gamma_1
-        Pi_12 = integrate.simpson(phi_01 * np.conjugate(phi_02) * gamma, x_grid) / Gamma_1
-        Pi_21 = integrate.simpson(phi_02 * np.conjugate(phi_01) * gamma, x_grid) / Gamma_2
-        Pi_22 = integrate.simpson(phi_02 * np.conjugate(phi_02) * gamma, x_grid) / Gamma_2
+        Pi_11 = integrate.simpson(np.conjugate(phi_01) * np.conjugate(phi_01) * gamma, x_grid) / Gamma_1
+        Pi_12 = integrate.simpson(np.conjugate(phi_01) * np.conjugate(phi_02) * gamma, x_grid) / Gamma_1
+        Pi_21 = integrate.simpson(np.conjugate(phi_02) * np.conjugate(phi_01) * gamma, x_grid) / Gamma_2
+        Pi_22 = integrate.simpson(np.conjugate(phi_02) * np.conjugate(phi_02) * gamma, x_grid) / Gamma_2
 
-        Delta_11 = (1) * integrate.simpson(phi_01 * np.abs(phi_02) ** 2 * phi_02, x_grid) / Gamma_1
-        Delta_21 = (2) * integrate.simpson(phi_01 * np.abs(phi_02) ** 2 * phi_01, x_grid) / Gamma_1
-        Delta_31 = (2) * integrate.simpson(phi_01 * np.abs(phi_01) ** 2 * phi_02, x_grid) / Gamma_1
-        Delta_41 = (1) * integrate.simpson(phi_01 * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_1
-        Delta_51 = (1) * integrate.simpson(phi_01 * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_1
-        Delta_61 = (1) * integrate.simpson(phi_01 * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_1
+        Delta_11 = (1) * integrate.simpson(np.conjugate(phi_01) * np.abs(phi_02) ** 2 * phi_02, x_grid) / Gamma_1 #
+        Delta_21 = (2) * integrate.simpson(np.conjugate(phi_01) * np.abs(phi_02) ** 2 * phi_01, x_grid) / Gamma_1 #
+        Delta_31 = (2) * integrate.simpson(np.conjugate(phi_01) * np.abs(phi_01) ** 2 * phi_02, x_grid) / Gamma_1 #
+        Delta_41 = (1) * integrate.simpson(np.conjugate(phi_01) * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_1 #
+        Delta_51 = (1) * integrate.simpson(np.conjugate(phi_01) * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_1 #
+        Delta_61 = (1) * integrate.simpson(np.conjugate(phi_01) * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_1 #
 
-        Delta_12 = (1) * integrate.simpson(phi_02 * np.abs(phi_02) ** 2 * phi_02, x_grid) / Gamma_2
-        Delta_22 = (2) * integrate.simpson(phi_02 * np.abs(phi_02) ** 2 * phi_01, x_grid) / Gamma_2
-        Delta_32 = (2) * integrate.simpson(phi_02 * np.abs(phi_01) ** 2 * phi_02, x_grid) / Gamma_2
-        Delta_42 = (1) * integrate.simpson(phi_02 * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_2
-        Delta_52 = (1) * integrate.simpson(phi_02 * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_2
-        Delta_62 = (1) * integrate.simpson(phi_02 * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_2
+        Delta_12 = (1) * integrate.simpson(np.conjugate(phi_02) * np.abs(phi_02) ** 2 * phi_02, x_grid) / Gamma_2
+        Delta_22 = (2) * integrate.simpson(np.conjugate(phi_02) * np.abs(phi_02) ** 2 * phi_01, x_grid) / Gamma_2
+        Delta_32 = (2) * integrate.simpson(np.conjugate(phi_02) * np.abs(phi_01) ** 2 * phi_02, x_grid) / Gamma_2
+        Delta_42 = (1) * integrate.simpson(np.conjugate(phi_02) * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_2
+        Delta_52 = (1) * integrate.simpson(np.conjugate(phi_02) * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_2
+        Delta_62 = (1) * integrate.simpson(np.conjugate(phi_02) * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_2
 
         dJ = np.array([[- mu + np.imag(Sigma_11) + np.real(Pi_11), - nu - np.real(Sigma_11) + np.imag(Pi_11)  , np.imag(Sigma_21) + np.real(Sigma_21), -np.real(Sigma_21) + np.imag(Pi_21)],
                        [+ nu + np.real(Sigma_11) + np.imag(Pi_11), - mu + np.imag(Sigma_11) - np.real(Pi_11), np.real(Sigma_21) + np.imag(Pi_21), np.real(Sigma_21) - np.real(Pi_21)],

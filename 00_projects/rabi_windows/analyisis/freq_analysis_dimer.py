@@ -62,3 +62,5 @@ if __name__ == '__main__':
     np.savetxt(save_directory + '/freqs.txt', frequencies, delimiter=',')
     np.savetxt(save_directory + '/powers.txt', powers, delimiter=',')
     np.savetxt(save_directory + '/modules.txt', modules, delimiter=',')
+    plt.plot(distances, frequencies)
+    plt.show()

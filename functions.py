@@ -717,6 +717,28 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         G2 = + (1j * Delta - gamma / 2) * V2 - 2 * 1j * Omega * V1 - 1j * k * U2 + 2 * 1j * g * np.abs(V2) ** 2 * V2
         fields = np.array([F1, F2, G1, G2])
 
+    elif eq == "coherent_langevin":
+        U = field_slices[0]
+        V = field_slices[1]
+
+        Delta = parameters[0]
+        gamma = parameters[1]
+        Omega = parameters[2]
+        k = parameters[3]
+        g = parameters[4]
+
+        noise_01_R = np.random.normal()
+        noise_01_I = np.random.normal()
+        noise_02_R = np.random.normal()
+        noise_02_I = np.random.normal()
+
+        noise_01 =  (noise_01_R + 1j * noise_01_I) / np.sqrt(2) # 0.0 #
+        noise_02 =  (noise_02_R + 1j * noise_02_I) / np.sqrt(2) # 0.0 #
+
+        F = - (1j * (Delta - 2 * g) + gamma / 2) * U - 2 * 1j * Omega * np.conjugate(U) + 1j * k * V - 2 * 1j * g * np.abs(U) ** 2 * U + np.sqrt(gamma / 2) * noise_01
+        G = - (1j * (Delta - 2 * g) + gamma / 2) * V + 2 * 1j * Omega * np.conjugate(V) + 1j * k * U - 2 * 1j * g * np.abs(V) ** 2 * V + np.sqrt(gamma / 2) * noise_02
+        fields = np.array([F, G])
+
     elif eq == 'pdnlS_dimer':
         U1 = field_slices[0]
         U2 = field_slices[1]

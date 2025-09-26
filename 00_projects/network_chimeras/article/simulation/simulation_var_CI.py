@@ -64,7 +64,7 @@ if __name__ == '__main__':
     project_name = '/network_chimeras/data/FIG03a/erdos_renyi'
     disc = 'G:/'
     route = 'My Drive/02. Académico/Investigación/Proyectos/[2025] Network Chimeras'
-    Ks = [0.017] #np.arange(0.02, 0.025, 0.0005)         #DESDE MEANDEGREE = 25 PARA ARRIBA HAY QUE USAR T TOTAL 15000, PARA ABAJO DE ESE VALOR SE PUEDE USAR T TOTAL DE 10000
+    Ks = [0.016] #np.arange(0.02, 0.025, 0.0005)         #DESDE MEANDEGREE = 25 PARA ARRIBA HAY QUE USAR T TOTAL 15000, PARA ABAJO DE ESE VALOR SE PUEDE USAR T TOTAL DE 10000
     samples = np.arange(34, 50)
 
     ########### NETWORK PARAMETERS ###########
@@ -113,8 +113,8 @@ if __name__ == '__main__':
             arg_chimera = [initial_quimera]                     # INITIAL QUIMERA INDEX
             for i in arg_chimera:
                 U_init[i] = 2.0
-            U_init = U_init + 0.0 * (np.random.rand(Nx) - 0.5)
-            V_init = 0.0 * (np.random.rand(Nx) - 0.5)
+            U_init = U_init + 0.1 * (np.random.rand(Nx) - 0.5)
+            V_init = 0.1 * (np.random.rand(Nx) - 0.5)
 
             operators = [laplacian_matrix]
             fields_init = [U_init, V_init]
