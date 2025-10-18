@@ -4,8 +4,8 @@ from time_integrators import *
 
 if __name__ == '__main__':
 
-    save_directory_01a = 'C:/mnustes_science/simulation_data/FD/PT_dimer/alpha=6.524/beta=1.000/mu=0.100/nu=0.020/sigma=6.000/gamma=0.185/analysis'
-    directory = "C:/mnustes_science/simulation_data/FD/PDNLS_extended_PT/extras/dimensional/analysis"
+    #save_directory_01a = 'C:/mnustes_science/simulation_data/FD/PT_dimer/alpha=6.524/beta=1.000/mu=0.100/nu=0.020/sigma=6.000/gamma=0.185/analysis'
+    directory = r"C:\mnustes_science\simulation_data\FD\PT_dimer\phase_dynamics\alpha=1.000\beta=1.000\mu=0.100\nu=0.200\sigma=3.000\gamma=0.280"
 
     #data = np.loadtxt(directory + '/data.txt', delimiter=',')
     data_dist = np.loadtxt(directory + '/data_dist.txt', delimiter=',')

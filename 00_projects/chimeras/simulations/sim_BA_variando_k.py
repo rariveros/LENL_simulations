@@ -25,24 +25,25 @@ if __name__ == '__main__':
     ###########################################################
     # CONFIGURACIÓN GENERAL (cambiar rutas acorde a carpetas ordenadas)
     ###########################################################
-    project_name = '/NW_chimeras/erdos_renyi/varying_K'
+    project_name = '/NW_chimeras/barabasi_albert/simulations_v1/'
     disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
 
     # Valores de k a explorar
-    Ks = [0.022] #np.arange(0.014, 0.0181, 0.001)
-    samples = np.arange(0, 10)
+    Ks = [0.018] #np.arange(0.014, 0.0181, 0.001)
+    samples = np.arange(0, 3)
 
     # Parámetros generales de la red
-    mean_degrees = np.arange(18, 32, 0.5)
+    mean_degree = 18 #np.arange(18, 32, 0.5)
     n = 501
+    ms = [17] #np.arange(7, 16, 1)
 
     ###########################################################
     # LOOP SOBRE k Y MUESTRAS
     ###########################################################
     for k in Ks:
         print("########### k = " + str(k) + " ###########")
-        for mean_degree in mean_degrees:
+        for m in ms:
             print("###### MD = " + str(mean_degree) + " ######")
             for sample in samples:
                 print("# Sample = " + str(sample) + " #")
@@ -54,7 +55,7 @@ if __name__ == '__main__':
                 # CREAR NUEVA RED
                 ###########################################################
                 p = mean_degree / (n - 1)
-                graph = erdos_renyi_graph(n, p)
+                graph = barabasi_albert_graph_connected(n, m)
                 adj_matrix = nx.adjacency_matrix(graph).astype(float)
                 degrees = np.sum(adj_matrix, axis=1)
                 D = np.diag(degrees)
@@ -132,9 +133,9 @@ if __name__ == '__main__':
                 ###########################################################
                 file = disc + route + project_name
                 k_str = f"{k:.{4}f}"
-                mean_degree_str = f"{mean_degree:.{2}f}"
+                mean_degree_str = f"{m:.{4}f}"
                 sample_str = f"{sample:.{2}f}"
-                subfile = "/k=" + k_str + "/mean_degree=" + mean_degree_str + "/sample=" + sample_str
+                subfile = "/k=" + k_str + "/m=" + mean_degree_str + "/sample=" + sample_str
 
                 if not os.path.exists(file + subfile):
                     os.makedirs(file + subfile)

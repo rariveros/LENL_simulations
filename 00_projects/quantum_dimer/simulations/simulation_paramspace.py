@@ -10,7 +10,7 @@ from scipy.ndimage import gaussian_filter1d  # <-- para suavizar espectros
 
 if __name__ == '__main__':
     # Parameters
-    project_name = '/coherent/spectrums_01'
+    project_name = '/coherent/parameter_space_01'
     disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'coherent_langevin'
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     #gs = [0.0011]
 
     # Grids
-    [tmin, tmax, dt] = [0, 20000, 0.1]
+    [tmin, tmax, dt] = [0, 10000, 0.1]
     [xmin, xmax, dx] = [0, 10, 1]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
@@ -115,7 +115,6 @@ if __name__ == '__main__':
             f_peak = Freqs[idx_peak]
             S_max = spec[idx_peak]
             S_noise = spec.mean()
-
             M = S_max
 
             # === normalizar después del promedio (cada κ con máximo = 1) ===
@@ -124,11 +123,8 @@ if __name__ == '__main__':
             # === suavizado ligero ===
             #psd_U_mean = gaussian_filter1d(psd_U_mean, sigma=10)
             #psd_V_mean = gaussian_filter1d(psd_V_mean, sigma=5)
-
+            del U_light, V_light, U, V
             output_data.append([k, quantumness, g, f_peak, M, S_noise])
-            Spectra_U.append(psd_U_mean)
-            Spectra_V.append(psd_V_mean)
-            Ks_mean.append(k)
 
             now = datetime.datetime.now()
             print('Hora de Término: ' + str(now.hour) + ':' + str(now.minute) + ':' + str(now.second))
@@ -139,62 +135,4 @@ if __name__ == '__main__':
         if not os.path.exists(file + subfile):
             os.makedirs(file + subfile)
 
-        # === Guardar resultados de análisis ===
-        np.savetxt(file + subfile + "/AvgOcc_U.txt", np.array(AvgOcc_U), delimiter=',')
-        np.savetxt(file + subfile + "/AvgOcc_V.txt", np.array(AvgOcc_V), delimiter=',')
-        np.savetxt(file + subfile + "/VarOcc_U.txt", np.array(VarOcc_U), delimiter=',')
-        np.savetxt(file + subfile + "/VarOcc_V.txt", np.array(VarOcc_V), delimiter=',')
-        np.savetxt(file + subfile + "/Ks.txt", np.array(Ks), delimiter=',')
-        np.savetxt(file + subfile + "/Ks_mean.txt", np.array(Ks_mean), delimiter=',')
-        np.savetxt(file + subfile + "/Freqs.txt", np.array(Freqs), delimiter=',')
-        np.savetxt(file + subfile + "/Spectra_U.txt", np.array(Spectra_U), delimiter=',')
-        np.savetxt(file + subfile + "/Spectra_V.txt", np.array(Spectra_V), delimiter=',')
-
-        # === Example plots ===
-        plt.figure()
-        plt.scatter(Ks, AvgOcc_U, c='b', label='U avg occ')
-        plt.scatter(Ks, AvgOcc_V, c='r', label='V avg occ')
-        plt.xlabel('$\\kappa$')
-        plt.ylabel('Average occupation')
-        plt.legend()
-        plt.grid(linestyle='--', alpha=0.5)
-        plt.savefig(file + subfile + "/avg_occ_vs_k.png", dpi=200)
-        plt.close()
-
-        plt.figure()
-        plt.scatter(Ks, VarOcc_U, c='b', label='U var')
-        plt.scatter(Ks, VarOcc_V, c='r', label='V var')
-        plt.xlabel('$\\kappa$')
-        plt.ylabel('Variance of intensity')
-        plt.legend()
-        plt.grid(linestyle='--', alpha=0.5)
-        plt.savefig(file + subfile + "/var_vs_k.png", dpi=200)
-        plt.close()
-
-        # Convert to arrays for cmap
-        Spectra_U = np.array(Spectra_U)
-        Spectra_V = np.array(Spectra_V)
-        Ks_mean_arr = np.array(Ks_mean)
-
-        plt.figure(figsize=(6, 5))
-        plt.pcolormesh(Freqs, Ks_mean_arr, Spectra_U,
-                       shading='auto', cmap='inferno',
-                       norm=LogNorm(vmin=1e-6, vmax=1))
-        plt.xlabel("$\omega$")
-        plt.ylabel("$\\kappa$")
-        plt.colorbar(label="$\\textrm{log}_{10}\ S_U(\\omega)$")
-        plt.xlim(-0.4, 0.4)
-        plt.savefig(file + subfile + "/spectrum_vs_k_U.png", dpi=200)
-        plt.close()
-
-        plt.figure(figsize=(6, 5))
-        plt.pcolormesh(Freqs, Ks_mean_arr, Spectra_V,
-                       shading='auto', cmap='inferno',
-                       norm=LogNorm(vmin=1e-6, vmax=1))
-        plt.xlabel("$\omega$")
-        plt.ylabel("$\\kappa$")
-        plt.colorbar(label="$\\textrm{log}_{10}\ S_V(\\omega)$")
-        plt.xlim(-0.4, 0.4)
-        plt.savefig(file + subfile + "/spectrum_vs_k_V.png", dpi=200)
-        plt.close()
     np.savetxt(file + "/output_data.txt", np.array(output_data), delimiter=',')

@@ -33,7 +33,7 @@ if __name__ == '__main__':
     ###########################################################
     # CONFIGURACIÓN GENERAL
     ###########################################################
-    project_name = '/NW_chimeras/erdos_renyi/simulations_v3'
+    project_name = '/NW_chimeras/watts_strogatz/simulations_v3'
     disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
 
@@ -41,21 +41,23 @@ if __name__ == '__main__':
     samples = np.arange(0, 30)   # condiciones iniciales distintas
 
     # Parámetros generales de la red
-    mean_degree = 20
+    mean_degree = 18
     n = 501
 
     ###########################################################
     # CREAR O CARGAR LA RED UNA SOLA VEZ
     ###########################################################
     p = mean_degree / (n - 1)
-    #graph = erdos_renyi_graph(n, p)
-    #adj_matrix = nx.adjacency_matrix(graph).toarray()
-    #degrees = np.sum(adj_matrix, axis=1)
-    #D = np.diag(degrees)
+    beta = 0.9
+    p = mean_degree / (n - 1)
+    graph = watts_strogatz_graph_connected(n, mean_degree, beta)
+    adj_matrix = nx.adjacency_matrix(graph).astype(float)
+    degrees = np.sum(adj_matrix, axis=1)
+    D = np.diag(degrees)
 
     # Matriz laplaciana
-    #L_dense = D - adj_matrix
-    #laplacian_matrix = L_dense
+    L_dense = D - adj_matrix
+    laplacian_matrix = L_dense
 
     # Guardar matriz de adyacencia una vez, al nivel superior
     file = disc + route + project_name
@@ -65,11 +67,11 @@ if __name__ == '__main__':
 
     # =========================================================
     # OPCIÓN: CARGAR MATRIZ DE ADJACENCIA
-    adj_matrix = np.loadtxt(r"C:\mnustes_science\simulation_data\FD\NW_chimeras\FIGxx\erdos_renyi_CI/Adj_matrix.txt", delimiter=',')
-    degrees = np.sum(adj_matrix, axis=1)
-    D = np.diag(degrees)
-    L_dense = D - adj_matrix
-    laplacian_matrix = L_dense
+    #adj_matrix = np.loadtxt(r"C:\mnustes_science\simulation_data\FD\NW_chimeras\FIGxx\erdos_renyi_CI/Adj_matrix.txt", delimiter=',')
+    #degrees = np.sum(adj_matrix, axis=1)
+    #D = np.diag(degrees)
+    #L_dense = D - adj_matrix
+    #laplacian_matrix = L_dense
     # =========================================================
 
     ###########################################################
@@ -154,10 +156,11 @@ if __name__ == '__main__':
             ###########################################################
             # GUARDADO DE RESULTADOS
             ###########################################################
+            file = disc + route + project_name
             k_str = f"{k:.{4}f}"
-            mean_degree_str = f"{mean_degree:.{2}f}"
+            beta_str = f"{beta:.{4}f}"
             sample_str = f"{sample:.{2}f}"
-            subfile = "/k=" + k_str + "/mean_degree=" + mean_degree_str + "/sample=" + sample_str
+            subfile = "/k=" + k_str + "/beta=" + beta_str + "/sample=" + sample_str
 
             if not os.path.exists(file + subfile):
                 os.makedirs(file + subfile)

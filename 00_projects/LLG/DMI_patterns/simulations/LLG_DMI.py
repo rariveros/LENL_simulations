@@ -11,8 +11,8 @@ if __name__ == '__main__':
     eq = 'LLG_DMI'
 
     t_rate = 2
-    A = 4.0
-    D = 0.0
+    A = 1.0
+    D = 0.5
     alpha = 0.01
 
     hx = 0.0
@@ -23,33 +23,35 @@ if __name__ == '__main__':
     Ky = 20.0
     Kz = 0.0
 
-    dist = 50 #30.0
-    sigma = 15 #6
-    phi = np.pi
+    #dist = 50 #30.0
+    #sigma = 15 #6
+    #phi = np.pi
 
     w0 = np.sqrt(hz * (hz + Ky))
-    nu = 0.02
+    nu = 0.1
     omega = 2 * (w0 + nu) #9.1626
 
     h = [hx, hy, hz]
     K = [Kx, Ky, Kz]
     L_x = 360
     # Definición de la grilla
-    [tmin, tmax, dt] = [0, 2000, 0.02]
-    [xmin, xmax, dx] = [- L_x/2, L_x/2, 1.0]
+    [tmin, tmax, dt] = [0, 5000, 0.02]
+    [xmin, xmax, dx] = [- L_x/2, L_x/2, 0.5]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
     T = tmax
     Nt = t_grid.shape[0]
     Nx = x_grid.shape[0]
-    dh_0 = 0.37
-    dh = dh_0 * np.real((np.exp(- (x_grid - dist / 2) ** 2 / (2 * sigma ** 2)) + np.exp(1j * phi) * np.exp( - (x_grid + dist / 2) ** 2 / (2 * sigma ** 2))))
+    dh_0 = 0.24
+    dh = dh_0 #* np.real((np.exp(- (x_grid - dist / 2) ** 2 / (2 * sigma ** 2)) + np.exp(1j * phi) * np.exp( - (x_grid + dist / 2) ** 2 / (2 * sigma ** 2))))
 
     mu = alpha * (2 * hz + Ky)
     gamma = dh_0 * (2 * hz + Ky) / omega
     print("nu = " + str(nu))
     print("mu = " + str(mu / 2))
     print("gamma = " + str(gamma / 4))
+    prefac = -gamma / (1 + alpha ** 2)
+    print("lambda = " + str(prefac))
 
     # Initial Conditions
     m1_init = m2_init = 0.05 * (np.random.rand(Nx) - 0.5)
@@ -57,8 +59,8 @@ if __name__ == '__main__':
 
     # Empaquetamiento de parametros, campos y derivadas para integración
     L = xmax - xmin
-    D1 = sparse_D_neumann(Nx, dx) #sparse_D_neumann(Nx, dx)
-    D2 = sparse_DD_neumann(Nx, dx) #sparse_DD_periodic(Nx, dx)
+    D1 = sparse_D_periodic(Nx, dx) #sparse_D_neumann(Nx, dx)
+    D2 = sparse_DD_periodic(Nx, dx) #sparse_DD_periodic(Nx, dx)
     operators = np.array([D1, D2])
     fields_init = [m1_init, m2_init, m3_init]
     grids = [t_grid, x_grid, 0]

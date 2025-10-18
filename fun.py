@@ -14,11 +14,116 @@ from scipy.linalg import expm
 # FUNCIONES GENERALES
 ###########################################################
 
+import networkx as nx
+from typing import Optional
+
+
 def erdos_renyi_graph(num_nodes, probability):
     graph = nx.erdos_renyi_graph(n=num_nodes, p=probability)
+    # keep the largest connected component
     largest_cc = max(nx.connected_components(graph), key=len)
     graph = graph.subgraph(largest_cc)
     return graph
+
+
+def watts_strogatz_graph_connected(
+        num_nodes: int,
+        k: int,
+        beta: float,
+        *,
+        max_attempts: int = 100,
+        seed: Optional[int] = None
+) -> nx.Graph:
+    """
+    Genera un grafo Watts–Strogatz que sea conexo y de tamaño exacto num_nodes.
+    Reintenta hasta max_attempts variando la semilla si es necesario.
+
+    Parámetros
+    ----------
+    num_nodes : int
+        Número de nodos (N).
+    k : int
+        Cada nodo se conecta inicialmente con k vecinos cercanos en un anillo.
+        Debe ser par y 0 < k < N.
+    beta : float
+        Probabilidad de "rewiring" en [0, 1].
+    max_attempts : int, opcional
+        Máximo de intentos (por defecto 100).
+    seed : int, opcional
+        Semilla base para reproducibilidad.
+
+    Retorna
+    -------
+    nx.Graph
+        Grafo conexo con exactamente num_nodes nodos.
+
+    Lanza
+    -----
+    ValueError si no se logra un grafo conexo tras max_attempts.
+    """
+    if not (0 < k < num_nodes) or (k % 2 != 0):
+        raise ValueError("k debe ser par y cumplir 0 < k < num_nodes.")
+
+    for attempt in range(max_attempts):
+        s = None if seed is None else (seed + attempt)
+        G = nx.watts_strogatz_graph(n=num_nodes, k=k, p=beta, seed=s)
+        if G.number_of_nodes() == num_nodes and nx.is_connected(G):
+            return G
+
+    raise ValueError(
+        f"No se logró un WS conexo con N={num_nodes}, k={k}, beta={beta} "
+        f"tras {max_attempts} intentos. Prueba con más intentos o ajusta parámetros."
+    )
+
+
+def barabasi_albert_graph_connected(
+        num_nodes: int,
+        m: int,
+        *,
+        max_attempts: int = 10,
+        seed: Optional[int] = None
+) -> nx.Graph:
+    """
+    Genera un grafo Barabási–Albert que sea conexo y de tamaño exacto num_nodes.
+    Reintenta hasta max_attempts variando la semilla si es necesario.
+
+    Nota: En la implementación clásica (m >= 1) BA resulta conexo porque cada
+    nuevo nodo se conecta a la componente existente. Este loop es por consistencia.
+
+    Parámetros
+    ----------
+    num_nodes : int
+        Número de nodos (N).
+    m : int
+        Aristas añadidas por cada nuevo nodo (1 <= m < N).
+    max_attempts : int, opcional
+        Máximo de intentos (por defecto 10).
+    seed : int, opcional
+        Semilla base para reproducibilidad.
+
+    Retorna
+    -------
+    nx.Graph
+        Grafo conexo con exactamente num_nodes nodos.
+
+    Lanza
+    -----
+    ValueError si no se logra un grafo conexo tras max_attempts.
+    """
+    if not (1 <= m < num_nodes):
+        raise ValueError("m debe cumplir 1 <= m < num_nodes.")
+
+    for attempt in range(max_attempts):
+        s = None if seed is None else (seed + attempt)
+        G = nx.barabasi_albert_graph(n=num_nodes, m=m, seed=s)
+        # En BA estándar ya debería ser conexo; verificamos por uniformidad:
+        if G.number_of_nodes() == num_nodes and nx.is_connected(G):
+            return G
+
+    raise ValueError(
+        f"No se logró un BA conexo con N={num_nodes}, m={m} "
+        f"tras {max_attempts} intentos. Revisa parámetros."
+    )
 
 def load_results_with_args_list(path):
     """

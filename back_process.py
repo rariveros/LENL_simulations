@@ -46,12 +46,15 @@ from scipy.linalg import expm
 
 #### OTROS ###
 import numpy as np
+from matplotlib.colors import LogNorm
 import os
 import time
 import datetime
 import shutil
 import tkinter as tk
 from tkinter import filedialog
+
+
 
 custom_green_500 = [
 (1.0, 1.0, 1.0),

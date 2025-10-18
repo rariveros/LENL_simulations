@@ -20,7 +20,7 @@ if __name__ == '__main__':
     eq = 'PT_dimer'
     t_rate = 1
     dt = 0.4
-    T = 100 #5000
+    T = 5000
 
     disco = 'D:/'
     initial_dir_data = str(disco) + 'Users/mnustes_science/PT_fluids/mnustes_science/simulation_data'
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     dx = x_grid[1] - x_grid[0]
     #[Z_r_00, Z_i_00, Z_r_01, Z_i_01] = [Z_r_00[-1, :], Z_i_00[-1, :], Z_r_01[-1, :], Z_i_01[-1, :]]
 
-    distances = np.arange(1, 40, 0.25)
+    distances = np.arange(1, 40, 0.1)
     PHI_Rs = []
     PHI_Ls = []
     times = []
@@ -58,6 +58,9 @@ if __name__ == '__main__':
     DELTAS = []
     DELTAS1 = []
     DELTAS2 = []
+    coefficients = []
+    U_1_init = 0.1 * (np.random.rand(1) + 1j * np.random.rand(1))
+    U_2_init = 0.1 * (np.random.rand(1) + 1j * np.random.rand(1))
     for d in distances:
         print("############ d = " + str(d) + " ############")
         X_L = - d / 2
@@ -110,7 +113,15 @@ if __name__ == '__main__':
         Delta_42 = (1) * integrate.simpson(phi_02 * np.abs(phi_01) ** 2 * phi_01, x_grid) / Gamma_2
         Delta_52 = (1) * integrate.simpson(phi_02 * phi_02 ** 2 * np.conjugate(phi_01), x_grid) / Gamma_2
         Delta_62 = (1) * integrate.simpson(phi_02 * phi_01 ** 2 * np.conjugate(phi_02), x_grid) / Gamma_2
-
+        coefficients_i = [
+            Sigma_11, Sigma_12, Sigma_21, Sigma_22,
+            Pi_11, Pi_12, Pi_21, Pi_22,
+            Delta_11, Delta_21, Delta_31, Delta_41,
+            Delta_51, Delta_61,
+            Delta_12, Delta_22, Delta_32, Delta_42,
+            Delta_52, Delta_62
+        ]
+        coefficients.append(coefficients_i)
         dJ = np.array([[- mu + np.imag(Sigma_11) + np.real(Pi_11), - nu - np.real(Sigma_11) + np.imag(Pi_11)  , np.imag(Sigma_21) + np.real(Sigma_21), -np.real(Sigma_21) + np.imag(Pi_21)],
                        [+ nu + np.real(Sigma_11) + np.imag(Pi_11), - mu + np.imag(Sigma_11) - np.real(Pi_11), np.real(Sigma_21) + np.imag(Pi_21), np.real(Sigma_21) - np.real(Pi_21)],
                        [np.imag(Sigma_12) + np.real(Pi_12)       ,  -np.real(Sigma_12) + np.imag(Pi_12)      , - mu + np.imag(Sigma_22) + np.real(Pi_22), -nu - np.real(Sigma_22) + np.imag(Pi_22)],
@@ -118,6 +129,7 @@ if __name__ == '__main__':
         eigenvalues, eigenvectors = np.linalg.eig(dJ)
         eig_R = np.real(eigenvalues)
         eig_I = np.imag(eigenvalues)
+
         for i in [0, 1, 2, 3]:
             if i == 0 and d == distances[0]:
                 plt.scatter(d, eig_R[i], c="b", s=10, label="$\lambda_R$")
@@ -138,6 +150,9 @@ if __name__ == '__main__':
         DELTAS2.append(delta2)
 
         parameters = [alpha, beta, mu, nu, sigma, pi, delta]
+        params = [alpha, beta, mu, nu, np.real(gamma_0)]
+
+        print(params)
 
         # Definición de la grilla
         [tmin, tmax, dt] = [0, T, dt]
@@ -146,8 +161,6 @@ if __name__ == '__main__':
         Nt = t_grid.shape[0]
 
         # Initial Conditions Pattern
-        U_1_init = 0.1 * (np.random.rand(1) + 1j * np.random.rand(1))
-        U_2_init = 0.1 * (np.random.rand(1) + 1j * np.random.rand(1))
         operators = [0]
 
         # Empaquetamiento de parametros, campos y derivadas para integración
@@ -224,25 +237,25 @@ if __name__ == '__main__':
     colors_01 = ["#46327e", "#365c8d", "#4ac16d", "#a0da39"]
     colors_02 = ["#46327e", "#365c8d", "#277f8e", "#1fa187", "#4ac16d", "#a0da39"] #["#FF1919", "#0237c9", "#d9c425", "#3ac73f", "#071847", "#db7516"]
 
-    fig, ((ax11, ax12), (ax21, ax22)) = plt.subplots(2, 2, figsize=(5.5, 4))
+    fig, ((ax11a, ax12a), (ax11b, ax12b), (ax21a, ax22a), (ax21b, ax22b), ) = plt.subplots(4, 2, figsize=(5.5, 4))
     for i in range(4):
         zorder = 1
         if i == 0:
             zorder = 5
         elif i == 3:
             zorder = 5
-        ax11.plot(distances, np.real(np.array(SIGMAS)[:, i]), label=labels_01[i], color=lava_colors[i], lw=2, zorder=zorder)
-        ax11.plot(distances, np.imag(np.array(SIGMAS)[:, i]), ls="--", color=lava_colors[i], lw=2, zorder=zorder)
-        ax11.legend(ncol=2, fontsize=6, loc="upper right")
+        ax11a.plot(distances, np.real(np.array(SIGMAS)[:, i]), label=labels_01[i], color=lava_colors[i], lw=2, zorder=zorder)
+        ax11b.plot(distances, np.imag(np.array(SIGMAS)[:, i]), color=lava_colors[i], lw=2, zorder=zorder)
+        #ax11a.legend(ncol=2, fontsize=6, loc="upper right")
     for i in range(4):
         zorder = 1
         if i == 1:
             zorder = 5
         elif i == 2:
             zorder = 5
-        ax12.plot(distances, np.real(np.array(PIS)[:, i]), label=labels_02[i], color=colors_01[i], lw=2, zorder=zorder)
-        ax12.plot(distances, np.imag(np.array(PIS)[:, i]), ls="--", color=colors_01[i], lw=2, zorder=zorder)
-        ax12.legend(ncol=2, fontsize=6, loc="upper right")
+        ax12a.plot(distances, np.real(np.array(PIS)[:, i]), label=labels_02[i], color=colors_01[i], lw=2, zorder=zorder)
+        ax12b.plot(distances, np.imag(np.array(PIS)[:, i]), color=colors_01[i], lw=2, zorder=zorder)
+        ax11a.legend(ncol=2, fontsize=5.5, loc="upper right", framealpha=0.9)
     for i in range(6):
         zorder = 1
         if i == 1:
@@ -251,9 +264,9 @@ if __name__ == '__main__':
             zorder = 5
         elif i == 4:
             zorder = 5
-        ax21.plot(distances, np.real(np.array(DELTAS1)[:, i]), label=labels_03[i], color=colors_02[i], lw=2, zorder=zorder)
-        ax21.plot(distances, np.imag(np.array(DELTAS1)[:, i]), ls="--", color=colors_02[i], lw=2, zorder=zorder)
-        ax21.legend(ncol=2, fontsize=6, loc="upper right")
+        ax21a.plot(distances, np.real(np.array(DELTAS1)[:, i]), label=labels_03[i], color=colors_02[i], lw=2, zorder=zorder)
+        ax21b.plot(distances, np.imag(np.array(DELTAS1)[:, i]), color=colors_02[i], lw=2, zorder=zorder)
+        #ax21a.legend(ncol=2, fontsize=6, loc="upper right")
 
     for i in range(6):
         zorder = 1
@@ -263,34 +276,52 @@ if __name__ == '__main__':
             zorder = 5
         elif i == 5:
             zorder = 5
-        ax22.plot(distances, np.real(np.array(DELTAS2)[:, i]), label=labels_04[i], color=colors_02[i], lw=2, zorder=zorder)
-        ax22.plot(distances, np.imag(np.array(DELTAS2)[:, i]), ls="--", color=colors_02[i], lw=2, zorder=zorder)
-        ax22.legend(ncol=2, fontsize=6, loc="upper right")
+        ax22a.plot(distances, np.real(np.array(DELTAS2)[:, i]), label=labels_04[i], color=colors_02[i], lw=2, zorder=zorder)
+        ax22b.plot(distances, np.imag(np.array(DELTAS2)[:, i]), color=colors_02[i], lw=2, zorder=zorder)
+        ax21a.legend(ncol=2, fontsize=5.5, loc="upper right", framealpha=0.9)
 
-    ax11.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False)
-    ax12.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False, labelright=True, right=True, labelleft=False, left=False)
-    ax21.tick_params(axis="both", direction="in", labelsize=13)
-    ax22.tick_params(axis="both", direction="in", labelsize=13, labelbottom=True, labelright=True, right=True, labelleft=False, left=False)
+    ax11a.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False)
+    ax12a.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False, labelright=True, right=True, labelleft=False, left=False)
+    ax11b.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False)
+    ax12b.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False, labelright=True, right=True, labelleft=False, left=False)
+    ax21a.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False)
+    ax22a.tick_params(axis="both", direction="in", labelsize=13, labelbottom=False, labelright=True, right=True, labelleft=False, left=False)
+    ax21b.tick_params(axis="both", direction="in", labelsize=13)
+    ax22b.tick_params(axis="both", direction="in", labelsize=13, labelbottom=True, labelright=True, right=True, labelleft=False, left=False)
 
-    ax11.set_xlim(0, 40)
-    ax12.set_xlim(0, 40)
-    ax21.set_xlim(0, 40)
-    ax22.set_xlim(0, 40)
+    ax11a.set_ylim(-0.5, 0.55)
+    ax12a.set_ylim(-1, 0.05)
+    ax11b.set_ylim(-1, 0.05)
+    ax12b.set_ylim(-1, 0.05)
+    ax21a.set_ylim(-0.05, 0.7)
+    ax22a.set_ylim(-0.05, 0.7)
+    ax21b.set_ylim(-0.31, 0.37)
+    ax22b.set_ylim(-0.31, 0.37)
+    ax21b.set_yticks([-0.3, 0, 0.3])
+    ax22b.set_yticks([-0.3, 0, 0.3])
 
-    ax21.set_xlabel("$d$", fontsize=17)
-    ax22.set_xlabel("$d$", fontsize=17)
+    ax11a.set_xlim(0, 40)
+    ax12a.set_xlim(0, 40)
+    ax11b.set_xlim(0, 40)
+    ax12b.set_xlim(0, 40)
+    ax21a.set_xlim(0, 40)
+    ax22a.set_xlim(0, 40)
+    ax21b.set_xlim(0, 40)
+    ax22b.set_xlim(0, 40)
 
-    ax11.set_ylabel("$\Sigma$", fontsize=17)
-    ax12.set_ylabel("$\Pi$", fontsize=17)
-    ax12.yaxis.set_label_position("right")
-    ax21.set_ylabel("$\Delta_{+}$", fontsize=17)
-    ax22.set_ylabel("$\Delta_{-}$", fontsize=17)
-    ax22.yaxis.set_label_position("right")
+    ax21b.set_xlabel("$d$", fontsize=17)
+    ax22b.set_xlabel("$d$", fontsize=17)
 
-    plt.subplots_adjust(wspace=0.1, hspace=0.1, left=0.15, right=0.85, bottom=0.2, top=0.95)
+    ax11a.set_ylabel("$\Sigma$", fontsize=17)
+    ax12a.set_ylabel("$\Pi$", fontsize=17)
+    ax12a.yaxis.set_label_position("right")
+    ax21a.set_ylabel("$\Delta_{+}$", fontsize=17)
+    ax22a.set_ylabel("$\Delta_{-}$", fontsize=17)
+    ax22a.yaxis.set_label_position("right")
+
+    plt.subplots_adjust(wspace=0.08, hspace=0.15, left=0.15, right=0.85, bottom=0.2, top=0.95)
     plt.savefig("coefficients.png", dpi=300)
     plt.close()
-
 
     np.savetxt(save_directory + '/ansatz_right.txt', PHI_Rs, delimiter=',')
     np.savetxt(save_directory + '/ansatz_left.txt', PHI_Ls, delimiter=',')
@@ -305,3 +336,7 @@ if __name__ == '__main__':
     np.savetxt(save_directory + '/U2_Rs.txt', np.array(U2_Rs), delimiter=',')
     np.savetxt(save_directory + '/U2_Is.txt', np.array(U2_Is), delimiter=',')
     np.savetxt(save_directory + '/dists.txt', distances, delimiter=',')
+    np.savetxt(save_directory + '/coefs.txt', coefficients, delimiter=',')
+    np.savetxt(save_directory + '/params.txt', params, delimiter=',')
+
+

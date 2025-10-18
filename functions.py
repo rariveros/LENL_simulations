@@ -700,10 +700,8 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         fields = np.array([F])
 
     elif eq == 'ladder_PDQHO':
-        U1 = field_slices[0]
-        U2 = field_slices[1]
-        V1 = field_slices[2]
-        V2 = field_slices[3]
+        U = field_slices[0]
+        V = field_slices[1]
 
         Delta = parameters[0]
         gamma = parameters[1]
@@ -711,11 +709,9 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
         k = parameters[3]
         g = parameters[4]
 
-        F1 = - (1j * Delta + gamma / 2) * U1 - 2 * 1j * Omega * U2 + 1j * k * V1 - 2 * 1j * g * np.abs(U1) ** 2 * U1
-        F2 = + (1j * Delta - gamma / 2) * U2 + 2 * 1j * Omega * U1 - 1j * k * V2 + 2 * 1j * g * np.abs(U2) ** 2 * U2
-        G1 = - (1j * Delta + gamma / 2) * V1 + 2 * 1j * Omega * V2 + 1j * k * U1 - 2 * 1j * g * np.abs(V1) ** 2 * V1
-        G2 = + (1j * Delta - gamma / 2) * V2 - 2 * 1j * Omega * V1 - 1j * k * U2 + 2 * 1j * g * np.abs(V2) ** 2 * V2
-        fields = np.array([F1, F2, G1, G2])
+        F = - (1j * Delta + gamma / 2) * U - 2 * 1j * Omega * np.conjugate(U) + 1j * k * V - 2 * 1j * g * np.abs(U) ** 2 * U
+        G = - (1j * Delta + gamma / 2) * V + 2 * 1j * Omega * np.conjugate(V) + 1j * k * U - 2 * 1j * g * np.abs(V) ** 2 * V
+        fields = np.array([F, G])
 
     elif eq == "coherent_langevin":
         U = field_slices[0]

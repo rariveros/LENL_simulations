@@ -5,15 +5,15 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = '/PT_dimer'
+    project_name = '/PT_dimer/phase_dynamics'
     disc = 'C:/'                                        # DISCO DE TRABAJO
     route = 'mnustes_science/simulation_data/FD'        # CARPETA DE TRABAJO
     eq = 'PDNLS'                                        # ECUACION
     t_rate = 1000                                      # CADA CUANTAS ITERACIONES GUARDA
-    dt = 0.01
+    dt = 0.005
     T = 3000
-    dx = 0.25#en milimetros
-    ies = np.arange(0.32, 0.401, 0.01)
+    dx = 0.1#en milimetros
+    ies = [0.20] #np.arange(0.32, 0.401, 0.01)
     jes = [0, np.pi] #np.arange(150, 50, -4)
     [tmin, tmax, dt] = [0, T, dt]
     [xmin, xmax, dx] = [-70, 70, dx]

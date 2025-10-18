@@ -158,18 +158,18 @@ if __name__ == '__main__':
 
                 # Leer datos
                 average_module = np.loadtxt(module_mean_path, delimiter=',')
-                x_sorted = np.loadtxt(os.path.join(sample_folder_path, 'X_sorted.txt'), delimiter=',')
+                x_sorted = np.loadtxt(os.path.join(sample_folder_path, 'args_module.txt'), delimiter=',', dtype="int")
 
                 # ajuste de la distribución a una función acumulada
-                x_vals, F_x = cumulate_function(average_module)
+                x_vals, F_x = cumulate_function(average_module[x_sorted])
+                #plt.plot(x_vals, F_x)
+                #plt.show()
+                #plt.close()
 
                 # ajustamos esta curva a una función
                 popt = ajustar_curva(x_vals, F_x)
                 a, xc, delta_c, delta_xs, delta_s = popt
-
                 F_x_fit = model_func(x_vals, a, xc, delta_c, delta_xs, delta_s)
-
-
                 xs = xc + delta_xs
 
                 #plt.plot(x_vals, F_x, color="k")

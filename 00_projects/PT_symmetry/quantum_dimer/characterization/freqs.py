@@ -23,8 +23,8 @@ if __name__ == '__main__':
             dir_02 = working_directory + "/" + directory_01 + "/" + directory_02
             params = np.loadtxt(dir_02 + '/parameters.txt', delimiter=',')
             T = np.loadtxt(dir_02 + '/T.txt', delimiter=',')
-            U1 = np.loadtxt(dir_02 + '/U1.txt', delimiter=',', dtype=np.complex128)
-            V1 = np.loadtxt(dir_02 + '/V1.txt', delimiter=',', dtype=np.complex128)
+            U1 = np.loadtxt(dir_02 + '/U.txt', delimiter=',', dtype=np.complex128)
+            V1 = np.loadtxt(dir_02 + '/V.txt', delimiter=',', dtype=np.complex128)
             save_directory = working_directory
             Nt = len(T)
             t0 = int(0.2 * Nt)

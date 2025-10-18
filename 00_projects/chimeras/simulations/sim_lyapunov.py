@@ -27,8 +27,8 @@ if __name__ == '__main__':
     ###########################################################
     # CONFIGURACIÓN GENERAL (cambiar rutas acorde a carpetas ordenadas)
     ###########################################################
-    project_name = '/network_chimeras/FIG03/erdos_renyi'
-    disc = 'D:/'
+    project_name = '/NW_chimeras/erdos_renyi/simulations_v1'
+    disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
 
     # Parámetros de red a simular
@@ -55,9 +55,13 @@ if __name__ == '__main__':
             p = mean_degree / (n - 1)
             graph = erdos_renyi_graph(n, p)
 
-            adj_matrix = nx.adjacency_matrix(graph).toarray()
-            laplacian_matrix = nx.laplacian_matrix(graph).tocsc()
-            L_dense = laplacian_matrix.toarray()
+            adj_matrix = nx.adjacency_matrix(graph).astype(float)
+            degrees = np.sum(adj_matrix, axis=1)
+            D = np.diag(degrees)
+
+            # Matriz laplaciana
+            L_dense = D - adj_matrix
+            laplacian_matrix = L_dense
 
             ###########################################################
             # PARÁMETROS DEL OSCILADOR
@@ -74,7 +78,7 @@ if __name__ == '__main__':
             # PREPARACIÓN DE LA SIMULACIÓN
             ###########################################################
             N_nodes = n
-            [tmin, tmax, dt] = [0, 5000, 0.05]   # Escala temporal
+            [tmin, tmax, dt] = [0, 20000, 0.05]   # Escala temporal
             t_grid = np.arange(tmin, tmax + dt, dt)   # Malla temporal
 
             [xmin, xmax, dx] = [0, N_nodes, 1]   # Escala espacial

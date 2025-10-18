@@ -3,7 +3,7 @@ from back_process import *
 from time_integrators import *
 
 if __name__ == '__main__':
-    directory = "D:/mnustes_science/simulation_data/FD/ladder_operators/test/Delta=0.1000/gamma=0.1000"
+    directory = "C:\mnustes_science\simulation_data\FD\coherent\meanfield"
     Freqs = np.loadtxt(directory + '/frequencies.txt', delimiter=',')
     Ks = np.loadtxt(directory + '/ks.txt', delimiter=',')
     Omegas = np.loadtxt(directory + '/omegas.txt', delimiter=',')

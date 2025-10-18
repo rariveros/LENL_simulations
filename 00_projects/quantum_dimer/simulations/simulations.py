@@ -11,8 +11,8 @@ if __name__ == '__main__':
     # Hay que tener los diagramas de fase estocasticos y mean-field.
     # Definiendo parámetros
 
-    project_name = '/coherent/test2'
-    disc = 'D:/'
+    project_name = '/coherent/test3'
+    disc = 'C:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'coherent_langevin'
     t_rate = 1
@@ -27,11 +27,11 @@ if __name__ == '__main__':
     Delta = 0.01
     gamma = 0.1
     Omegas = [0.2]
-    K = [0.6] #np.arange(0.5, 0.1, -0.01) # [0.15] #
+    K = [0.2] #np.arange(0.5, 0.1, -0.01) # [0.15] #
     g = 0.5
-
+    Ti, Tf = 9800, 10000
     # Definición de la grilla
-    [tmin, tmax, dt] = [0, 4000, 0.1]
+    [tmin, tmax, dt] = [0, 10000, 0.1]
     [xmin, xmax, dx] = [0, 10, 1]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
@@ -58,13 +58,13 @@ if __name__ == '__main__':
     plt.show()
     plt.close()
 
-
     for Omega in Omegas:
         for k in K:
             Delta_str = f"{Delta:.{4}f}"
             gamma_str = f"{gamma:.{4}f}"
             Omega_str = f"{Omega:.{4}f}"
             k_str = f"{k:.{4}f}"
+            g_str = f"{g:.{4}f}"
 
             print("####### " + k_str + " #######")
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
             # Guardando datos
             file = disc + route + project_name
-            subfile = "/Delta=" + Delta_str + "/gamma=" + gamma_str + "/Omega=" + Omega_str + "/k=" + k_str
+            subfile = "/Delta=" + Delta_str + "/gamma=" + gamma_str + "/Omega=" + Omega_str + "/g=" + g_str + "/k=" + k_str
             if not os.path.exists(file + subfile):
                 os.makedirs(file + subfile)
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
             t_light = time_grid[0::lightness]
 
             # --- eliminar 20% inicial (transiente) ---
-            cut = int(0.2 * len(t_light))
+            cut = int(0.5 * len(t_light))
             U_light = U_light[cut:]
             V_light = V_light[cut:]
             t_light = t_light[cut:]
@@ -124,40 +124,46 @@ if __name__ == '__main__':
             avg_psd_U = np.mean(psd_U, axis=1)
             avg_psd_V = np.mean(psd_V, axis=1)
 
+            avg_psd_U = avg_psd_U / np.amax(avg_psd_U)
+            avg_psd_V = avg_psd_V / np.amax(avg_psd_V)
+
             # Frequency grid
             freqs = np.fft.fftshift(np.fft.fftfreq(len(t_light), d=dt))
 
             plt.figure()
-            plt.plot(freqs, avg_psd_U, 'b', label='U avg')
-            plt.plot(freqs, avg_psd_V, 'r', label='V avg')
+            plt.plot(freqs, np.log(avg_psd_U), 'b', label='U avg')
+            plt.plot(freqs, np.log(avg_psd_V), 'r', label='V avg')
             plt.xlabel("Frequency")
             plt.ylabel("Average Power Spectrum")
             plt.grid(linestyle='--', alpha=0.5)
             plt.xlim(-0.5, 0.5)
             plt.legend()
-            plt.savefig("spectrum_avg.png", dpi=200)
+            plt.savefig( file + subfile + "/spectrum_avg.png", dpi=300)
             plt.close()
 
-            """
+
             # === Time series (con transiente eliminado) ===
             fig, (ax1, ax2) = plt.subplots(2)
-            ax1.plot(t_light, np.real(U_light), c="b", label="$\\textrm{Re}\\, \\alpha_i$")
-            ax1.plot(t_light, np.imag(U_light), c="r", label="$\\textrm{Im}\\, \\alpha_i$")
+            ax1.plot(t_light, np.real(U_light[:, 0]), c="b", label="$\\textrm{Re}\\, \\alpha_i$")
+            ax1.plot(t_light, np.imag(U_light[:, 0]), c="r", label="$\\textrm{Im}\\, \\alpha_i$")
             ax1.set_xlabel('$t$', size=20)
             ax1.set_ylabel('$\\alpha_1$', size=20)
             ax1.set_xlim([t_light[0], t_light[-1]])
             ax1.grid(linestyle='--', alpha=0.5)
             ax1.legend(loc="upper right", fontsize=12)
+            ax1.set_xlim(Ti, Tf)
 
-            ax2.plot(t_light, np.real(V_light), c="b")
-            ax2.plot(t_light, np.imag(V_light), c="r")
+            ax2.plot(t_light, np.real(V_light[:, 0]), c="b")
+            ax2.plot(t_light, np.imag(V_light[:, 0]), c="r")
             ax2.set_xlabel('$t$', size=20)
             ax2.set_ylabel('$\\alpha_2$', size=20)
             ax2.set_xlim([t_light[0], t_light[-1]])
             ax2.grid(linestyle='--', alpha=0.5)
+            ax2.set_xlim(Ti, Tf)
             plt.savefig(file + subfile + "/timeseries.png", dpi=300)
             plt.close()
 
+            """
             # === Photon number statistics (post-transient) ===
             nU = np.abs(U_light.flatten()) ** 2
             nV = np.abs(V_light.flatten()) ** 2
