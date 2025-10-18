@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     #### SPATIOTEMPORAL DIAGRAMS ####
     N_interval = 2
-    fig, (ax01, ax02, ax03) = plt.subplots(3, 1, figsize=(2.5, 4))
+    fig, (ax01, ax02, ax03) = plt.subplots(3, 1, figsize=(3, 4))
     cax_01 = ax01.pcolormesh(x_grid, t_light[i_0:i_f:N_interval] + 1, module_01[i_0:i_f:N_interval, :], cmap="turbo", shading='auto')
     cbar = fig.colorbar(cax_01, pad=0.03, aspect=10)
     cbar.ax.tick_params(labelsize=13)
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     ax01.tick_params(axis="y", direction="in", labelsize=15, left=True, right=True, labelleft=True, labelright=False)
     ax01.tick_params(axis="x", direction="in", labelsize=15, top=True, bottom=False, labeltop=False, labelbottom=False)
 
-    cax_02 = ax02.pcolormesh(x_grid, t_light[i_0:i_f:N_interval ] + 1, module_02[i_0:i_f:N_interval, :], cmap="turbo", shading='auto')
+    cax_02 = ax02.pcolormesh(x_grid, t_light[i_0:i_f:N_interval ] + 1, module_02[i_0:i_f:N_interval, args_lyap_modes_02], cmap="turbo", shading='auto')
     cbar = fig.colorbar(cax_02, pad=0.03, aspect=10)
     cbar.ax.tick_params(labelsize=13)
     #cbar.set_label('$r(t)$', rotation=0, size=20, labelpad=-50, y=1.1)
@@ -90,7 +90,7 @@ if __name__ == '__main__':
         wspace=0.0# controls vertical spacing
     )
     plt.tight_layout()
-    plt.savefig(file + '/spatiotemporals.png', dpi=200)
+    plt.savefig('spatiotemporals.png', dpi=200)
     plt.close()
 
     #### LYAPUNOV SPECTRUM ####
@@ -121,5 +121,5 @@ if __name__ == '__main__':
     )
 
     plt.tight_layout()
-    plt.savefig(file + '/lyap_spectrums.png', dpi=200)
+    plt.savefig('lyap_spectrums.png', dpi=200)
     plt.close()

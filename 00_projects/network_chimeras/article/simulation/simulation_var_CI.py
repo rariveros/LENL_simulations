@@ -61,11 +61,11 @@ def Der(D, f): #función de diferenciación
 
 if __name__ == '__main__':
 
-    project_name = '/network_chimeras/data/FIG03a/erdos_renyi'
+    project_name = '/network_chimeras/time_test'
     disc = 'G:/'
     route = 'My Drive/02. Académico/Investigación/Proyectos/[2025] Network Chimeras'
     Ks = [0.016] #np.arange(0.02, 0.025, 0.0005)         #DESDE MEANDEGREE = 25 PARA ARRIBA HAY QUE USAR T TOTAL 15000, PARA ABAJO DE ESE VALOR SE PUEDE USAR T TOTAL DE 10000
-    samples = np.arange(34, 50)
+    samples = [0] #np.arange(34, 50)
 
     ########### NETWORK PARAMETERS ###########
     mean_degree = 20

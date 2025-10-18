@@ -48,7 +48,7 @@ if __name__ == '__main__':
             chaos_no_chaos = np.loadtxt(chaos_path)
 
             # Reordenar
-            chaos_ordered = chaos_no_chaos#[X_sorted]
+            chaos_ordered = chaos_no_chaos
             #print(X_sorted)
             CHAOS.append(chaos_ordered)
     Adj_matrix = np.loadtxt(Adj_matrix_path, delimiter=",")

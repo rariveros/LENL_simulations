@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # Hay que tener los diagramas de fase estocasticos y mean-field.
     # Definiendo parámetros
 
-    project_name = '/coherent/test2'
+    project_name = '/coherent/phase_space'
     disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'coherent_langevin'
@@ -24,11 +24,11 @@ if __name__ == '__main__':
     Fano_UU = []
     Fano_VV = []
 
-    Delta = 0.01
+    Delta = 0.0
     gamma = 0.1
     Omegas = [0.2]
     K = [0.6] #np.arange(0.5, 0.1, -0.01) # [0.15] #
-    g = 0.5
+    g = 0.1
 
     # Definición de la grilla
     [tmin, tmax, dt] = [0, 4000, 0.1]
@@ -107,7 +107,7 @@ if __name__ == '__main__':
             t_light = time_grid[0::lightness]
 
             # --- eliminar 20% inicial (transiente) ---
-            cut = int(0.2 * len(t_light))
+            cut = int(0.5 * len(t_light))
             U_light = U_light[cut:]
             V_light = V_light[cut:]
             t_light = t_light[cut:]
@@ -222,11 +222,11 @@ if __name__ == '__main__':
             print(Re1)
 
             fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 8))
-            hist_01 = ax1.hist2d(Re1, Im2, bins=160, density=True, cmap="inferno")
+            hist_01 = ax1.hist2d(Re1, Im1, bins=300, density=True, cmap="inferno")
             ax1.set_xlabel("$\\textrm{Re }(\\alpha_1)$")
             ax1.set_ylabel("$\\textrm{Im }(\\alpha_1)$")
 
-            hist_01 = ax2.hist2d(Re2, Im1, bins=160, density=True, cmap="inferno")
+            hist_01 = ax2.hist2d(Re2, Im2, bins=500, density=True, cmap="inferno")
             ax2.set_xlabel("$\\textrm{Re }(\\alpha_2)$")
             ax2.set_ylabel("$\\textrm{Im }(\\alpha_2)$")
             #plt.gca().set_aspect("equal")
