@@ -12,7 +12,7 @@ if __name__ == '__main__':
     frequencies = []  # Esta lista no se usa, pero está declarada...
 
     # Ruta inicial donde el usuario va a empezar a buscar
-    disc = "D:/"  # Letra del disco (raro, pero probablemente es una unidad externa)
+    disc = "aD:/"  # Letra del disco (raro, pero probablemente es una unidad externa)
     initial_dir_data = str(disc) + 'mnustes_science/simulation_data/FD'
 
     # Mostramos una ventanita para que el usuario elija una carpeta
@@ -24,11 +24,12 @@ if __name__ == '__main__':
 
     # Buscamos todas las subcarpetas dentro de la carpeta elegida
     directories = [name for name in os.listdir(working_directory) if os.path.isdir(os.path.join(working_directory, name))]
-
+    markers = ["o", "^", "s"]
     # Preparamos una figura (gráfico) y un eje para dibujar
-    fig, ax = plt.subplots(1, 1, figsize=(4, 3))  # 1 fila, 1 columna, tamaño de 5x3 pulgadas
+    fig, ax = plt.subplots(1, 1, figsize=(4.5, 2.4))  # 1 fila, 1 columna, tamaño de 5x3 pulgadas
 
     # Recorremos cada subcarpeta (cada una representa un valor distinto de kappa)
+    i = 0
     for directory_01 in directories:
         dir_01 = working_directory + "/" + directory_01
 
@@ -44,13 +45,15 @@ if __name__ == '__main__':
             MEAN_DEGREES,        # Eje X: grado medio
             N_QUIM,              # Eje Y: fracción de quimeras
             yerr=N_QUIM_std,     # Barras de error en Y
-            marker='o',          # Puntos como circulitos
-            ls='',               # Sin línea entre puntos
-            ecolor="k",          # Color negro para las líneas de error
+            marker=markers[i],   # Puntos como circulitos
+            ls='',
+            ms=5,                # Sin línea entre puntos
+            ecolor="k",
+            color="k",# Color negro para las líneas de error
             mec='black',         # Contorno negro para los marcadores
             label="$\kappa=" + directory_01.split('=')[-1] + "$"  # Leyenda con el valor de kappa sacado del nombre de la carpeta
         )
-
+        i = i + 1
     # Ajustamos los límites de los ejes
     ax.set_xlim(13, 33)
     ax.set_ylim(-0.05, 1.05)
@@ -59,22 +62,22 @@ if __name__ == '__main__':
     ax.set_xticks([14, 16, 18, 20, 22, 24, 26, 28, 30, 32])
 
     # Personalizamos los "ticks" (las marcas en los ejes)
-    ax.tick_params(axis="y", direction="in", labelsize=12, left=True, right=True, labelleft=True, labelright=False)
-    ax.tick_params(axis="x", direction="in", labelsize=12, top=True, bottom=True, labeltop=False, labelbottom=True)
+    ax.tick_params(axis="y", direction="in", labelsize=15, left=True, right=True, labelleft=True, labelright=False)
+    ax.tick_params(axis="x", direction="in", labelsize=15, top=True, bottom=True, labeltop=False, labelbottom=True)
 
     # Etiquetas de los ejes (con formato matemático)
-    ax.set_xlabel("$\\langle k \\rangle$", fontsize=20)      # Grado promedio
-    ax.set_ylabel("$\\frac{N_c}{N}$", fontsize=20)           # Fracción de nodos en estado quimera
+    ax.set_xlabel(r"$\textrm{Centralities}$", fontsize=18)      # Grado promedio
+    ax.set_ylabel(r"$P_{\textrm{chaos}}$", fontsize=18)           # Fracción de nodos en estado quimera
 
     # Textos extra en el gráfico (fijos)
-    ax.text(13.5, 0.92, "$\kappa = 1.5 \\times 10^{-2}$", fontsize=12)  # Valor de kappa (puede que esté fijo, no automático)
-    ax.text(13.5, 0.8, "$N = 501$", fontsize=12)                        # Tamaño de la red
+    #ax.text(13.5, 0.92, "$\kappa = 1.5 \\times 10^{-2}$", fontsize=12)  # Valor de kappa (puede que esté fijo, no automático)
+    #ax.text(13.5, 0.8, "$N = 501$", fontsize=12)                        # Tamaño de la red
 
     # Línea horizontal punteada en y = 0 y y = 1 como referencia
     ax.hlines([0, 1], 10, 35, linestyle="--", color="black")
 
     # Mostramos la leyenda (etiquetas de cada serie de datos)
-    plt.legend()
+    plt.legend(loc="center right")
 
     # Ajusta los márgenes automáticamente para que no se corte nada
     plt.tight_layout()

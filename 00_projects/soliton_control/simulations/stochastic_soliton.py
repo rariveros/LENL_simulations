@@ -6,14 +6,14 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = "/soliton_control/testt"
+    project_name = "/soliton_control/stochastic"
     disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
-    eq = 'PDNLS'
+    eq = 'PDNLS_noise'
     save_rate = 100
     plots = "si"
     file = disc + route + project_name
-    [tmin, tmax, dt] = [0, 2500, 0.01]
+    [tmin, tmax, dt] = [0, 2000, 0.005]
     [xmin, xmax, dx] = [-50, 50, 0.5]
     t_grid = np.arange(tmin, tmax + dt, dt)
     x_grid = np.arange(xmin, xmax, dx)
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     Nx = x_grid.shape[0]
     beta_adim = 0.004811649356064012
     gammas = [0.18] #np.arange(0.15, 0.205, 0.005)#np.arange(0.1, 0.25, 0.01) + 0.005
-    nus = [-0.08] #np.arange(-0.15, -0.05, 0.005)
+    nus = [0.16] #np.arange(-0.15, -0.05, 0.005)
     sigmas = [15]
     t_0 = tmax
     x_0 = -4
@@ -37,6 +37,7 @@ if __name__ == '__main__':
             mu_0 = 0.075
             #sigma = 15
             gamma = 0.18
+            noise_level = 0.0008
             delta = np.sqrt(- nu + np.sqrt(gamma_0 ** 2 - mu_0 ** 2))
             [alpha_str, beta_str, mu_str, nu_str, sigma_str, gamma_str] = pdnlS_str_parameters([alpha, beta, mu_0, nu, sigma, gamma_0], 0)
 
@@ -49,12 +50,12 @@ if __name__ == '__main__':
             operators = np.array([D2])
             fields_init = [U_1_init, U_2_init]
             grids = [t_grid, x_grid, 0]
-            gamma_real = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) #np.ones(Nx) #
+            gamma_real = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2))
             gamma_img = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * 0
             gamma = [gamma_real, gamma_img]
             mu = mu_0 * np.ones(Nx)
 
-            parameters = [alpha, beta, gamma, mu, nu]
+            parameters = [alpha, beta, gamma, mu, nu, noise_level]
 
             # Midiendo tiempo inicial
             now = datetime.datetime.now()
@@ -176,7 +177,6 @@ if __name__ == '__main__':
                 plt.close()
 
                 plt.plot(x_grid, np.unwrap(arg_light_1[-1, :], period=2 * np.pi))
-                plt.ylim(0, 2*np.pi)
                 plt.xlabel('$x$', size='25')
                 plt.ylabel('$\\theta(x)$', size='25')
                 plt.tight_layout()

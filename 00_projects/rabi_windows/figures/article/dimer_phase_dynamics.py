@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     # Left subplot: Streamplot for gamma = 0.15
     axes[0].streamplot(PHI1, PHI2, F_values1, G_values1, color='k', density=2.2, linewidth=0.7, arrowsize=0.7)
-    contour_G1 = axes[0].contourf(PHI1, PHI2, np.sqrt(F_values1 ** 2 + G_values1 ** 2), levels=100, cmap='turbo', alpha=1.0)
+    contour_G1 = axes[0].contourf(PHI1, PHI2, np.sqrt(F_values1 ** 2 + G_values1 ** 2), levels=100, cmap='turbo', alpha=1.0, rasterized=True)
     cbar = fig.colorbar(contour_G1, ax=axes[0], ticks=ticks)
     cbar.ax.tick_params(labelsize=12)
     cbar.set_label(r"$|\vec{F}(\theta, \phi)|$", rotation=0, size=14, labelpad=-20, y=1.23)
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     # Right subplot: Streamplot for gamma = 0.35
     axes[1].streamplot(PHI1, PHI2, F_values2, G_values2, color='k', density=2.2, linewidth=0.7, arrowsize=0.7)
-    contour_G2 = axes[1].contourf(PHI1, PHI2, np.sqrt(F_values2 ** 2 + G_values2 ** 2), levels=100, cmap='turbo', alpha=1.0)
+    contour_G2 = axes[1].contourf(PHI1, PHI2, np.sqrt(F_values2 ** 2 + G_values2 ** 2), levels=100, cmap='turbo', alpha=1.0, rasterized=True)
     cbar = fig.colorbar(contour_G2, ax=axes[1], ticks=ticks)
     cbar.ax.tick_params(labelsize=12)
     cbar.set_label(r"$|\vec{F}(\theta, \phi)|$", rotation=0, size=14, labelpad=-20, y=1.23)
@@ -80,4 +80,4 @@ if __name__ == '__main__':
 
     # Adjust layout and display
     fig.subplots_adjust(left=0.1, right=0.9, bottom=0.25, top=0.85)
-    plt.savefig('dimer_phase_dynamics.png', dpi=300)
+    plt.savefig('dimer_phase_dynamics.svg', dpi=300)

@@ -6,8 +6,8 @@ from time_integrators import *
 if __name__ == '__main__':
 
     # Definiendo parámetros
-    project_name = "/chirped_soliton"
-    disc = 'C:/'
+    project_name = "/chirped_soliton/test"
+    disc = 'D:/'
     route = 'mnustes_science/simulation_data/FD'
     eq = 'PDNLS'
     save_rate = 100
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     beta_adim = 0.004811649356064012
     gammas = [0.18] #np.arange(0.15, 0.205, 0.005)#np.arange(0.1, 0.25, 0.01) + 0.005
     nus = [-0.13] #np.arange(-0.15, -0.05, 0.005)
-    Cs = np.arange(0, 0.6, 0.02)
+    Cs = [-0.01]
     t_0 = tmax
     x_0 = -5
     mods = []
@@ -37,6 +37,7 @@ if __name__ == '__main__':
             mu_0 = 0.075
             sigma = 15
             gamma = 0.18
+            #nu = -0.13
             #c = 0.5
 
             delta = np.sqrt(- nu + np.sqrt(gamma_0 ** 2 - mu_0 ** 2))
@@ -51,7 +52,7 @@ if __name__ == '__main__':
             operators = np.array([D2])
             fields_init = [U_1_init, U_2_init]
             grids = [t_grid, x_grid, 0]
-            gamma_complex = gamma_0 * np.exp((- x_grid ** 2 / (2 * sigma ** 2)) * (1 + 1j * c))
+            gamma_complex = gamma_0 * np.exp(- x_grid ** 2 / (2 * sigma ** 2)) * np.exp(1j * c * x_grid)
             gamma_real = np.real(gamma_complex)
             gamma_img = np.imag(gamma_complex)
             gamma = [gamma_real, gamma_img]

@@ -25,7 +25,7 @@ if __name__ == '__main__':
     i_f = np.argmin(np.abs(t_light - t_final))
     power_threshold = 1.5
 
-    file = dir
+    file = dir_01
 
     arg_lyap_pos = np.loadtxt(file + '/arg_lyap.txt', delimiter=',')
     x = np.loadtxt(file + '/x_lyap.txt', delimiter=',')
@@ -71,5 +71,5 @@ if __name__ == '__main__':
     ax04.set_xlabel("$i$", fontsize=20)
 
     plt.tight_layout()
-    plt.savefig(file + '/spatiotemporals.png', dpi=200)
+    plt.savefig('spatiotemporals.png', dpi=200)
     plt.close()

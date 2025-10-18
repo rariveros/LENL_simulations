@@ -141,6 +141,35 @@ def equations_FD(eq, field_slices, t_i, x_grid, y_grid, parameters, operators):
 
         fields = np.array([F])
 
+    elif eq == 'PDNLS_noise':
+
+        U_1 = field_slices[0]
+        U_2 = field_slices[1]
+
+        alpha = parameters[0]
+        beta = parameters[1]
+        gamma = parameters[2]
+        gamma_1 = gamma[0]
+        gamma_2 = gamma[1]
+        mu = parameters[3]
+        nu = parameters[4]
+        noise_level = parameters[5]
+
+        DD = operators[0]
+
+        ddU_1 = Der(DD, U_1)
+        ddU_2 = Der(DD, U_2)
+
+        Nx = len(x_grid)
+
+        noise_R = np.random.normal(Nx)
+        noise_I = np.random.normal(Nx)
+
+        F = alpha * ddU_2 + (beta * (U_1 ** 2 + U_2 ** 2) + nu + gamma_2) * U_2 + (gamma_1 - mu) * U_1 + noise_level * noise_R / np.sqrt(2)
+        G = -alpha * ddU_1 - (beta * (U_1 ** 2 + U_2 ** 2) + nu - gamma_2) * U_1 - (gamma_1 + mu) * U_2 + noise_level * noise_I / np.sqrt(2)
+
+        fields = np.array([F, G])
+
     elif eq == 'amplitude_bigaussian':
         A = field_slices[0]
         B = field_slices[1]
